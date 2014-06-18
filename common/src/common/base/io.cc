@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
+#include "common/base/config.h"
 #include "common/base/io.h"
 
 void baseio_perror(const char* format, ...) {

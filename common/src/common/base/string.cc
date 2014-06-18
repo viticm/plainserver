@@ -1,5 +1,6 @@
-#include "common/base/string.h"
 #include <limits>
+#include "common/base/string.h"
+#include "common/base/base64.hpp"
 
 namespace ps_common_base {
 
@@ -15,11 +16,11 @@ namespace string {
   * @return: 如果转换成功返回true, 否则返回false
   */
 template <typename IntType>
-static bool fast_string_toint(const char* str,
-                              IntType& result, 
-                              uint8_t max_length, 
-                              uint8_t converted_length, 
-                              bool ignored_zero) {
+static bool fast_toint(const char* str,
+                       IntType& result, 
+                       uint8_t max_length, 
+                       uint8_t converted_length, 
+                       bool ignored_zero) {
   __ENTER_FUNCTION
     bool negative = false;
     const char* tmp_str = str;
@@ -85,33 +86,15 @@ void replace_all(std::string& str, const std::string source, const std::string d
   __LEAVE_FUNCTION
 }
 
-bool string_toint16(const char* source, 
-                    int16_t& result, 
-                    uint8_t converted_length, 
-                    bool ignored_zero) {
-  __ENTER_FUNCTION
-    return string_toint(source, result, converted_length, ignored_zero);
-  __LEAVE_FUNCTION
-    return false;
-}
-
-bool string_toint32(const char* source,
-                    int32_t& result, 
-                    uint8_t converted_length, 
-                    bool ignored_zero) {
-  return string_toint(source, result, converted_length, ignored_zero);
-}
-
-
-bool string_toint(const char* source, 
-                  int32_t& result, 
-                  uint8_t converted_length, 
-                  bool ignored_zero) {
+bool toint32(const char* source, 
+             int32_t& result, 
+             uint8_t converted_length, 
+             bool ignored_zero) {
   __ENTER_FUNCTION
     if (NULL == source) return false;
 
     long value;
-    if (!fast_string_toint<long>(
+    if (!fast_toint<long>(
           source, 
           value, 
           sizeof("-2147483648") - 1, 
@@ -129,13 +112,13 @@ bool string_toint(const char* source,
     return false;
 }
 
-bool string_toint(const char* source, 
-                  int16_t& result, 
-                  uint8_t converted_length, 
-                  bool ignored_zero) {
+bool toint16(const char* source, 
+             int16_t& result, 
+             uint8_t converted_length, 
+             bool ignored_zero) {
   __ENTER_FUNCTION
     int32_t value = 0;
-    if (!string_toint32(source, value, converted_length, ignored_zero)) 
+    if (!toint32(source, value, converted_length, ignored_zero)) 
       return false;
     if (value < std::numeric_limits<int16_t>::min() ||
         value > std::numeric_limits<int16_t>::max()) return false;
@@ -143,6 +126,64 @@ bool string_toint(const char* source,
     return true;
   __LEAVE_FUNCTION
     return false;
+}
+
+char get_base64char(int index) {
+  const char str[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi"
+                     "jklmnopqrstuvwxyz0123456789+/";
+  if ((index >= 0) && (index < 64)) {
+    return str[index];
+  }
+  return '=';
+}
+
+void encrypt(const char* in, char* out, int32_t out_length) {
+  int insize = static_cast<int>(strlen(in));
+  if (insize <= 0) return;
+  int middle = 0 == insize % 2 ? insize / 2 : (insize + 1) / 2;
+  int length = insize + 2 + 3 + 1;
+  char* src = new char[length];
+  char* temp = new char[length + length / 3 + 10]; //enough output size
+  int i, j, index;
+  srand(static_cast<unsigned int>(time(NULL)));
+  i = j = 0;
+  for (; i < length; ++i) {
+    index = rand() % 100;
+    if (i < 2 || (middle <= i && middle + 3 > i) || i == length - 1) {
+      src[i] = get_base64char(index);
+      continue;
+    }
+    src[i] = in[j++];
+  }
+  base64encode(temp, src, length);
+  strncpy(out, temp, out_length);
+  out[out_length - 1] = '\0';
+  SAFE_DELETE_ARRAY(temp);
+  SAFE_DELETE_ARRAY(src);
+}
+
+void decrypt(const char* in, char* out, int32_t out_length) {
+  int insize = static_cast<int>(strlen(in));
+  if (insize <= 0) return;
+  char* temp = new char[insize - insize / 3 + 10]; // enough buffer size
+  base64decode(temp, in, insize);
+  int length = static_cast<int>(strlen(temp));
+  int right_length = length - 2 - 3 - 1;
+  char* _temp = new char[right_length + 1];
+  int middle = //用正确的长度算出中间值
+    0 == right_length % 2 ? right_length / 2 : (right_length + 1) / 2;
+  int i, j;
+  i = j = 0;
+  for (; i < length; ++i) {
+    if (i < 2 || (middle <= i && middle + 3 > i) || i == length - 1) {
+      continue;
+    }
+    _temp[j++] = temp[i];
+  }
+  strncpy(out, _temp, out_length);
+  out[out_length - 1] = '\0';
+  SAFE_DELETE_ARRAY(_temp);
+  SAFE_DELETE_ARRAY(temp);
 }
 
 uint32_t crc(const char* str) {

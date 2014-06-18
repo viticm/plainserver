@@ -1,8 +1,8 @@
 #include "common/sys/thread.h"
 
-pap_common_sys::ThreadLock g_thread_lock;
+ps_common_sys::ThreadLock g_thread_lock;
 
-namespace pap_common_sys {
+namespace ps_common_sys {
 
 uint16_t g_thread_quit_count = 0;
 
@@ -145,4 +145,4 @@ uint64_t get_current_thread_id() {
     return NULL;
 }
 
-} //namespace pap_common_sys
+} //namespace ps_common_sys

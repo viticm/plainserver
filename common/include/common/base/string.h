@@ -14,7 +14,7 @@
 #include <map> 
 #include "common/base/config.h"
 
-namespace pap_common_base {
+namespace ps_common_base {
 
 namespace string {
 
@@ -22,25 +22,26 @@ namespace string {
 typedef std::map<std::string, std::string> map; //my map
 /*typedef }*/
 
+char get_base64char(int index);
+
+
 void replace_all(std::string& str, 
                  const std::string source, 
                  const std::string destination);
-bool string_toint(const char* source, 
-                  int16_t& result, 
-                  uint8_t converted_length = 0, 
-                  bool ignored_zero = false);
-bool string_toint16(const char* source, 
-                    int16_t& result, 
-                    uint8_t converted_length = 0, 
-                    bool ignored_zero = false);
-bool string_toint32(const char* source, 
-                    int32_t& result, 
-                    uint8_t converted_length = 0, 
-                    bool ignored_zero = false);
-bool string_toint(const char* source, 
-                  int32_t& result, 
-                  uint8_t converted_length = 0, 
-                  bool ignored_zero = false);
+
+bool toint16(const char* source, 
+             int16_t& result, 
+             uint8_t converted_length = 0, 
+             bool ignored_zero = false);
+
+bool toint32(const char* source, 
+             int32_t& result, 
+             uint8_t converted_length = 0, 
+             bool ignored_zero = false);
+
+void encrypt(const char* in, char* out, int32_t out_length);
+
+void decrypt(const char* in, char* out, int32_t out_length);
 
 }; //namespace string
 
