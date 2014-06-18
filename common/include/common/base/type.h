@@ -1,15 +1,16 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id type.h
  * @link https://github.com/viticm/pap for the canonical source repository
  * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
  * @license
  * @user viticm<viticm@126.com>
- * @date 2013-8-23 20:01:52
+ * @date 2014/06/18 12:07
  * @uses 基本数据定义,该文件定义不存在命名空间
+ *       不能直接包含此头文件，要使用此头文件包含common/base/config.h即可
  */
-#ifndef PAP_COMMON_BASE_TYPE_H_
-#define PAP_COMMON_BASE_TYPE_H_
+#ifndef PS_COMMON_BASE_TYPE_H_
+#define PS_COMMON_BASE_TYPE_H_
 
 #if defined(GAME_CLIENT)
 #define __ENTER_FUNCTION 
@@ -36,12 +37,12 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#if defined(__WINDOWS__) //diffrent system include
+#if __WINDOWS__ //diffrent system include
 #pragma warning (disable: 4786)
 #include <windows.h>
 #include <crtdbg.h>
 #include <tchar.h>
-#elif defined(__LINUX__)
+#elif __LINUX__
 #include <string.h>
 #include <sys/types.h>
 #include <pthread.h>
@@ -83,18 +84,18 @@ typedef int16_t connectionid_t;
 #endif
 
 // common define
-#if defined(__LINUX__)
+#if __LINUX__
 #ifndef LF
 #define LF "\n"
 #endif
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
 #ifndef LF
 #define LF "\r\n"
 #endif
 #endif
 
 //c output/string functions
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 #ifndef snprintf
 #define snprintf _snprintf
 #endif
@@ -104,7 +105,7 @@ typedef int16_t connectionid_t;
 #ifndef vsnprintf
 #define vsnprintf _vsnprintf
 #endif
-#elif defined(__LINUX__)
+#elif __LINUX__
 #ifndef stricmp
 #define stricmp strcasecmp
 #endif
@@ -112,34 +113,34 @@ typedef int16_t connectionid_t;
 
 //根据指针值删除内存
 #ifndef SAFE_DELETE
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 #define SAFE_DELETE(x)	if ((x) != NULL) { \
                           Assert(_CrtIsValidHeapPointer(x)); \
                           delete (x); (x) = NULL; \
                         }
 
-#elif defined(__LINUX__)
+#elif __LINUX__
 #define SAFE_DELETE(x)	if ((x) != NULL) { delete (x); (x) = NULL; }
 #endif
 #endif
 //根据指针值删除数组类型内存 
 //其中注意_CrtIsValidHeapPointer前的定义，在release需要定义NDEBUG
 #ifndef SAFE_DELETE_ARRAY
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 #define SAFE_DELETE_ARRAY(x) if ((x) != NULL) { \
                                Assert(_CrtIsValidHeapPointer(x)); \
                                delete[] (x); (x) = NULL; \
                              }
-#elif defined(__LINUX__)
+#elif __LINUX__
 #define SAFE_DELETE_ARRAY(x) if ((x) != NULL) { delete[] (x); (x) = NULL; }
 #endif
 #endif
 
 //删除指针型数据(应尽量使用SAFE_DELETE_ARRAY)
 #ifndef DELETE_ARRAY
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 #define DELETE_ARRAY(x)	if ((x) != NULL) { delete[] (x); (x) = NULL; }
-#elif defined(__LINUX__)
+#elif __LINUX__
 #define DELETE_ARRAY(x)	if ((x) != NULL) { delete[] (x); (x) = NULL; }
 #endif
 #endif
@@ -164,7 +165,7 @@ typedef int16_t connectionid_t;
 #define WARNINGPRINTF baseio_pwarn
 #endif
 
-#if defined(__WINDOWS__) //normal functions
+#if __WINDOWS__ //normal functions
 #if defined(NDEBUG)
   #define __ENTER_FUNCTION { try {
   #define __LEAVE_FUNCTION } catch(...){ AssertSpecial(false,__FUNCTION__); } }
@@ -173,10 +174,10 @@ typedef int16_t connectionid_t;
   #define __LEAVE_FUNCTION } catch(...){ AssertSpecial(false,__FUNCTION__); } }
 #endif
 
-#elif defined(__LINUX__)    //linux
+#elif __LINUX__    //linux
 #define __ENTER_FUNCTION { try {
 #define __LEAVE_FUNCTION } catch(...) \
                          { AssertSpecial(false,__PRETTY_FUNCTION__); } }
 #endif
 
-#endif //PAP_COMMON_BASE_TYPE_H_
+#endif //PS_COMMON_BASE_TYPE_H_

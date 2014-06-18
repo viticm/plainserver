@@ -1,20 +1,20 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id ptype.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id util.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-11-22 19:36:44
- * @uses some useful base util functions 
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/18 13:46
+ * @uses base util module
  */
-#ifndef PAP_COMMON_BASE_UTIL_H_
-#define PAP_COMMON_BASE_UTIL_H_
+#ifndef PS_COMMON_BASE_UTIL_H_
+#define PS_COMMON_BASE_UTIL_H_
 
 #include "common/base/md5.h"
 #include "common/base/config.h"
 
-namespace pap_common_base {
+namespace ps_common_base {
 
 namespace util {
 
@@ -43,6 +43,6 @@ void password_swap_chars(char* str); //string will more than 32
 
 } //namespace util
 
-} //namespace pap_common_base
+} //namespace ps_common_base
 
-#endif //PAP_COMMON_BASE_UTIL_H_
+#endif //PS_COMMON_BASE_UTIL_H_

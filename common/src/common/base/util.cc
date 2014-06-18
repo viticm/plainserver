@@ -1,5 +1,4 @@
 #include "common/base/util.h" //无论如何都是用全路径
-#include "common/lib/iconv/iconv.h"
 
 namespace pap_common_base {
 
@@ -201,9 +200,9 @@ bool string_tobinary(const char* in,
 
 void sleep(uint32_t million_seconds) {
   __ENTER_FUNCTION
-#if defined(__WINDOWS__)
+#if __WINDOWS__
     Sleep(million_seconds);
-#elif defined(__LINUX__)
+#elif __LINUX__
     usleep(million_seconds * 1000);
 #endif
   __LEAVE_FUNCTION
