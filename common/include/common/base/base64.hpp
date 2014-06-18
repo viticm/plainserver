@@ -62,7 +62,7 @@
 
 namespace ps_common_base {
 
-// 编码后的长度一般比原文多占1/3的存储空间，请保证base64code有足够的空间
+//编码后的长度一般比原文多占1/3的存储空间，请保证base64code有足够的空间
 int base64encode(char * base64code, const char * src, int src_len = 0);
 int base64decode(char * buf, const char * base64code, int src_len = 0);
 
@@ -75,13 +75,13 @@ char getb64char(int index) {
   return '=';
 }
 
-// 从双字中取单字节
+//从双字中取单字节
 #define B0(a) (a & 0xFF)
 #define B1(a) (a >> 8 & 0xFF)
 #define B2(a) (a >> 16 & 0xFF)
 #define B3(a) (a >> 24 & 0xFF)
 
-// 编码后的长度一般比原文多占1/3的存储空间，请保证base64code有足够的空间
+//编码后的长度一般比原文多占1/3的存储空间，请保证base64code有足够的空间
 int base64encode(char *base64code, const char *src, int src_len) {
   unsigned char *psrc = (unsigned char*)src;
   char *p64 = base64code;
@@ -108,7 +108,7 @@ int base64encode(char *base64code, const char *src, int src_len) {
     psrc += 3;
   }
   
-  // 处理最后余下的不足3字节的饿数据
+  //处理最后余下的不足3字节的饿数据
   if (i < src_len) {
     int rest = src_len - i;
     unsigned long ulTmp = 0;
@@ -152,7 +152,7 @@ int getb64index(char ch) {
   return index;
 }
 
-// 解码后的长度一般比原文少用占1/4的存储空间，请保证buf有足够的空间
+//解码后的长度一般比原文少用占1/4的存储空间，请保证buf有足够的空间
 int base64decode(char * buf, const char * base64code, int src_len) { 
   int ii = 0;
   int jj = 0;
@@ -172,9 +172,12 @@ int base64decode(char * buf, const char * base64code, int src_len) {
   for (ii = 0; ii < src_len - 4; ii += 4) {
     unsigned long ulTmp = *(unsigned long*)psrc;
     
-     b0 = (getb64index((char)B0(ulTmp)) << 2 | getb64index((char)B1(ulTmp)) << 2 >> 6) & 0xFF;
-     b1 = (getb64index((char)B1(ulTmp)) << 4 | getb64index((char)B2(ulTmp)) << 2 >> 4) & 0xFF;
-     b2 = (getb64index((char)B2(ulTmp)) << 6 | getb64index((char)B3(ulTmp)) << 2 >> 2) & 0xFF;
+     b0 = (getb64index((char)B0(ulTmp)) << 2 | 
+         getb64index((char)B1(ulTmp)) << 2 >> 6) & 0xFF;
+     b1 = (getb64index((char)B1(ulTmp)) << 4 | 
+         getb64index((char)B2(ulTmp)) << 2 >> 4) & 0xFF;
+     b2 = (getb64index((char)B2(ulTmp)) << 6 | 
+         getb64index((char)B3(ulTmp)) << 2 >> 2) & 0xFF;
     
     *((unsigned long*)pbuf) = b0 | b1 << 8 | b2 << 16;
     psrc  += 4; 
@@ -182,7 +185,7 @@ int base64decode(char * buf, const char * base64code, int src_len) {
     len += 3;
   }
 
-  // 处理最后余下的不足4字节的饿数据
+  //处理最后余下的不足4字节的饿数据
   if (ii < src_len) {
     rest = src_len - ii;
     ulTmp = 0;
