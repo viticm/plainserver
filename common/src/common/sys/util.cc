@@ -1,7 +1,7 @@
 #include "common/sys/util.h"
 #include "common/sys/thread.h"
 
-namespace pap_common_sys {
+namespace ps_common_sys {
 
 namespace util {
 
@@ -9,7 +9,7 @@ void dumpstack(const char* log_fileprefix, const char* type) {
   __ENTER_FUNCTION
     USE_PARAM(log_fileprefix);
     USE_PARAM(type);
-#if defined(__LINUX__)
+#if __LINUX__
     void* dumparray[25];
     uint32_t size = backtrace(dumparray, 25);
     char** symbols = backtrace_symbols(dumparray, size);

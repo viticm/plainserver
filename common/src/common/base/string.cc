@@ -1,7 +1,7 @@
 #include "common/base/string.h"
 #include <limits>
 
-namespace pap_common_base {
+namespace ps_common_base {
 
 namespace string {
 
@@ -158,4 +158,4 @@ uint32_t crc(const char* str) {
 
 } //namespace string
 
-} //namespace pap_common_base
+} //namespace ps_common_base

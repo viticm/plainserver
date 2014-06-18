@@ -18,7 +18,7 @@ extern bool g_command_ignore_message_box;//控制参数，跳过MyMessageBox的�
 extern int g_file_name_fix;//文件名称后缀
 extern int g_need_manager_do_pos_init;//控制参数，是否需要初始化管理器数据
 
-namespace pap_common_sys {
+namespace ps_common_sys {
 
 void __assert__(const char* file, 
                 unsigned int line, 

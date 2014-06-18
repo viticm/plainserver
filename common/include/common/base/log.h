@@ -59,7 +59,7 @@ class Log : public Singleton<Log> {
  private:
    char* log_cache_[kLogFileCount];
    int32_t log_position_[kLogFileCount];
-   pap_common_sys::ThreadLock log_lock_[kLogFileCount];
+   ps_common_sys::ThreadLock log_lock_[kLogFileCount];
    int32_t cache_size_;
    uint32_t day_time_;
 

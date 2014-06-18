@@ -21,7 +21,7 @@ const char* g_log_file_name[] = {
   '\0',
 };
 
-pap_common_sys::ThreadLock g_log_lock;
+ps_common_sys::ThreadLock g_log_lock;
 bool g_log_in_one_file = false;
 template<> Log* Singleton<Log>::singleton_ = NULL;
 
@@ -62,7 +62,7 @@ void Log::get_log_time_str(char* time_str, int32_t length) {
         g_time_manager->reset_time();
         snprintf(time_str, length, 
                  " (%"PRIu64")(T0=%d-%d-%d_%d:%d:%d T1=%.4f)",
-                 pap_common_sys::get_current_thread_id(), 
+                 ps_common_sys::get_current_thread_id(), 
                  g_time_manager->get_year(),
                  g_time_manager->get_month() + 1,
                  g_time_manager->get_day(),
@@ -328,4 +328,4 @@ void Log::get_serial(char* serial, int16_t world_id, int16_t server_id) {
   __LEAVE_FUNCTION
 }
 
-} //namespace pap_server_common_base
+} //namespace ps_common_base

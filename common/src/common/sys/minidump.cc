@@ -1,7 +1,7 @@
 #include "common/sys/minidump.h"
 #include "common/sys/thread.h"
 
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 #include <stdio.h>
 #include <stdlib.h>
 #include <Dbghelp.h>
@@ -16,7 +16,7 @@ namespace pap_common_sys {
 
 namespace minidump {
 
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 LONG WINAPI unhandled_exceptionfilter(
     struct _EXCEPTION_POINTERS* exceptioninfo)
 {

@@ -13,7 +13,7 @@
 #ifndef PS_COMMON_SYS_CONFIG_H_
 #define PS_COMMON_SYS_CONFIG_H_
 
-#include "common/base/type.h"
+#include "common/base/config.h"
 
 #define INTERFACE_NAME_MAX 20
 #ifndef LINE_MAX

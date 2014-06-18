@@ -3,12 +3,11 @@
 #endif
 #include <time.h>
 #include "common/sys/assert.h"
-#include "common/base/type.h"
 int g_command_assert = 0;
 bool g_command_ignore_message_box = false; //控制参数，跳过MyMessageBox的中断
 int g_need_manager_do_pos_init = 1; //控制参数，是否需要初始化管理器数据
 
-namespace pap_common_sys {
+namespace ps_common_sys {
 
 /**
  * g_command_assert 控制参数

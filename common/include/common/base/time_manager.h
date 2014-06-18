@@ -2,7 +2,7 @@
  * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id time_manager.h
  * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm.ti@gmail.com )
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
  * @user viticm<viticm@126.com>
  * @date 2014/06/18 15:53
@@ -11,11 +11,11 @@
 #ifndef PS_COMMON_BASE_TIME_MANAGER_H_
 #define PS_COMMON_BASE_TIME_MANAGER_H_
 
+#include "common/base/config.h"
 #if __LINUX__
 #include <sys/time.h>
 #include <sys/utsname.h>
 #endif
-#include "common/base/config.h"
 #include "common/base/singleton.h"
 
 namespace ps_common_base {
@@ -29,7 +29,6 @@ class TimeManager : public Singleton<TimeManager> {
    uint32_t current_time_;
    time_t set_time_;
    tm tm_;
-   world_time_enum world_time_;
 #if __LINUX__
    struct timeval start_, end_;
    struct timezone time_zone_;
@@ -68,8 +67,6 @@ class TimeManager : public Singleton<TimeManager> {
    uint32_t get_days(); //取得以天为单位的时间值, 千位数代表年份，其他三位代表时间（天数）
    uint32_t get_hours(); //12723表示本年度第127天的5(23/4)点的第3(23%4)刻钟时间
    uint32_t get_weeks(); //取得以周为单位的时间值, 千位数代表年份，其他三位代表时间（周数）
-   world_time_enum get_world_time();
-   void set_world_time(world_time_enum world_time);
 
 };
 
@@ -79,4 +76,4 @@ extern ps_common_base::TimeManager* g_time_manager;
 extern uint32_t g_file_name_fix_last;
 extern int32_t g_file_name_fix;
 
-#endif //PAP_SERVER_COMMON_BASE_TIME_MANAGER_H_
+#endif //PS__COMMON_BASE_TIME_MANAGER_H_

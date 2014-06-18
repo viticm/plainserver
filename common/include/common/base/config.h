@@ -11,6 +11,9 @@
 #ifndef PS_COMMON_BASE_CONFIG_H_
 #define PS_COMMON_BASE_CONFIG_H_
 
+#undef __WINDOWS__
+#undef __LINUX__
+
 /* base type { */
 #define __WINDOWS__ (defined(_MSC_VER) || defined(__ICL))
 #define __LINUX__ !(__WINDOWS__)
@@ -18,5 +21,7 @@
 /* } base type */
 
 #define PASSWORD_ENCRYPT_KEY "123456" //密码加密串，真实加密串是取其MD5值
+
+//headers include order: common/base/type.h -> sys include -> module include
 
 #endif //PS_COMMON_BASE_CONFIG_H_

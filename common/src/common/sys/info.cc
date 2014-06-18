@@ -1,7 +1,7 @@
-#if defined(__LINUX__)
+#if __LINUX__
 #include <sys/times.h>
 #include <sys/sysinfo.h>
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
 #include <winsock2.h>
 #include <io.h>
 #endif
@@ -22,7 +22,7 @@ CloseHelper<FILE*>::~CloseHelper<FILE*>() {
 
 bool get_sys_info(sys_info_t& sys_info) {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
+#if __LINUX__
     struct sysinfo info;
     if (-1 == sysinfo(&info)) return false;
     sys_info.uptime_second = info.uptime;
@@ -36,7 +36,7 @@ bool get_sys_info(sys_info_t& sys_info) {
     sys_info.swap_total = info.totalswap;
     sys_info.swap_free = info.freeswap;
     sys_info.process_number = info.procs;
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     MEMORYSTATUS mem_info;
     SYSTEM_INFO info;
     GlobalMemoryStatus(&mem_info); //memory
@@ -60,7 +60,7 @@ bool get_sys_info(sys_info_t& sys_info) {
 
 bool get_mem_info(mem_info_t& mem_info) {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
+#if __LINUX__
     FILE* fp = fopen("/proc/meminfo", "r");
     if (NULL == fp) return false;
     CloseHelper<FILE*> ch(fp);

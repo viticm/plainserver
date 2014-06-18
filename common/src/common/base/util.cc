@@ -1,6 +1,6 @@
 #include "common/base/util.h" //无论如何都是用全路径
 
-namespace pap_common_base {
+namespace ps_common_base {
 
 namespace util {
 
@@ -338,4 +338,4 @@ int charset_convert(const char* from,
 
 } //namespace util
 
-} //namespace pap_common_base
+} //namespace ps_common_base

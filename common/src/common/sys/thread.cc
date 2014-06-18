@@ -11,7 +11,7 @@ Thread::Thread() {
   __ENTER_FUNCTION
     id_ = 0;
     status_ = kReady;
-#if defined(__WINDOWS__)
+#if __WINDOWS__
     thread_handle_ = NULL; 
 #endif
   __LEAVE_FUNCTION
@@ -24,9 +24,9 @@ Thread::~Thread() {
 void Thread::start() {
   __ENTER_FUNCTION
     if (status_ != kReady) return;
-#if defined(__LINUX__)
+#if __LINUX__
     pthread_create(&id_, NULL, pap_thread_process, this);
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     thread_handle_ = 
       ::CreateThread(NULL, 0, pap_thread_process, this, 0, &id_);
 #endif
@@ -40,9 +40,9 @@ void Thread::stop() {
 void Thread::exit(void* retval) {
   __ENTER_FUNCTION
     USE_PARAM(retval);
-#if defined(__LINUX__)
+#if __LINUX__
     pthread_exit(retval);
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     ::CloseHandle(thread_handle_);
 #endif
   __LEAVE_FUNCTION
@@ -52,9 +52,9 @@ void Thread::run() {
   //do nothing
 }
 
-#if defined(__LINUX__)
+#if __LINUX__
 void* pap_thread_process(void* derived_thread) {
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
 DWORD WINAPI pap_thread_process(void* derived_thread) {
 #endif
   __ENTER_FUNCTION
@@ -70,9 +70,9 @@ DWORD WINAPI pap_thread_process(void* derived_thread) {
   __LEAVE_FUNCTION
     return NULL;
 }
-#if defined(__LINUX__)
+#if __LINUX__
 uint64_t Thread::get_id() {
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
 DWORD Thread::get_id() {
 #endif
   return id_;
@@ -93,9 +93,9 @@ void Thread::set_status(enum_thread_status status) {
 //-- thread lock class
 ThreadLock::ThreadLock() {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
+#if __LINUX__
     pthread_mutex_init(&mutex_, NULL);
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     InitializeCriticalSection(&lock_);
 #endif
   __LEAVE_FUNCTION
@@ -103,9 +103,9 @@ ThreadLock::ThreadLock() {
 
 ThreadLock::~ThreadLock() {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
+#if __LINUX__
     pthread_mutex_destroy(&mutex_);
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     DeleteCriticalSection(&lock_);
 #endif
   __LEAVE_FUNCTION
@@ -113,9 +113,9 @@ ThreadLock::~ThreadLock() {
 
 void ThreadLock::lock() {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
+#if __LINUX__
     pthread_mutex_lock(&mutex_);
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     EnterCriticalSection(&lock_);
 #endif
   __LEAVE_FUNCTION
@@ -123,9 +123,9 @@ void ThreadLock::lock() {
 
 void ThreadLock::unlock() {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
+#if __LINUX__
     pthread_mutex_unlock(&mutex_);
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
     LeaveCriticalSection(&lock_);
 #endif
   __LEAVE_FUNCTION
@@ -134,11 +134,13 @@ void ThreadLock::unlock() {
 //thread lock class --
 uint64_t get_current_thread_id() {
   __ENTER_FUNCTION
-#if defined(__LINUX__)
-    return static_cast<uint64_t>(pthread_self());
-#elif defined(__WINDOWS__)
-    return static_cast<uint64_t>(GetCurrentThreadId());
+    uint64_t result = 0;
+#if __LINUX__
+    result = static_cast<uint64_t>(pthread_self());
+#elif __WINDOWS__
+    result = static_cast<uint64_t>(GetCurrentThreadId());
 #endif
+    return result;
   __LEAVE_FUNCTION
     return NULL;
 }
