@@ -1,10 +1,10 @@
 #include <stdarg.h>
-#include "server/common/base/log.h"
-#include "server/common/base/time_manager.h"
+#include "common/base/log.h"
+#include "common/base/time_manager.h"
 
-pap_server_common_base::Log* g_log = NULL;
+ps_common_base::Log* g_log = NULL;
 
-namespace pap_server_common_base {
+namespace ps_common_base {
 
 bool g_command_log_print = true;
 bool g_command_log_active = true;
@@ -23,7 +23,16 @@ const char* g_log_file_name[] = {
 
 pap_common_sys::ThreadLock g_log_lock;
 bool g_log_in_one_file = false;
+template<> Log* Singleton<Log>::singleton_ = NULL;
 
+Log* Log::getsingleton_pointer() {
+  return singleton_;
+}
+
+Log& Log::getsingleton() {
+  Assert(singleton_);
+  return *singleton_;
+}
 
 Log::Log() {
   __ENTER_FUNCTION
@@ -149,14 +158,14 @@ bool Log::init(int32_t cache_size) {
 void Log::fast_save_log(enum_log_id log_id, const char* format, ...) {
   __ENTER_FUNCTION
     if (log_id < 0 || log_id >= kLogFileCount) return;
-    char buffer[2049];
+    char buffer[2049] = {0};
     va_list argptr;
     try {
       va_start(argptr, format);
       vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
       va_end(argptr);
       if (g_time_manager) {
-        char time_str[256];
+        char time_str[256] = {0};
         memset(time_str, '\0', sizeof(time_str));
         get_log_time_str(time_str, sizeof(time_str) - 1);
         strncat(buffer, time_str, strlen(time_str));
@@ -294,7 +303,7 @@ void Log::save_log(const char* file_name_prefix, const char* format, ...) {
       printf(buffer);
     }
     catch(...) {
-      printf("some log error here%s", LF);
+      printf("ps_common_base::Log::save_log have some log error here%s", LF);
     }
     g_log_lock.unlock();
   __LEAVE_FUNCTION

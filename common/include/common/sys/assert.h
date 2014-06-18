@@ -1,15 +1,15 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id assert.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-11-22 18:00:40
- * @uses 断言控制器
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/18 16:57
+ * @uses assert functions
  */
-#ifndef PAP_COMMON_SYS_ASSERT_H_
-#define PAP_COMMON_SYS_ASSERT_H_
+#ifndef PS_COMMON_SYS_ASSERT_H_
+#define PS_COMMON_SYS_ASSERT_H_
 
 #include "common/sys/config.h"
 
@@ -20,11 +20,25 @@ extern int g_need_manager_do_pos_init;//控制参数，是否需要初始化管�
 
 namespace pap_common_sys {
 
-void __assert__(const char* file, unsigned int line, const char* func, const char* expr);
-void __assertex__(const char* file, unsigned int line, const char* func, const char* expr, const char* msg);
-void __assertspecial__(const char* file, unsigned int line, const char* func, const char* expr, const char* msg);
+void __assert__(const char* file, 
+                unsigned int line, 
+                const char* func, 
+                const char* expr);
+void __assertex__(const char* file, 
+                  unsigned int line, 
+                  const char* func, 
+                  const char* expr, 
+                  const char* msg);
+void __assertspecial__(const char* file, 
+                       unsigned int line, 
+                       const char* func, 
+                       const char* expr, 
+                       const char* msg);
 void __messagebox__(const char* msg);
-void __protocol_assert__(const char* file, unsigned int line, const char* func, const char* expr);
+void __protocol_assert__(const char* file, 
+                         unsigned int line, 
+                         const char* func, 
+                         const char* expr);
 
 //--------------------------------------------------------------------------------
 // if nIndex was in [nFrom, nTo], this function will return TRUE. that means legal.
@@ -34,26 +48,29 @@ void __protocol_assert__(const char* file, unsigned int line, const char* func, 
 // Legal: 0<=i<=10;
 // Illegal: i<0 or i>10;
 //--------------------------------------------------------------------------------
-bool RangeCheckForIndex_Assert(int index, int from, int to, char const* code_location);
+bool RangeCheckForIndex_Assert(int index, 
+                               int from, 
+                               int to, 
+                               char const* code_location);
 
-} //namespace pap_common_sys_assert
+} //namespace pap_common_sys
 
 #if defined(NDEBUG)
     #define Assert(expr) ((void)0)
     #define AssertEx(expr,msg) ((void)0)
     #define AssertSpecial(expr,msg) ((void)0)
     #define MyMessageBox(msg) ((void)0)
-#elif defined(__LINUX__)
-    #define Assert(expr) {if(!(expr)){pap_common_sys::__assert__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr);}}
-    #define ProtocolAssert(expr) ((void)((expr)?0:(pap_common_sys::__protocol_assert__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr),0)))
-    #define AssertEx(expr,msg) {if(!(expr)){pap_common_sys::__assertex__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr,msg);}}
-    #define AssertSpecial(expr,msg) {if(!(expr)){pap_common_sys::__assertspecial__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr,msg);}}
+#elif __LINUX__
+    #define Assert(expr) {if(!(expr)){ps_common_sys::__assert__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr);}}
+    #define ProtocolAssert(expr) ((void)((expr)?0:(ps_common_sys::__protocol_assert__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr),0)))
+    #define AssertEx(expr,msg) {if(!(expr)){ps_common_sys::__assertex__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr,msg);}}
+    #define AssertSpecial(expr,msg) {if(!(expr)){ps_common_sys::__assertspecial__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr,msg);}}
     #define AssertExPass(expr,msg) {if(!(expr)){pap_common_sys::__assertex__(__FILE__,__LINE__,__PRETTY_FUNCTION__,#expr,msg);}}
     #define MyMessageBox(msg) ((void)0)
-#elif defined(__WIN_CONSOLE__) || defined(__WIN32__) || defined(__WINDOWS__)
-    #define Assert(expr) ((void)((expr)?0:(pap_common_sys::__assert__(__FILE__,__LINE__,__FUNCTION__,#expr),0)))
-    #define AssertEx(expr,msg) ((void)((expr)?0:(pap_common_sys::__assertex__(__FILE__,__LINE__,__FUNCTION__,#expr,msg),0)))
-    #define AssertSpecial(expr,msg) ((void)((expr)?0:(pap_common_sys::__assertspecial__(__FILE__,__LINE__,__FUNCTION__,#expr,msg),0)))
+#elif defined(__WIN_CONSOLE__) || defined(__WIN32__) || __WINDOWS__
+    #define Assert(expr) ((void)((expr)?0:(ps_common_sys::__assert__(__FILE__,__LINE__,__FUNCTION__,#expr),0)))
+    #define AssertEx(expr,msg) ((void)((expr)?0:(ps_common_sys::__assertex__(__FILE__,__LINE__,__FUNCTION__,#expr,msg),0)))
+    #define AssertSpecial(expr,msg) ((void)((expr)?0:(ps_common_sys::__assertspecial__(__FILE__,__LINE__,__FUNCTION__,#expr,msg),0)))
     #define MyMessageBox(msg) __messagebox__(msg)
 #elif defined(__MFC__)
     #define Assert(expr) ASSERT(expr)
@@ -62,4 +79,4 @@ bool RangeCheckForIndex_Assert(int index, int from, int to, char const* code_loc
     #define MyMessageBox(msg) ((void)0)
 #endif
 
-#endif //PAP_COMMON_SYS_ASSERT_H_
+#endif //PS_COMMON_SYS_ASSERT_H_

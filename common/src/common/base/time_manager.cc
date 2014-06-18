@@ -1,10 +1,21 @@
-#include "server/common/base/time_manager.h"
+#include "common/base/time_manager.h"
 
-pap_server_common_base::TimeManager* g_time_manager = NULL;
+ps_common_base::TimeManager* g_time_manager = NULL;
+
 int32_t g_file_name_fix = 0;
 uint32_t g_file_name_fix_last = 0;
 
-namespace pap_server_common_base {
+namespace ps_common_base {
+
+template<> TimeManager* Singleton<TimeManager>::singleton_ = NULL;
+TimeManager* TimeManager::getsingleton_pointer() {
+  return singleton_;
+}
+
+TimeManager& TimeManager::getsingleton() {
+  Assert(singleton_);
+  return *singleton_;
+}
 
 TimeManager::TimeManager() {
   __ENTER_FUNCTION
@@ -18,10 +29,10 @@ TimeManager::~TimeManager() {
 
 bool TimeManager::init() {
   __ENTER_FUNCTION
-#if defined(__WINDOWS__)
+#if __WINDOWS__
     start_time_ = GetTickCount();
     current_time_ = GetTickCount();
-#elif defined(__LINUX__)
+#elif __LINUX__
     start_time_ = 0;
     current_time_ = 0;
     gettimeofday(&start_, &time_zone_);
@@ -36,9 +47,9 @@ bool TimeManager::init() {
 
 uint32_t TimeManager::get_current_time() {
   __ENTER_FUNCTION
-#if defined(__WINDOWS__)
+#if __WINDOWS__
     current_time_ = GetTickCount();
-#elif defined(__LINUX__)
+#elif __LINUX__
     gettimeofday(&end_, &time_zone_);
     double time1 = static_cast<double>(start_.tv_sec * 1000) +
                    static_cast<double>(start_.tv_usec / 1000);
@@ -309,4 +320,4 @@ void TimeManager::set_world_time(world_time_enum world_time) {
   __LEAVE_FUNCTION
 }
 
-} //namespace pap_server_common_base
+} //namespace ps_common_base

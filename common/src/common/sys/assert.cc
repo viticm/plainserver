@@ -18,7 +18,7 @@ namespace pap_common_sys {
  **/
 
 void __show__(const char* temp) {
-#ifdef __LINUX__
+#if __LINUX__
   printf("Assert:%s",temp);
 #endif
   //保存日志
@@ -29,7 +29,7 @@ void __show__(const char* temp) {
   fclose(f) ;
 #endif
 
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 /**
   static MyLock lock;
   if (1 != g_command_assert) {
@@ -38,7 +38,7 @@ void __show__(const char* temp) {
     lock.Unlock() ;
   }
 **/
-#elif defined(__LINUX__)
+#elif __LINUX__
 #endif
 
 #ifdef GAME_CLIENT
@@ -51,15 +51,18 @@ void __show__(const char* temp) {
 void __messagebox__(const char* msg) {
   if (g_command_ignore_message_box)
     return;
-#if defined(__WINDOWS__)
+#if __WINDOWS__
   ::MessageBoxA(NULL, msg, "信息", MB_OK);
-#elif defined(__LINUX__)
+#elif __LINUX__
 #endif
 }
 
-void __assert__ (const char* file, unsigned int line, const char* func , const char* expr) {
+void __assert__ (const char* file, 
+                 unsigned int line, 
+                 const char* func , 
+                 const char* expr) {
   char temp[1024] = {0};
-#ifdef __LINUX__ //换个格式
+#if __LINUX__ //换个格式
   sprintf(temp, "[%s][%d][%s][%s]\n", file, line, func, expr);
 #else
   sprintf(temp, "[%s][%d][%s][%s]", file, line, func, expr);
@@ -67,9 +70,13 @@ void __assert__ (const char* file, unsigned int line, const char* func , const c
   __show__(temp);
 }
 
-void __assertex__ (const char* file, unsigned int line, const char* func, const char* expr,const char* msg) {
+void __assertex__ (const char* file, 
+                   unsigned int line, 
+                   const char* func, 
+                   const char* expr,
+                   const char* msg) {
   char temp[1024] = {0};
-#ifdef __LINUX__
+#if __LINUX__
   sprintf(temp, "[%s][%d][%s][%s]\n[%s]\n", file, line, func, expr, msg);
 #else
   sprintf(temp, "[%s][%d][%s][%s]\n[%s]", file, line, func, expr, msg);
@@ -77,9 +84,13 @@ void __assertex__ (const char* file, unsigned int line, const char* func, const 
   __show__(temp);
 }
 
-void __assertspecial__ (const char* file, unsigned int line, const char* func, const char* expr,const char* msg) {
+void __assertspecial__ (const char* file, 
+                        unsigned int line, 
+                        const char* func, 
+                        const char* expr,
+                        const char* msg) {
   char temp[1024] = {0};
-#ifdef __LINUX__
+#if __LINUX__
   sprintf(temp, "S[%s][%d][%s][%s]\n[%s]\n", file, line, func, expr, msg) ;
 #else
   sprintf(temp, "S[%s][%d][%s][%s]\n[%s]", file, line, func, expr, msg ) ;
@@ -87,11 +98,17 @@ void __assertspecial__ (const char* file, unsigned int line, const char* func, c
   __show__(temp) ;
 }
 
-void __protocol_assert__ ( const char* file, unsigned int line, const char* func, const char* expr) {
+void __protocol_assert__(const char* file, 
+                         unsigned int line, 
+                         const char* func, 
+                         const char* expr) {
   printf("[%s][%d][%s][%s]", file, line, func, expr);
 }
 
-bool RangeCheckForIndex_Assert(int index, int from, int to, char const* code_location) {
+bool RangeCheckForIndex_Assert(int index, 
+                               int from, 
+                               int to, 
+                               char const* code_location) {
   int up_border = 0;
   int low_border = 0;
   char buff[1024];
@@ -121,4 +138,4 @@ bool RangeCheckForIndex_Assert(int index, int from, int to, char const* code_loc
   return false;
 }
 
-} //namespace pap_common_sys_assert
+} //namespace ps_common_sys

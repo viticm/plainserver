@@ -1,34 +1,19 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id log.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * @link https://github.com/viticm/plainserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-12-4 16:18:56
+ * @user viticm<viticm.ti@gmail.com>
+ * @date 2014/06/18 15:48
  * @uses server log class
  */
-#ifndef PAP_SERVER_COMMON_BASE_LOG_H_
-#define PAP_SERVER_COMMON_BASE_LOG_H_
+#ifndef PS_COMMON_BASE_LOG_H_
+#define PS_COMMON_BASE_LOG_H_
 
-#include "common/base/type.h"
-#include "common/game/define/all.h"
+#include "common/base/config.h"
 #include "common/sys/thread.h"
-#include "server/common/base/define.h"
-
-/**
-#define LOGIN_LOG "./log/login" //I would not want to use macros, modules do wrong name.
-#define SERVER_LOG "./log/server"
-#define SERVER_ERROR_LOG "./log/error"
-#define SERVER_FUNCTION_LOG "./log/function"
-#define WORLD_LOG "./log/world"
-#define CONFIG_LOG "./log/config"
-#define ASSERT_LOG "./log/assert"
-#define RECYCLE_LOG "./log/recycle"
-#define CRC32_LOG "./log/crc32"
-#define SHARE_MEMROY_LOG "./log/share_memory"
-#define BILLING_LOG "./log/billing"
-**/
+#include "common/base/singleton.h"
 
 typedef enum {
   kLoginLogFile = 0,
@@ -42,18 +27,20 @@ typedef enum {
 } enum_log_id;
 
 
-namespace pap_server_common_base {
+namespace ps_common_base {
 
 extern const char* kBaseLogSaveDir; //如果不要外部使用，就别使用宏
 const uint32_t kLogBufferTemp = 4096;
 const uint32_t kLogNameTemp = 128;
 const uint32_t kDefaultLogCacheSize = 1024 * 1024 * 4;
 
-class Log {
+class Log : public Singleton<Log> {
 
  public:
    Log();
    ~Log();
+   static Log* getsingleton_pointer();
+   static Log& getsingleton();
 
  public:
    static void disk_log(const char* file_name_prefix, const char* format, ...);
@@ -78,15 +65,15 @@ class Log {
 
 };
 
-#if defined(__LINUX__)
-#define SaveErrorLog() (pap_server_common_base::Log::save_log( \
+#if __LINUX__
+#define SaveErrorLog() (ps_common_base::Log::save_log( \
     "error", \
     "%s %d %s", \
     __FILE__, \
     __LINE__, \
     __PRETTY_FUNCTION__))
-#elif defined(__WINDOWS__)
-#define SaveErrorLog() (pap_server_common_base::Log::save_log( \
+#elif __WINDOWS__
+#define SaveErrorLog() (ps_common_base::Log::save_log( \
     "error", \
     "%s %d %s", \
     __FILE__, \
@@ -94,8 +81,8 @@ class Log {
     __FUNCTION__))
 #endif
 
-}; //namespace pap_server_common_base
+}; //namespace ps_common_base
 
-extern pap_server_common_base::Log* g_log;
+extern ps_common_base::Log* g_log;
 
-#endif //PAP_SERVER_COMMON_BASE_LOG_H_
+#endif //PS_COMMON_BASE_LOG_H_

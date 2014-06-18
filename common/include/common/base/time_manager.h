@@ -1,26 +1,26 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id time_manager.h
  * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * @copyright Copyright (c) 2013-2013 viticm( viticm.ti@gmail.com )
  * @license
  * @user viticm<viticm@126.com>
- * @date 2013-12-6 16:28:57
- * @uses the server base time manager class
+ * @date 2014/06/18 15:53
+ * @uses the base time manager class
  */
-#ifndef PAP_SERVER_COMMON_BASE_TIME_MANAGER_H_
-#define PAP_SERVER_COMMON_BASE_TIME_MANAGER_H_
+#ifndef PS_COMMON_BASE_TIME_MANAGER_H_
+#define PS_COMMON_BASE_TIME_MANAGER_H_
 
-#if defined(__LINUX__)
+#if __LINUX__
 #include <sys/time.h>
 #include <sys/utsname.h>
 #endif
-#include "common/game/define/all.h"
-#include "common/base/type.h"
+#include "common/base/config.h"
+#include "common/base/singleton.h"
 
-namespace pap_server_common_base {
+namespace ps_common_base {
 
-class TimeManager {
+class TimeManager : public Singleton<TimeManager> {
 
  public:
    TimeManager();
@@ -30,7 +30,7 @@ class TimeManager {
    time_t set_time_;
    tm tm_;
    world_time_enum world_time_;
-#if defined(__LINUX__)
+#if __LINUX__
    struct timeval start_, end_;
    struct timezone time_zone_;
 #endif
@@ -40,6 +40,8 @@ class TimeManager {
    uint32_t get_current_time();
    uint32_t get_saved_time();
    uint32_t get_start_time();
+   static TimeManager& getsingleton();
+   static TimeManager* getsingleton_pointer();
    void reset_time();
    time_t get_ansi_time(); //standard
    tm get_tm();
@@ -71,9 +73,9 @@ class TimeManager {
 
 };
 
-}; //namespace pap_server_common_base
+}; //namespace ps_common_base
 
-extern pap_server_common_base::TimeManager* g_time_manager;
+extern ps_common_base::TimeManager* g_time_manager;
 extern uint32_t g_file_name_fix_last;
 extern int32_t g_file_name_fix;
 
