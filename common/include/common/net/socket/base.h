@@ -1,77 +1,83 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id socket.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id base.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-12-31 17:34:43
- * @uses server and client net model socket class
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/19 14:51
+ * @uses socket base class
  */
-#ifndef PAP_COMMON_NET_SOCKET_BASE_H_
-#define PAP_COMMON_NET_SOCKET_BASE_H_
+#ifndef PS_COMMON_NET_SOCKET_BASE_H_
+#define PS_COMMON_NET_SOCKET_BASE_H_
 
-#include "common/net/config.h"
+#include "common/file/api.h"
+#include "common/net/socket/api.h"
+
+#ifndef SOCKET_ERROR
+#define SOCKET_ERROR -1
+#endif
+
+#if __WINDOWS__
+#ifndef EINPROGRESS
+#define EINPROGRESS WSAEINPROGRESS
+#endif
+#ifndef EWOULDBLOCK
+#define EWOULDBLOCK WSAEWOULDBLOC
+#endif
+#endif
+
+#define SOCKET_WOULD_BLOCK EWOULDBLOCK //api use SOCKET_ERROR_WOULD_BLOCK
+#define SOCKET_CONNECT_ERROR EINPROGRESS
+#define SOCKET_CONNECT_TIMEOUT 10
 
 namespace pap_common_net {
 
 namespace socket {
 
 class Base {
- 
+
  public:
-   Base();
-   Base(const char* host, uint16_t port);
+   Base(int32_t socketid);
+   Base(int32_t family, int32_t type, int32_t protocol);
    virtual ~Base();
 
  public:
+   void startup();
+   int32_t send(const void* buffer, int64_t size, int32_t mode);
+   int32_t receive(void* buffer, int64_t size, int32_t mode);
+   bool ioctl(int64_t cmd, uint64_t* argp);
+   bool setoption(int32_t level, 
+                  int32_t name, 
+                  const char* value, 
+                  int32_t length);
+   uint32_t getoption(int32_t level,
+                      int32_t name,
+                      char* value,
+                      uint32_t* length);
+   int32_t handle() const;
+
+ public:
+   int32_t open(int32_t family, int32_t type, int32_t protocol);
+   bool close();
+   bool connect(const sockaddr* socket_address);
+   bool shutdown(int32_t mode);
+   bool bind(const sockaddr* socket_address);
+   bool listen(int32_t count);
+   int32_t accept(sockaddr* socket_address);
+   int32_t get_errorcode();
+   void get_errorstring(char* buffer, uint16_t length);
+
+ protected:
    int32_t socketid_;
-   char host_[IP_SIZE];
-   uint16_t port_;
-
- public: //socket base operate functions
-   bool create();
-   void close();
-   bool connect(); //use self host_ and port_
-   bool connect(const char* host, uint16_t port);
-   bool reconnect(const char* host, uint16_t port);
-   uint32_t send(const void* buffer, uint32_t length, uint32_t flag = 0);
-   uint32_t receive(void* buffer, uint32_t length, uint32_t flag = 0);
-   uint32_t available() const;
-   int32_t accept(uint16_t port);
-   int32_t fastaccept();
-   bool bind();
-   bool bind(uint16_t port);
-   bool listen(uint32_t backlog);
-   static int32_t select(int32_t maxfdp, 
-                         void* readset, 
-                         void* writeset, 
-                         void* exceptset,
-                         void* timeout);
-
- public: //socket check and set functions
-   uint32_t getlinger() const;
-   bool setlinger(uint32_t lingertime);
-   bool is_reuseaddr() const;
-   bool set_reuseaddr(bool on = true);
-   uint32_t getlast_errorcode() const;
-   void getlast_errormessage(char* buffer, uint16_t length) const;
-   bool iserror() const; //socket if has error
-   bool is_nonblocking() const;
-   bool set_nonblocking(bool on = true);
-   uint32_t getreceive_buffersize() const;
-   bool setreceive_buffersize(uint32_t size);
-   uint32_t getsend_buffersize() const;
-   bool setsend_buffersize(uint32_t size);
-   uint16_t getport() const;
-   uint64_t getu64host() const;
-   bool isvalid() const;
-   int32_t getid() const;
+   void init();
 
 };
 
 }; //namespace socket
 
-}; //namespace pap_common_net
+}; //namespace ps_common_net
 
-#endif //PAP_COMMON_NET_SOCKET_BASE_H_
+#include "common/net/socket/extend.inl"
+
+#endif //PS_COMMON_NET_SOCKET_BASE_H_

@@ -1,10 +1,12 @@
-#include "server/common/db/odbc_interface.h"
-#include "server/common/base/log.h"
+#include "common/db/odbc/interface.h"
+#include "common/base/log.h"
 #include "common/base/util.h"
 
-namespace pap_server_common_db {
+namespace ps_common_db {
 
-ODBCInterface::ODBCInterface() {
+namespace odbc {
+
+Interface::Interface() {
   __ENTER_FUNCTION
     connectd_ = false;
     affect_count_ = -1;
@@ -21,7 +23,7 @@ ODBCInterface::ODBCInterface() {
   __LEAVE_FUNCTION
 }
 
-ODBCInterface::~ODBCInterface() {
+Interface::~Interface() {
   __ENTER_FUNCTION
     if (sql_hstmt_) SQLFreeHandle(SQL_HANDLE_STMT, sql_hstmt_);
     if (sql_hdbc_) SQLDisconnect(sql_hdbc_);
@@ -30,11 +32,11 @@ ODBCInterface::~ODBCInterface() {
   __LEAVE_FUNCTION
 }
 
-bool ODBCInterface::connect(const char* connection_name,
+bool Interface::connect(const char* connection_name,
                             const char* user,
                             const char* password) {
   __ENTER_FUNCTION
-    using namespace pap_server_common_base;
+    using namespace ps_common_base;
     close(); //first disconnect
     strncpy(connection_name_, connection_name, sizeof(connection_name_) - 1);
     strncpy(user_, user, sizeof(user_) - 1);
@@ -75,9 +77,9 @@ bool ODBCInterface::connect(const char* connection_name,
     return false;
 }
 
-bool ODBCInterface::connect() {
+bool Interface::connect() {
   __ENTER_FUNCTION
-    using namespace pap_server_common_base;
+    using namespace ps_common_base;
     close(); //first disconnect
 #ifdef MUST_CLOSE_HENV_HANDLE
     SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_henv_);
@@ -117,7 +119,7 @@ bool ODBCInterface::connect() {
     return false;
 }
 
-bool ODBCInterface::close() {
+bool Interface::close() {
   __ENTER_FUNCTION
     if (sql_hstmt_) {
       try {
@@ -159,7 +161,7 @@ bool ODBCInterface::close() {
     return false;
 }
 
-bool ODBCInterface::execute() {
+bool Interface::execute() {
   try {
     //int column_index;
     result_ = SQLExecDirect(sql_hstmt_, 
@@ -207,7 +209,7 @@ bool ODBCInterface::execute() {
   }
 }
 
-bool ODBCInterface::execute(const char* sql_str) {
+bool Interface::execute(const char* sql_str) {
   __ENTER_FUNCTION
     memset(query_.sql_str_, '\0', sizeof(query_.sql_str_));
     strncpy(query_.sql_str_, sql_str, sizeof(query_.sql_str_) - 1);
@@ -216,7 +218,7 @@ bool ODBCInterface::execute(const char* sql_str) {
     return false;
 }
 
-bool ODBCInterface::long_execute() {
+bool Interface::long_execute() {
   __ENTER_FUNCTION
     //int column_index;
     result_ = SQLExecDirect(sql_hstmt_, 
@@ -261,7 +263,7 @@ bool ODBCInterface::long_execute() {
      return false;
 }
 
-bool ODBCInterface::long_excute(const char* sql_str) {
+bool Interface::long_excute(const char* sql_str) {
   __ENTER_FUNCTION
     memset(long_query_.sql_str_, '\0', sizeof(long_query_.sql_str_));
     strncpy(long_query_.sql_str_, sql_str, sizeof(long_query_.sql_str_) - 1);
@@ -270,21 +272,21 @@ bool ODBCInterface::long_excute(const char* sql_str) {
     return false;
 }
 
-void ODBCInterface::clear_no_commit() {
+void Interface::clear_no_commit() {
   __ENTER_FUNCTION
     SQLCloseCursor(sql_hstmt_);
     SQLFreeStmt(sql_hstmt_, SQL_UNBIND);
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::clear() {
+void Interface::clear() {
   __ENTER_FUNCTION
     SQLCloseCursor(sql_hstmt_);
     SQLFreeStmt(sql_hstmt_, SQL_UNBIND);
   __LEAVE_FUNCTION
 }
 
-bool ODBCInterface::fetch() {
+bool Interface::fetch() {
   __ENTER_FUNCTION
     result_ = SQLFetch(sql_hstmt_);
     if ((result_ != SQL_SUCCESS) && 
@@ -309,7 +311,7 @@ bool ODBCInterface::fetch() {
     return false;
 }
 
-bool ODBCInterface::long_fetch() {
+bool Interface::long_fetch() {
   __ENTER_FUNCTION
     result_ = SQLFetch(sql_hstmt_);
     if ((result_ != SQL_SUCCESS) && 
@@ -335,7 +337,7 @@ bool ODBCInterface::long_fetch() {
     return false;
 }
 
-int32_t ODBCInterface::get_int(int32_t column_index, int32_t &error_code) {
+int32_t Interface::get_int(int32_t column_index, int32_t &error_code) {
   __ENTER_FUNCTION
     if (column_index > column_count_) {
       error_code = QUERY_NO_COLUMN;
@@ -355,7 +357,7 @@ int32_t ODBCInterface::get_int(int32_t column_index, int32_t &error_code) {
     return QUERY_NULL;
 }
 
-uint32_t ODBCInterface::get_uint(int32_t column_index, int32_t &error_code) {
+uint32_t Interface::get_uint(int32_t column_index, int32_t &error_code) {
   __ENTER_FUNCTION
     if (column_index > column_count_) {
       error_code = QUERY_NO_COLUMN;
@@ -375,7 +377,7 @@ uint32_t ODBCInterface::get_uint(int32_t column_index, int32_t &error_code) {
     return 0;
 }
 
-float ODBCInterface::get_float(int32_t column_index, int32_t &error_code) {
+float Interface::get_float(int32_t column_index, int32_t &error_code) {
   __ENTER_FUNCTION
     if (column_index > column_count_) {
       error_code = QUERY_NO_COLUMN;
@@ -395,7 +397,7 @@ float ODBCInterface::get_float(int32_t column_index, int32_t &error_code) {
     return QUERY_NULL;
 }
 
-void ODBCInterface::get_string(int32_t column_index, 
+void Interface::get_string(int32_t column_index, 
                                char* buffer, 
                                int32_t buffer_length, 
                                int32_t &error_code) {
@@ -423,7 +425,7 @@ void ODBCInterface::get_string(int32_t column_index,
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::get_field(int32_t column_index, 
+void Interface::get_field(int32_t column_index, 
                               char* buffer, 
                               int32_t buffer_length, 
                               int32_t & error_code) {
@@ -458,7 +460,7 @@ void ODBCInterface::get_field(int32_t column_index,
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::get_long_field(int32_t column_index, 
+void Interface::get_long_field(int32_t column_index, 
                                    char* buffer, 
                                    int32_t buffer_length, 
                                    int32_t & error_code) {
@@ -493,7 +495,7 @@ void ODBCInterface::get_long_field(int32_t column_index,
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::diag_state() {
+void Interface::diag_state() {
   __ENTER_FUNCTION
     int32_t j = 1;
     SQLINTEGER native_error;
@@ -544,7 +546,7 @@ void ODBCInterface::diag_state() {
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::diag_state_ex() {
+void Interface::diag_state_ex() {
   __ENTER_FUNCTION
     int32_t j = 1;
     SQLINTEGER native_error;
@@ -595,7 +597,7 @@ void ODBCInterface::diag_state_ex() {
     save_error_log(static_cast<const char*>(long_query_.sql_str_));
   __LEAVE_FUNCTION
 }
-void ODBCInterface::save_error_log(const char* log) {
+void Interface::save_error_log(const char* log) {
   __ENTER_FUNCTION
     if (0 == strlen(log)) return;
      FILE* f = fopen("./Log/dberror.log", "a");
@@ -607,7 +609,7 @@ void ODBCInterface::save_error_log(const char* log) {
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::save_warning_log(const char* log) {
+void Interface::save_warning_log(const char* log) {
   __ENTER_FUNCTION
     if (0 == strlen(log)) return;
      FILE* f = fopen("./Log/dbwarning.log", "a");
@@ -619,7 +621,7 @@ void ODBCInterface::save_warning_log(const char* log) {
   __LEAVE_FUNCTION
 }
 
-void ODBCInterface::clear_env() {
+void Interface::clear_env() {
   __ENTER_FUNCTION
     if (sql_hstmt_) {
       SQLCloseCursor(sql_hstmt_);
@@ -641,7 +643,7 @@ void ODBCInterface::clear_env() {
   __LEAVE_FUNCTION
 }
 //dump field
-void ODBCInterface::dump(int32_t column_index) {
+void Interface::dump(int32_t column_index) {
   __ENTER_FUNCTION
     FILE* f = fopen("./Log/field", "a");
     if (f) {
@@ -652,68 +654,70 @@ void ODBCInterface::dump(int32_t column_index) {
   __LEAVE_FUNCTION
 }
 
-uint16_t ODBCInterface::get_ushort(int32_t column_index, int32_t &error_code) {
+uint16_t Interface::get_ushort(int32_t column_index, int32_t &error_code) {
   __ENTER_FUNCTION
     return static_cast<uint16_t>(get_int(column_index, error_code));
   __LEAVE_FUNCTION
     return 0;
 }
 
-uint8_t ODBCInterface::get_byte(int32_t column_index, int32_t &error_code) {
+uint8_t Interface::get_byte(int32_t column_index, int32_t &error_code) {
   __ENTER_FUNCTION
     return static_cast<uint8_t>(get_int(column_index, error_code));
   __LEAVE_FUNCTION
     return 0;
 }
 
-int16_t ODBCInterface::get_short(int32_t column_index, int32_t &error_code) {
+int16_t Interface::get_short(int32_t column_index, int32_t &error_code) {
   __ENTER_FUNCTION
     return static_cast<int16_t>(get_int(column_index, error_code));
   __LEAVE_FUNCTION
     return 0;
 }
 
-int32_t ODBCInterface::get_error_code() {
+int32_t Interface::get_error_code() {
   __ENTER_FUNCTION
     return error_code_;
   __LEAVE_FUNCTION
     return 0;
 }
 
-char* ODBCInterface::get_error_message() {
+char* Interface::get_error_message() {
   __ENTER_FUNCTION
     return reinterpret_cast<char*>(error_message_);
   __LEAVE_FUNCTION
     return NULL;
 }
 
-bool ODBCInterface::is_connected() {
+bool Interface::is_connected() {
   __ENTER_FUNCTION
     return connectd_;
   __LEAVE_FUNCTION
     return false;
 }
 
-int ODBCInterface::get_affect_row_count() {
+int Interface::get_affect_row_count() {
   __ENTER_FUNCTION
     return affect_count_;
   __LEAVE_FUNCTION
     return 0;
 }
 
-bool ODBCInterface::is_prepare() {
+bool Interface::is_prepare() {
   __ENTER_FUNCTION
     return connectd_;
   __LEAVE_FUNCTION
     return false;
 }
 
-db_query_t& ODBCInterface::get_query() {
+db_query_t& Interface::get_query() {
    return query_;
 }
 
-long_db_query_t& ODBCInterface::get_long_query() {
+long_db_query_t& Interface::get_long_query() {
   return long_query_;
 }
 
-} //namespace pap_server_common_db
+} //namespace odbc
+
+} //namespace ps_common_db

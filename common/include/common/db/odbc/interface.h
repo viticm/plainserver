@@ -1,18 +1,18 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id odbc_interface.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id interface.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-11-22 19:29:37
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/19 11:04
  * @uses the odbc interface class(some op functions)
  */
-#ifndef PAP_SERVER_COMMON_DB_ODBC_INTERFACE_H_
-#define PAP_SERVER_COMMON_DB_ODBC_INTERFACE_H_
+#ifndef PS_COMMON_DB_ODBC_INTERFACE_H_
+#define PS_COMMON_DB_ODBC_INTERFACE_H_
 
-#include "server/common/db/config.h"
-#include "server/common/base/define.h"
+#include "common/db/odbc/config.h"
+
 //include from odbc
 #ifndef VOID
 #define VOID void //for unixODBC
@@ -23,20 +23,20 @@
 
 #define HOST_LENGTH 30
 #define CONNECTION_NAME_LENGTH 32
-#define MAX_COLUMN_NAME 30 //column name max length
-#define MAX_COLUMN_BUFFER 2049 //normal one column value length
-#define MAX_LONG_COLUMN_BUFFER 204800 //long column value length
-#define MAX_ERROR_MESSAGE_LENGTH 255
+#define COLUMN_NAME_MAX 30 //column name max length
+#define COLUMN_BUFFER_MAX 2049 //normal one column value length
+#define LONG_COLUMN_BUFFER_MAX 204800 //long column value length
+#define ERROR_MESSAGE_LENGTH_MAX 255
 
-namespace pap_server_common_db {
+namespace ps_common_db {
 
-//#define USE_MYSQL
+namespace odbc {
 
-class ODBCInterface {
+class Interface {
  public:
    enum
    {
-     MAX_COLUMN = 100,
+     COLUMN_MAX = 100,
      BLOB_BATCH = 10000,
      QUERY_OK = 0,
      QUERY_NULL = -100,
@@ -48,7 +48,7 @@ class ODBCInterface {
    SQLHENV sql_henv_;
    SQLHDBC sql_hdbc_;
    SQLRETURN result_;
-   char column_[MAX_COLUMN][MAX_COLUMN_BUFFER];
+   char column_[COLUMN_MAX][COLUMN_BUFFER_MAX];
    char connection_name_[DB_CONNECTION_NAME_LENGTH];
    char user_[DB_USER_NAME_LENGTH];
    char password_[DB_PASSWORD_LENGTH];
@@ -56,17 +56,17 @@ class ODBCInterface {
    SQLLEN affect_count_;
    SQLHSTMT sql_hstmt_;
    SQLSMALLINT column_count_;
-   SQLCHAR column_name_[MAX_COLUMN][MAX_COLUMN_NAME];
-   SQLLEN column_locate_[MAX_COLUMN];
+   SQLCHAR column_name_[COLUMN_MAX][COLUMN_NAME_MAX];
+   SQLLEN column_locate_[COLUMN_MAX];
    
    db_query_t query_;
    long_db_query_t long_query_;
    SQLINTEGER error_code_;
-   SQLCHAR error_message_[MAX_ERROR_MESSAGE_LENGTH];
+   SQLCHAR error_message_[ERROR_MESSAGE_LENGTH_MAX];
 
  public:
-   ODBCInterface();
-   ~ODBCInterface();
+   Interface();
+   ~Interface();
    bool connect(const char* connection_name, 
                 const char* user = NULL, 
                 const char* password = NULL);
@@ -115,6 +115,8 @@ class ODBCInterface {
    void dump(int32_t column);
 };
 
-}; //namespace pap_server_common_db
+}; //namespace odbc
 
-#endif //PAP_SERVER_COMMON_DB_ODBC_INTERFACE_H_
+}; //namespace ps_common_db
+
+#endif //PS_COMMON_DB_ODBC_INTERFACE_H_

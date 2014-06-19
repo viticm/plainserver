@@ -1,6 +1,6 @@
 #include <stdarg.h>
-#include "common/base/log.h"
 #include "common/base/time_manager.h"
+#include "common/base/log.h"
 
 ps_common_base::Log* g_log = NULL;
 
@@ -101,10 +101,18 @@ void Log::disk_log(const char* file_name_prefix, const char* format, ...) {
       return;
     }
 
-    char log_file_name[FILENAME_MAX] ;
+    if (true == g_command_log_print) {
+      printf("%s", buffer);
+    }
+
+    if (!g_command_log_active) return;
+
+    char log_file_name[FILENAME_MAX] = {0};
     try {
       memset(log_file_name, '\0', sizeof(log_file_name));
-      snprintf(log_file_name, sizeof(log_file_name) - 1, "%s_%.4d-%.2d-%.2d.%u.log", 
+      snprintf(log_file_name, 
+               sizeof(log_file_name) - 1, 
+               "%s_%.4d-%.2d-%.2d.%u.log", 
                file_name_prefix, 
                g_file_name_fix / 10000,
                (g_file_name_fix % 10000) / 100,
@@ -131,9 +139,6 @@ void Log::disk_log(const char* file_name_prefix, const char* format, ...) {
 
     g_log_lock.unlock();
     
-    if (true == g_command_log_print) {
-      printf("%s", buffer);
-    }
   __LEAVE_FUNCTION
 }
 
@@ -176,6 +181,11 @@ void Log::fast_save_log(enum_log_id log_id, const char* format, ...) {
       Assert(false);
       return;
     }
+    
+    if (g_command_log_print) printf(buffer); //print
+
+    if (!g_command_log_active) return; //save log condition
+
     int32_t length = static_cast<int32_t>(strlen(buffer));
     if (length <= 0) return;
     if (g_log_in_one_file) {
@@ -184,7 +194,6 @@ void Log::fast_save_log(enum_log_id log_id, const char* format, ...) {
     log_lock_[log_id].lock();
     try {
       memcpy(log_cache_[log_id] + log_position_[log_id], buffer, length);
-      printf(buffer);
     }
     catch(...) {
       //do nogthing
@@ -291,6 +300,11 @@ void Log::save_log(const char* file_name_prefix, const char* format, ...) {
         strncat(buffer, time_str, strlen(time_str));
       }
       strncat(buffer, LF, sizeof(LF)); //add wrap
+
+      if (g_command_log_print) printf(buffer);
+      
+      if (!g_command_log_active) return;
+
       char log_file_name[FILENAME_MAX];
       memset(log_file_name, '\0', sizeof(log_file_name));
       get_log_file_name(file_name_prefix, log_file_name);
@@ -300,7 +314,6 @@ void Log::save_log(const char* file_name_prefix, const char* format, ...) {
         fwrite(buffer, 1, strlen(buffer), fp);
         fclose(fp);
       }
-      printf(buffer);
     }
     catch(...) {
       printf("ps_common_base::Log::save_log have some log error here%s", LF);
@@ -324,7 +337,6 @@ void Log::get_serial(char* serial, int16_t world_id, int16_t server_id) {
     USE_PARAM(world_id);
     USE_PARAM(server_id);
     USE_PARAM(serial);
-    //int32_t step = 100;
   __LEAVE_FUNCTION
 }
 

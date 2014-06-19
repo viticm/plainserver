@@ -11,16 +11,22 @@
 #ifndef PAP_SERVER_COMMON_DB_MANAGER_H_
 #define PAP_SERVER_COMMON_DB_MANAGER_H_
 
-#include "server/common/db/config.h"
-#include "server/common/db/odbc_interface.h"
-#include "server/common/base/define.h"
+#include "common/base/singleton.h"
+#include "common/db/odbc/config.h"
+#include "common/db/odbc/interface.h"
 
-namespace pap_server_common_db {
+namespace ps_common_db {
 
-class Manager {
+namespace odbc {
+
+class Manager : public ps_common_base::Singleton<Manager> {
  public:
    Manager();
    ~Manager();
+
+ public:
+   Manager& getsingleton();
+   Manager* getsingleton_pointer();
    bool init(db_type_enum db_type = kAllDatabase);
    ODBCInterface* get_interface(db_type_enum db_type);
 
@@ -30,9 +36,8 @@ class Manager {
    ODBCInterface* user_interface_;
 };
 
+}; //namespace odbc
 
-}; //namespace pap_server_common_db
-
-extern pap_server_common_db::Manager* g_db_manager; //global db manager
+}; //namespace ps_common_db
 
 #endif //PAP_SERVER_COMMON_DB_DB_MANAGER_H_

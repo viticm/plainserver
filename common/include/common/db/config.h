@@ -10,7 +10,8 @@
  */
 #ifndef PAP_SERVER_COMMON_DB_DEFINE_H_
 #define PAP_SERVER_COMMON_DB_DEFINE_H_
-#include "common/base/type.h"
+
+#include "common/base/config.h"
 #define SQL_LENGTH_MAX 4096
 #define LONG_SQL_LENGTH_MAX 204800
 

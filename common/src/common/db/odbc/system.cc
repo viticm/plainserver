@@ -1,7 +1,9 @@
-#include "server/common/db/system.h"
 #include "common/base/util.h"
+#include "common/db/odbc/system.h"
 
-namespace pap_server_common_db {
+namespace ps_common_db {
+
+namespace odbc {
 
 System::System() {
   __ENTER_FUNCTION
@@ -57,8 +59,7 @@ bool System::check_db_connect() {
       int i;
       for (i = 0; i <5; ++i) {
         pap_common_base::util::sleep(5000);
-        if (odbc_interface_->connect())
-        {
+        if (odbc_interface_->connect()) {
           return true;
         }
       }
@@ -160,4 +161,6 @@ char* System::get_error_message() {
     return NULL;
 }
 
-} //namespace pap_server_common_db
+} //namespace odbc
+
+} //namespace ps_common_db

@@ -1,10 +1,20 @@
-#include "server/common/db/manager.h"
-#include "server/common/base/log.h"
-#include "server/common/base/config.h"
+#include "common/base/log.h"
+#include "common/db/odbc/manager.h"
 
-pap_server_common_db::Manager* g_db_manager = NULL;
+namespace ps_common_db {
 
-namespace pap_server_common_db {
+namespace odbc {
+
+template<> Manager* Singleton<Manager>::singleton_ = NULL;
+
+Manager* Manager::getsingleton_pointer() {
+  return singleton_;
+}
+
+Manager& Manager::getsingleton() {
+  Assert(singleton_);
+  return *singleton_;
+}
 
 Manager::Manager() {
   __ENTER_FUNCTION
@@ -23,7 +33,7 @@ Manager::~Manager() {
 
 bool Manager::init(db_type_enum db_type) {
   __ENTER_FUNCTION
-    using namespace pap_server_common_base;
+    using namespace ps_common_base;
     bool connected = false;
     db_type_ = db_type;
     char host[HOST_LENGTH];
@@ -143,4 +153,6 @@ ODBCInterface* Manager::get_interface(db_type_enum db_type) {
     return NULL;
 }
 
-} //namespace pap_server_common_db
+} //namespace odbc
+
+} //namespace ps_common_db

@@ -30,6 +30,10 @@ typedef enum {
 namespace ps_common_base {
 
 extern const char* kBaseLogSaveDir; //如果不要外部使用，就别使用宏
+
+extern bool g_command_log_print; //global if print log to io
+extern bool g_command_log_active; //global if write log to file
+
 const uint32_t kLogBufferTemp = 4096;
 const uint32_t kLogNameTemp = 128;
 const uint32_t kDefaultLogCacheSize = 1024 * 1024 * 4;

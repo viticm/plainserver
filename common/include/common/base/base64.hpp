@@ -57,8 +57,8 @@
 //    C4       E3       BA
 //
 
-#ifndef PS_COMMON_BASE64_H_
-#define PS_COMMON_BASE64_H_
+#ifndef PS_COMMON_BASE64_HPP_
+#define PS_COMMON_BASE64_HPP_
 
 namespace ps_common_base {
 
@@ -219,4 +219,4 @@ int base64decode(char * buf, const char * base64code, int src_len) {
 
 } //namespace ps_common_base
 
-#endif //PS_COMMON_BASE64_H_
+#endif //PS_COMMON_BASE64_HPP_
