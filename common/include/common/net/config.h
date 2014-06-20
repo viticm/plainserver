@@ -13,36 +13,14 @@
 
 #include "common/base/type.h"
 
-namespace pap_common_net {
+#define CONNECTION_MAX 1024
+#define CONNECTION_CACHESIZE_MAX 1024
+#define CONNECTION_KICKTIME 6000000 //超过该时间则断开连接
+#define CONNECTION_INCOME_KICKTIME 60000
 
-namespace packet {
-
-class Base;
-class Factory;
-class FactoryManager;
-
-}; //namespace packet
-
-namespace socket {
-
-class Base;
-class InputStream;
-class OutputStream;
-
-}; //namespace socket
-
-}; //namespace pap_common_net
-
-
-//server connection
-namespace pap_server_common_net {
-
-namespace connection {
-
-class Base;
-
-}; //namespace connection
-
-}; //namespace pap_server_common_net
+typedef enum {
+  kPacketFlagNone = 0,
+  kPacketFlagRemove,
+} packetflag_enum;
 
 #endif //PAP_COMMON_NET_CONFIG_H_
