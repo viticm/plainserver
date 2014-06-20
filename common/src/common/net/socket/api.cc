@@ -982,7 +982,7 @@ bool closeex(int32_t socketid) {
 
   bool result = true;
 #if __LINUX__
-  if (SOCKET_ERROR == fileapi_closeex(socketid)) result = false;
+  if (SOCKET_ERROR == ps_common_file::api::closeex(socketid)) result = false;
 #elif __WINDOWS__
   if (SOCKET_ERROR == closesocket(socketid)) {
     error = WSAGetLastError();
@@ -1065,7 +1065,7 @@ bool ioctlex(int32_t socketid, int64_t cmd, uint64_t* argp) {
 bool get_nonblocking_ex(int32_t socketid) {
   bool result = true;
 #if __LINUX__
-  result = fileapi_get_nonblocking_ex(socketid);
+  result = ps_common_file::api::get_nonblocking_ex(socketid);
 #elif __WINDOWS__
   USE_PARAM(socketid);
   result = false;
@@ -1076,7 +1076,7 @@ bool get_nonblocking_ex(int32_t socketid) {
 bool set_nonblocking_ex(int32_t socketid, bool on) {
   bool result = true;
 #if __LINUX__
-  fileapi_set_nonblocking_ex(socketid, on);
+  ps_common_file::api::set_nonblocking_ex(socketid, on);
 #elif __WINDOWS__
   uint64_t argp = true == on ? 1 : 0;
   result = ioctlex(socketid, FIONBIO, &argp);
@@ -1087,7 +1087,7 @@ bool set_nonblocking_ex(int32_t socketid, bool on) {
 uint32_t availableex(int32_t socketid) {
   uint32_t result = 0;
 #if __LINUX__
-  result = fileapi_availableex(socketid);
+  result = ps_common_file::api::availableex(socketid);
 #elif __WINDOWS__
   uint64_t argp = 0;
   ioctlex(socketid, FIONREAD, &argp);

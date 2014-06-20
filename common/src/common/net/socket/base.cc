@@ -4,19 +4,20 @@ namespace ps_common_net {
 
 namespace socket {
 
-Base::Base(int32_t socketid) {
+Base::Base() {
   __ENTER_FUNCTION
-    init();
-    socketid_ = socketid;
-    startup();
+    socketid_ = SOCKET_INVALID;
+    memset(host_, '\0', sizeof(host_));
+    port_ = 0;
   __LEAVE_FUNCTION
 }
 
-Base::Base(int32_t family, int32_t type, int32_t protocol) {
+Base::Base(const char* host, uint16_t port) {
   __ENTER_FUNCTION
-    init();
-    open(family, type, protocol);
-    startup();
+    memset(host_, '\0', sizeof(host_));
+    snprintf(host_, sizeof(host_) - 1, "%s", host);
+    port_ = port;
+    create();
   __LEAVE_FUNCTION
 }
 
@@ -26,183 +27,359 @@ Base::~Base() {
   __LEAVE_FUNCTION
 }
 
-void Base::init() {
+bool Base::create() {
   __ENTER_FUNCTION
-    socketid_ = SOCKET_ERROR;
+    bool result = true;
+    socketid_ = api::socketex(AF_INET, SOCK_STREAM, 0);
+    result = isvalid();
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+void Base::close() {
+  __ENTER_FUNCTION
+    if (isvalid() && !iserror())
+      api::closeex(socketid_);
+    socketid_ = SOCKET_INVALID;
+    memset(host_, '\0', sizeof(host_));
+    port_ = 0;
   __LEAVE_FUNCTION
 }
 
-void Base::startup() {
+bool Base::connect() {
   __ENTER_FUNCTION
-    uint64_t noblock = 1;
-    uint64_t revalue = 1;
-    ioctlex(FIONBIO, &noblock);
-    struct linger so_linger;
-    so_linger.l_onoff = false;
-    so_linger.l_linger = 0;
-    setoption(SOL_SOCKET, 
-              SO_LINGER, 
-              reinterpret_cast<char*>(&so_linger), 
-              sizeof(so_linger));
-    setoption(SOL_SOCKET, 
-              SO_REUSEADDR, 
-              reinterpret_cast<char*>(&revalue), 
-              sizeof(revalue)); 
+    bool result = true;
+    struct sockaddr_in connect_sockaddr_in;
+    connect_sockaddr_in.sin_family = AF_INET;
+    connect_sockaddr_in.sin_addr.s_addr = inet_addr(host_);
+    connect_sockaddr_in.sin_port = htons(port_);
+    result = api::connectex(
+        socketid_, 
+        reinterpret_cast<const struct sockaddr*>(&connect_sockaddr_in), 
+        sizeof(connect_sockaddr_in));
+    return result;
   __LEAVE_FUNCTION
+    return false;
 }
 
-int32_t Base::open(int32_t family, int32_t type, int32_t protocol) {
+bool Base::connect(const char* host, uint16_t port) {
   __ENTER_FUNCTION
+    bool result = true;
+    snprintf(host_, sizeof(host_) - 1, "%s", host);
+    port_ = port;
+    result = connect();
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Base::reconnect(const char* host, uint16_t port) {
+  __ENTER_FUNCTION
+    bool result = true;
     close();
-    socketid_ = api::socketex(family, type, protocol);
-    if (socketid_ < 0) return SOCKET_ERROR;
-  __LEAVE_FUNCTION
-    return SOCKET_ERROR;
-}
-
-bool Base::close() {
-  __ENTER_FUNCTION
-    bool result = true;
-    if (socketid_ < 0) return true;
-    result = ps_common_file::api::closeex(socketid_);
-    socketid_ = SOCKET_ERROR;
-    return result;
-  __LEAVE_FUNCTION
-    return SOCKET_ERROR;
-}
-
-int32_t Base::handle() const {
-  return socketid_;
-}
-
-int32_t Base::send(const void* buffer, int64_t size, int32_t mode) {
-  __ENTER_FUNCTION
-    int32_t result = api:send(socketid_, buffer, size, mode);
-    return result;
-  __LEAVE_FUNCTION
-    return SOCKET_ERROR;
-}
-
-int32_t Base::receive(void* buffer, int64_t size, int32_t mode) {
-  __ENTER_FUNCTION
-    int32_t result = api:recvex(socketid_, buffer, size, mode);
-    return result;
-  __LEAVE_FUNCTION
-    return SOCKET_ERROR;
-}
-
-bool Base::connect(const sockaddr* socket_address) {
-  __ENTER_FUNCTION
-    socklen_t length = sizeof(struct sockaddr);
-    bool connected = api::connectex(socketid_, socket_address, length);
-    int32_t error_code = api::getlast_errorcode();
-    if (!connectd_ && SOCKET_CONNECT_ERROR == error_code) {
-      pollfd fds[1];
-      fds[0].fd = socketid_;
-      fds[0].events = POLLOUT;
-      result = poll(fds, 1, SOCKET_CONNECT_TIMEOUT * 1000);
-      if (result > 0) {
-        int32_t value, _length = sizeof(value);
-        if (!getoption(SOL_SOCKET, 
-                       SO_ERROR, 
-                       reinterpret_cast<char*>(&value), 
-                       &_length) && value) {
-          errno = value;
-          return false;
-        }
-        return true;
-      }
-    }
-    return connected;
-  __LEAVE_FUNCTION
-    return false;
-}
-
-bool Base::shutdown(int32_t mode) {
-  __ENTER_FUNCTION
-    bool result = api::shutdown_ex(socketid_, mode);
+    snprintf(host_, sizeof(host_) - 1, "%s", host);
+    port_ = port;
+    create();
+    result = connect();
     return result;
   __LEAVE_FUNCTION
     return false;
 }
 
-bool Base::bind(const sockaddr* socket_address) {
-  __ENTER_FUNCTION
-    bool result = true;
-    socklen_t length = sizeof(struct sockaddr);
-    result = api::bindex(socketid_, socket_address, length);
-    return result;
-  __LEAVE_FUNCTION
-    return false;
-}
-
-bool Base::listen(int32_t count) {
-  __ENTER_FUNCTION
-    bool result = true;
-    result = api::listenex(socketid_, count);
-    return result;
-  __LEAVE_FUNCTION
-    return false;
-}
-
-int32_t Base::accept(sockaddr* socket_address) {
-  __ENTER_FUNCTION
-    int32_t result = 0;
-    socklen_t length = sizeof(struct sockaddr);
-    result = api::acceptex(socketid_, socket_address, &length);
-    return result;
-  __LEAVE_FUNCTION
-    return SOCKET_ERROR;
-}
-
-bool Base::ioctl(int64_t cmd, uint64_t* argp) {
-  __ENTER_FUNCTION
-    int32_t result = true;
-    result = api::ioctlex(socketid_, cmd, argp);
-    return result;
-  __LEAVE_FUNCTION
-    return false;
-}
-
-bool Base::setoption(int32_t level, 
-                     int32_t name, 
-                     const char* value, 
-                     int32_t length) {
-  __ENTER_FUNCTION
-    bool result = true;
-    result = api::setsockopt_ex(socketid_, level, name, value, length);
-    return result;
-  __LEAVE_FUNCTION
-    return false;
-}
-
-uint32_t Base::getoption(int32_t level,
-                         int32_t name,
-                         char* value,
-                         uint32_t* length) {
+uint32_t Base::send(const void* buffer, uint32_t length, uint32_t flag) {
   __ENTER_FUNCTION
     uint32_t result = 0;
-    uint32_t option_length = length ? *length : 0;
-    uint32_t result = 
-      api::getsockopt_exu(socketid_, level, name, value, &option_length);
+    result = api::sendex(socketid_, buffer, length, flag);
     return result;
   __LEAVE_FUNCTION
     return 0;
 }
 
-int32_t Base::get_errorcode() {
+uint32_t Base::receive(void* buffer, uint32_t length, uint32_t flag) {
   __ENTER_FUNCTION
-    int32_t errorcode = 0;
-    errorcode = api::getlast_errorcode();
-    return errorcode;
+    uint32_t result = 0;
+    result = api::recvex(socketid_, buffer, length, flag);
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+uint32_t Base::available() const {
+  __ENTER_FUNCTION
+    uint32_t result = 0;
+    result = api::availableex(socketid_);
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+int32_t Base::accept(uint16_t port) {
+  __ENTER_FUNCTION
+    int32_t result = SOCKET_ERROR;
+    uint32_t addrlength = 0;
+    struct sockaddr_in accept_sockaddr_in;
+    accept_sockaddr_in.sin_family = AF_INET;
+    accept_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+    accept_sockaddr_in.sin_port = htons(port);
+    addrlength = sizeof(struct sockaddr_in);
+    result = api::acceptex(
+        socketid_, 
+        reinterpret_cast<struct sockaddr *>(&accept_sockaddr_in),
+        &addrlength);
+    return result;
   __LEAVE_FUNCTION
     return SOCKET_ERROR;
 }
 
-void Base::get_errorstring(char* buffer, uint16_t length) {
+int32_t Base::fastaccept() {
+  __ENTER_FUNCTION
+    int32_t result = SOCKET_ERROR;
+    uint32_t addrlength = 0;
+    addrlength = sizeof(struct sockaddr_in);
+    result = api::acceptex(socketid, NULL, &addrlength);
+    return result;
+  __LEAVE_FUNCTION
+    return SOCKET_ERROR;
+}
+
+bool Base::bind() {
+  __ENTER_FUNCTION
+    bool result = true;
+    struct sockaddr_in connect_sockaddr_in;
+    connect_sockaddr_in.sin_family = AF_INET;
+    connect_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+    connect_sockaddr_in.sin_port = htons(port_);
+    result = socketapi_bindex(
+        socketid_, 
+        reinterpret_cast<const struct sockaddr*>(&connect_sockaddr_in), 
+        sizeof(connect_sockaddr_in));
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Base::bind(uint16_t port) {
+  __ENTER_FUNCTION
+    bool result = true;
+    port_ = port;
+    result = bind();
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Base::listen(uint32_t backlog) {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = api::listenex(socketid_, backlog);
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+int32_t Base::select(int32_t maxfdp, 
+                     void* readset, 
+                     void* writeset, 
+                     void* exceptset,
+                     void* timeout) {
+  __ENTER_FUNCTION
+    int32_t result = SOCKET_ERROR;
+    result = api::selectex(maxfdp, readset, writeset, exceptset, timeout);
+    return result;
+  __LEAVE_FUNCTION
+    return SOCKET_ERROR;
+}
+
+uint32_t Base::getlinger() const {
+  __ENTER_FUNCTION
+    uint32_t result = 0;
+    struct linger getlinger;
+    uint32_t length = sizeof(getlinger);
+    api::getsockopt_exb(socketid_, SOL_SOCKET, SO_LINGER, &getlinger, &length);
+    result = getlinger.l_linger;
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+bool Base::setlinger(uint32_t lingertime) {
+  __ENTER_FUNCTION
+    bool result = true;
+    struct linger setlinger;
+    setlinger.l_onoff = lingertime > 0 ? 1 : 0;
+    setlinger.l_linger = static_cast<uint16_t>(lingertime);
+    result = api::setsockopt_ex(socketid_, 
+                                SOL_SOCKET, 
+                                SO_LINGER, 
+                                &setlinger, 
+                                sizeof(setlinger));
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Base::is_reuseaddr() const {
+  __ENTER_FUNCTION
+    bool result = true;
+    int32_t reuse = 0;
+    uint32_t length = sizeof(reuse);
+    result = api::getsockopt_exb(socketid_, 
+                                 SOL_SOCKET, 
+                                 SO_REUSEADDR, 
+                                 &reuse, 
+                                 &length);
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Base::set_reuseaddr(bool on) {
+  __ENTER_FUNCTION
+    bool result = true;
+    int32_t option = true == on ? 1 : 0;
+    result = api::setsockopt_ex(socketid_, 
+                                SOL_SOCKET, 
+                                SO_REUSEADDR, 
+                                &option, 
+                                sizeof(option));
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+uint32_t Base::getlast_errorcode() const {
+  __ENTER_FUNCTION
+    uint32_t result = 0;
+    result = api::getlast_errorcode();
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+void Base::getlast_errormessage(char* buffer, uint16_t length) const {
   __ENTER_FUNCTION
     api::getlast_errormessage(buffer, length);
   __LEAVE_FUNCTION
+}
+
+bool Base::iserror() const {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = 1 == vnet_socketbase_iserror(socketid_);
+    int32_t option_value = 0;
+    int32_t option_length = sizeof(option_value);
+    api::getsockopt_exu(socketid_, 
+                        SOL_SOCKET, 
+                        SO_ERROR, 
+                        &option_value,
+                        &option_length);
+    result = 0 == option_value ? false : true;
+    return result;
+  __LEAVE_FUNCTION
+    return true;
+}
+
+bool Base::is_nonblocking() const {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = api::get_nonblocking_ex(socketid_);
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Base::set_nonblocking(bool on) {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = api::set_nonblocking_ex(socketid_, on);
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+uint32_t Base::getreceive_buffersize() const {
+  __ENTER_FUNCTION
+    uint32_t option_value = 0;
+    uint32_t option_length = sizeof(option_value);
+    api::getsockopt_exb(socketid_, 
+                        SOL_SOCKET, 
+                        SO_RCVBUF, 
+                        &option_value, 
+                        &option_length);
+    return option_value;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+bool Base::setreceive_buffersize(uint32_t size) {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = 
+      api::setsockopt_ex(socketid_, SOL_SOCKET, SO_RCVBUF, &size, sizeof(size));
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+uint32_t Base::getsend_buffersize() const {
+  __ENTER_FUNCTION
+    uint32_t result = 0;
+    uint32_t option_value = 0;
+    uint32_t option_length = sizeof(option_value);
+    api::getsockopt_exb(socketid_, 
+                        SOL_SOCKET, 
+                        SO_SNDBUF, 
+                        &option_value, 
+                        &option_length);
+    return option_value;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+bool Base::setsend_buffersize(uint32_t size) {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = 
+      api::setsockopt_ex(socketid_, SOL_SOCKET, SO_SNDBUF, &size, sizeof(size));
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+uint16_t Base::getport() const {
+    return port_;
+}
+
+uint64_t Base::getu64host() const {
+  __ENTER_FUNCTION
+    uint64_t result = 0;
+    if (0 == strlen(host_)) {
+      result = static_cast<uint64_t>(htonl(INADDR_ANY));
+    }
+    else {
+      result = static_cast<uint64_t>(inet_addr(host_));
+    }
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+bool Base::isvalid() const {
+  __ENTER_FUNCTION
+    bool result = true;
+    result = socketid_ != SOCKET_INVALID;
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+int32_t Base::getid() const {
+  __ENTER_FUNCTION
+    int32_t result = SOCKET_INVALID;
+    result = socketid_;
+    return result;
+  __LEAVE_FUNCTION
+    return SOCKET_INVALID;
 }
 
 } //namespace socket
