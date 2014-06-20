@@ -1,25 +1,27 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id socket.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id server.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-12-31 17:34:43
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/20 11:18
  * @uses server net model socket class
  */
-#ifndef PAP_SERVER_COMMON_NET_SOCKET_H_
-#define PAP_SERVER_COMMON_NET_SOCKET_H_
+#ifndef PS_COMMON_NET_SOCKET_SERVER_H_
+#define PS_COMMON_NET_SOCKET_SERVER_H_
 
 #include "common/net/socket/base.h"
 
-namespace pap_server_common_net {
+namespace ps_common_net {
 
-class Socket {
+namespace socket {
+
+class Server {
 
  public:
-   Socket(uint16_t port, uint32_t backlog = 5);
-   ~Socket();
+   Server(uint16_t port, uint32_t backlog = 5);
+   ~Server();
 
  public:
    void close();
@@ -35,10 +37,12 @@ class Socket {
    int32_t getid() const;
 
  protected:
-   pap_common_net::socket::Base* socket_;
+   ps_common_net::socket::Base* socket_;
 
 };
 
-}; //namespace pap_server_common_net
+}; //namespace socket
 
-#endif //PAP_SERVER_COMMON_NET_SOCKET_H_
+}; //namespace ps_common_net
+
+#endif //PS_COMMON_NET_SOCKET_SERVER_H_

@@ -1,17 +1,17 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id packet.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id base.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2014-1-2 11:36:54
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/20 11:54
  * @uses server and client net pakcet class
  */
 #ifndef PAP_COMMON_NET_PACKET_BASE_H_
 #define PAP_COMMON_NET_PACKET_BASE_H_
 
-#include "common/net/config.h"
+#include "common/net/scoket/config.h"
 #include "common/net/socket/inputstream.h"
 #include "common/net/socket/outputstream.h"
 
@@ -38,7 +38,7 @@ typedef enum {
 } packet_executestatus_enum;
 
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace packet {
 
@@ -57,7 +57,7 @@ class Base {
    virtual bool read(socket::InputStream& inputstream) = 0;
    virtual bool write(socket::OutputStream& outputstream) const = 0;
    virtual uint32_t execute(
-       pap_server_common_net::connection::Base* connection) = 0;
+       ps_common_net::connection::Base* connection) = 0;
    virtual uint16_t getid() const = 0;
    virtual uint32_t getsize() const = 0;
    int8_t getindex() const;
@@ -69,6 +69,6 @@ class Base {
 
 }; //namespace packet
 
-}; //namespace pap_common_net
+}; //namespace ps_common_net
 
 #endif //PAP_COMMON_NET_PACKET_BASE_H_

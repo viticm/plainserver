@@ -1,6 +1,6 @@
 #include "common/net/packet/base.h"
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace packet {
 
@@ -30,4 +30,4 @@ void Base::setstatus(uint8_t status) {
 
 } //namespace packet
 
-} //namespace pap_common_net
+} //namespace ps_common_net

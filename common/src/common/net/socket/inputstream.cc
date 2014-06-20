@@ -1,5 +1,6 @@
-#include "common/net/socket/inputstream.h"
 #include "common/base/util.h"
+#include "common/net/socket/encode.h"
+#include "common/net/socket/inputstream.h"
 
 namespace pap_common_net {
 
@@ -10,41 +11,59 @@ InputStream::InputStream(Base* socket,
                          uint32_t bufferlength_max) {
   __ENTER_FUNCTION
     socket_ = socket;
-    //struct packet_t and endecode_param_t in c, so need init memory to it
-    packet_ = (struct packet_t*)malloc(sizeof(struct packet_t));
-    endecode_param_ = NULL;
-    /**
-    endecode_param_ = 
-      (struct endecode_param_t*)malloc(sizeof(struct endecode_param_t));
-    **/
-    packet_->bufferlength = bufferlength;
-    packet_->bufferlength_max = bufferlength_max;
-    packet_->headlength = 0;
-    packet_->taillength = 0;
-    packet_->buffer = (char*)malloc(sizeof(char) * bufferlength);
+    memset(&packet_, 0, sizeof(packet_));
+    memset(&encode_param_, 0, sizeof(encode_param_));
+    packet_.bufferlength = bufferlength;
+    packet_.bufferlength_max = bufferlength_max;
+    packet_.headlength = 0;
+    packet_.taillength = 0;
+    packet_.buffer = new char[sizeof(char) * bufferlength];
   __LEAVE_FUNCTION
 }
 
 InputStream::~InputStream() {
   __ENTER_FUNCTION
-    SAFE_FREE(packet_->buffer);
-    SAFE_FREE(packet_);
-    SAFE_FREE(endecode_param_);
+    SAFE_DELETE_ARRAY(packet_.buffer);
   __LEAVE_FUNCTION
 }
 
 uint32_t InputStream::read(char* buffer, uint32_t length) {
   __ENTER_FUNCTION
-    uint32_t result = 0;
-    if (endecode_param_ != NULL && (*endecode_param_).keysize > 0) {
-      result = vnet_socket_inputstream_encoderead(packet_, 
-                                                  buffer, 
-                                                  length, 
-                                                  endecode_param_);
+    uint32_t result = length; //normal state
+    char* stream_buffer = streamdata_.buffer;
+    uint32_t bufferlength = streamdata_.bufferlength;
+    uint32_t headlength = streamdata_.headlength;
+    uint32_t taillength = streamdata_.taillength;
+    if (0 == length || length > reallength()) return 0;
+    char* tempbuffer = new char[sizeof(char) * length];
+    if (0 == tempbuffer) return 0;
+    if (headlength < taillength) {
+      memcpy(tempbuffer, &stream_buffer[headlength], length);
     }
     else {
-      result = vnet_socket_inputstream_read(packet_, buffer, length);
+      uint32_t rightlength = bufferlength - headlength;
+      if (length < rightlength) {
+        memcpy(tempbuffer, &stream_buffer[headlength], length);
+      }
+      else {
+        memcpy(tempbuffer, &stream_buffer[headlength], rightlength);
+        memcpy(&(tempbuffer[rightlength]), stream_buffer, length - rightlength);
+      }
     }
+    streamdata_.headlength = (headlength + length) % bufferlength;
+    if (encode_param_.keysize > 0) {
+      bool encode_result = true;
+      encode_param_.in = tempbuffer;
+      encode_param_.insize = length;
+      encode_param_.out = reinterpret_cast<unsigned char*>(buffer);
+      encode_param_.outsize = length;
+      encode_result = encode::make(encode_param_);
+      if (!encode_result) result = 0;
+    }
+    else {
+      memcpy(buffer, tempbuffer, length);
+    }
+    SAFE_DELETE_ARRAY(tempbuffer);
     return result;
   __LEAVE_FUNCTION
     return 0;
@@ -63,23 +82,44 @@ bool InputStream::readpacket(packet::Base* packet) {
 
 bool InputStream::peek(char* buffer, uint32_t length) {
   __ENTER_FUNCTION
-    bool result = false;
-    result = 1 == vnet_socket_inputstream_peek(*packet_, buffer, length);
-    return result;
+    if (0 == length || length > reallength()) {
+      return false;
+    }
+    uint32_t bufferlength = streamdata_.bufferlength;
+    uint32_t headlength = streamdata_.headlength;
+    uint32_t taillength = streamdata_.taillength;
+    char* stream_buffer = streamdata_.buffer;
+    if (headlength < taillength) {
+      memcpy(buffer, &(stream_buffer[headlength]), length);
+    }
+    else {
+      uint32_t rightlength = bufferlength - headlength;
+      if (length < rightlength) {
+        memcpy(&buffer[0], &(stream_buffer[headlength]), length);
+      }
+      else {
+        memcpy(&buffer[0], &(stream_buffer[headlength]), rightlength);
+        memcpy(&buffer[rightlength], &(stream_buffer[0]), length - rightlength);
+      }
+    }
+    return true;
   __LEAVE_FUNCTION
     return false;
 }
 
 bool InputStream::skip(uint32_t length) {
   __ENTER_FUNCTION
-    bool result = false;
-    if (endecode_param_ != NULL && (*endecode_param_).keysize > 0) {
-      result = 1 == vnet_socket_inputstream_encodeskip(packet_,
-                                                  length,
-                                                  endecode_param_);
-    }
-    else {
-      result = 1 == vnet_socket_inputstream_skip(packet_, length);
+    if (0 == length || length > reallength()) return false;
+    bool result = true;
+    uint32_t headlength = streamdata_.headlength;
+    uint32_t bufferlength = streamdata_.bufferlength;
+    streamdata_.headlength = (headlength + length) % bufferlength;
+    if (encode_param_.keysize > 0) {
+      encode_param_.in = NULL;
+      encode_param_.insize = 0;
+      encode_param_.out = NULL;
+      encode_param_.outsize = 0;
+      result = encode::skip(encode_param_, length);
     }
     return result;
   __LEAVE_FUNCTION
@@ -91,7 +131,37 @@ uint32_t InputStream::fill() {
     uint32_t result = 0;
     if (!socket_->isvalid()) return result;
     int32_t socketid = socket_->getid();
-    result = vnet_socket_inputstream_fill(socketid, packet_);
+    int32_t fillcount = 0;
+    int32_t receivecount = 0;
+    int32_t freecount = 0;
+    uint32_t bufferlength = streamdata_.bufferlength;
+    uint32_t bufferlength_max = streamdata_.bufferlength_max;
+    uint32_t headlength = streamdata_.headlength;
+    uint32_t taillength = streamdata_.taillength;
+    char* stream_buffer = streamdata_.buffer;
+    // head tail length=10
+    // 0123456789
+    // abcd......
+    if (headlength < taillength) {
+      freecount = 0 == headlength ? 
+                  bufferlength - taillength - 1 : 
+                  bufferlength - headlength;
+    }
+    else {
+      freecount = headlength - taillength - 1;
+    }
+    if (freecount != 0) {
+      receivecount = 
+        api::recvex(scoketid, &stream_buffer[taillength], freecount, 0);
+      if (SOCKET_ERROR_WOULD_BLOCK == receivecount) return 0;
+      if (SOCKET_ERROR == receivecount) return SOCKET_ERROR - 1;
+      if (0 == receivecount) return SOCKET_ERROR - 2;
+      streamdata_.taillength += receivecount;
+      fillcount += receivecount;
+    }
+    if (receivecount == freecount) {
+      
+    }
     return result;
   __LEAVE_FUNCTION
     return 0;
@@ -115,7 +185,15 @@ bool InputStream::resize(int32_t size) {
 uint32_t InputStream::reallength() {
   __ENTER_FUNCTION
     uint32_t length = 0;
-    length = vnet_socket_inputstream_reallength(*packet_);
+    uint32_t bufferlength = streamdata_.bufferlength;
+    uint32_t headlength = streamdata_.headlength;
+    uint32_t taillength = streamdata_.taillength;
+    if (headlength < taillength) {
+      length = taillength - headlength;
+    }
+    else {
+      length = bufferlength - headlength + taillength;
+    }
     return length;
   __LEAVE_FUNCTION
     return 0;

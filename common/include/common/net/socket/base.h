@@ -13,27 +13,6 @@
 
 #include "common/net/socket/api.h"
 
-#ifndef SOCKET_ERROR
-#define SOCKET_ERROR -1
-#endif
-
-#ifndef SOCKET_INVALID
-#define SOCKET_INVALID -1
-#endif
-
-#if __WINDOWS__
-#ifndef EINPROGRESS
-#define EINPROGRESS WSAEINPROGRESS
-#endif
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK WSAEWOULDBLOC
-#endif
-#endif
-
-#define SOCKET_WOULD_BLOCK EWOULDBLOCK //api use SOCKET_ERROR_WOULD_BLOCK
-#define SOCKET_CONNECT_ERROR EINPROGRESS
-#define SOCKET_CONNECT_TIMEOUT 10
-
 namespace pap_common_net {
 
 namespace socket {

@@ -1,8 +1,17 @@
-#ifndef PAP_COMMON_NET_SOCKET_INPUTSTREAM_H_
-#define PAP_COMMON_NET_SOCKET_INPUTSTREAM_H_
+/**
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id inputstream.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
+ * @license
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/20 11:45
+ * @uses socket inputstream class
+ */
+#ifndef PS_COMMON_NET_SOCKET_INPUTSTREAM_H_
+#define PS_COMMON_NET_SOCKET_INPUTSTREAM_H_
 
-#include "common/net/config.h"
-#include "common/lib/vnet/vnet.hpp"
+#include "common/net/socket/config.h"
 #include "common/net/socket/base.h"
 #include "common/net/packet/base.h"
 
@@ -36,13 +45,13 @@ class InputStream {
 
  private:
    Base* socket_;
-   struct packet_t* packet_;
-   struct endecode_param_t* endecode_param_;
+   struct streamdata_t streamdata_;
+   struct encode_param_t encode_param_;
 
 };
 
 }; //namespace socket
 
-}; //namespace pap_common_net
+}; //namespace ps_common_net
 
-#endif //PAP_COMMON_NET_SOCKET_INPUTSTREAM_H_
+#endif //PS_COMMON_NET_SOCKET_INPUTSTREAM_H_

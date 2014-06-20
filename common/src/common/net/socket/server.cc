@@ -1,14 +1,15 @@
-#include "server/common/net/socket.h"
-#include "common/lib/vnet/vnet.hpp"
+#include "common/net/socket/server.h"
 
-namespace pap_server_common_net {
+namespace ps_common_net {
 
-Socket::Socket(uint16_t port, uint32_t backlog) {
+namespace socket {
+
+Server::Server(uint16_t port, uint32_t backlog) {
   __ENTER_FUNCTION
     bool result = false;
-    socket_ = new pap_common_net::socket::Base();
+    socket_ = new ps_common_net::socket::Base();
     if (NULL == socket_) { //memory not enough
-      ERRORPRINTF("pap_server_common_net::Socket::Socket"
+      ERRORPRINTF("pap_server_common_net::Server::Server"
                   " new pap_common_net::socket::Base() failed,"
                   " errorcode: %d",
                   socket_->getlast_errorcode());
@@ -16,21 +17,21 @@ Socket::Socket(uint16_t port, uint32_t backlog) {
     }
     result = socket_->create();
     if (false == result) {
-      ERRORPRINTF("pap_server_common_net::Socket::Socket"
+      ERRORPRINTF("pap_server_common_net::Server::Server"
                   " socket_->create() failed, errorcode: %d",
                   socket_->getlast_errorcode()); 
       throw 1;
     }
     result = socket_->set_reuseaddr();
     if (false == result) {
-      ERRORPRINTF("pap_server_common_net::Socket::Socket"
+      ERRORPRINTF("pap_server_common_net::Server::Server"
                   " socket_->set_reuseaddr() failed, errorcode: %d",
                   socket_->getlast_errorcode());
       throw 1;
     }
     result = socket_->bind(port);
     if (false == result) {
-      ERRORPRINTF("pap_server_common_net::Socket::Socket"
+      ERRORPRINTF("pap_server_common_net::Server::Server"
                   " socket_->bind(%d) failed, errorcode: %d", 
                   port,
                   socket_->getlast_errorcode());
@@ -38,7 +39,7 @@ Socket::Socket(uint16_t port, uint32_t backlog) {
     }
     result = socket_->listen(backlog);
     if (false == result) {
-      ERRORPRINTF("pap_server_common_net::Socket::Socket"
+      ERRORPRINTF("pap_server_common_net::Server::Server"
                   " socket_->listen(%d) failed, errorcode: %d",
                   backlog,
                   socket_->getlast_errorcode());
@@ -47,7 +48,7 @@ Socket::Socket(uint16_t port, uint32_t backlog) {
   __LEAVE_FUNCTION
 }
 
-Socket::~Socket() {
+Server::~Server() {
   __ENTER_FUNCTION
     if (socket_ != NULL) {
       socket_->close();
@@ -56,11 +57,11 @@ Socket::~Socket() {
   __LEAVE_FUNCTION
 }
 
-void Socket::close() {
+void Server::close() {
   if (socket_ != NULL) socket_->close();
 }
 
-bool Socket::accept(pap_common_net::socket::Base* socket) {
+bool Server::accept(pap_common_net::socket::Base* socket) {
   __ENTER_FUNCTION
     if (NULL == socket) return false;
     socket->close();
@@ -76,7 +77,7 @@ bool Socket::accept(pap_common_net::socket::Base* socket) {
     return false;
 }
 
-uint32_t Socket::getlinger() const {
+uint32_t Server::getlinger() const {
   __ENTER_FUNCTION
     uint32_t linger;
     linger = socket_->getlinger();
@@ -85,7 +86,7 @@ uint32_t Socket::getlinger() const {
     return 0;
 }
 
-bool Socket::setlinger(uint32_t lingertime) {
+bool Server::setlinger(uint32_t lingertime) {
   __ENTER_FUNCTION
     bool result = false;
     result = socket_->setlinger(lingertime);
@@ -94,7 +95,7 @@ bool Socket::setlinger(uint32_t lingertime) {
     return false;
 }
 
-bool Socket::is_nonblocking() const {
+bool Server::is_nonblocking() const {
   __ENTER_FUNCTION
     bool result = false;
     result = socket_->is_nonblocking();
@@ -103,14 +104,14 @@ bool Socket::is_nonblocking() const {
     return false;
 }
 
-bool Socket::set_nonblocking(bool on) {
+bool Server::set_nonblocking(bool on) {
   __ENTER_FUNCTION
     return socket_->set_nonblocking(on);
   __LEAVE_FUNCTION
     return false;
 }
 
-uint32_t Socket::getreceive_buffersize() const {
+uint32_t Server::getreceive_buffersize() const {
   __ENTER_FUNCTION
     uint32_t result = 0;
     result = socket_->getreceive_buffersize();
@@ -119,7 +120,7 @@ uint32_t Socket::getreceive_buffersize() const {
     return 0;
 }
 
-bool Socket::setreceive_buffersize(uint32_t size) {
+bool Server::setreceive_buffersize(uint32_t size) {
   __ENTER_FUNCTION
     bool result = false;
     result = socket_->setreceive_buffersize(size);
@@ -128,7 +129,7 @@ bool Socket::setreceive_buffersize(uint32_t size) {
     return false;
 }
 
-int32_t Socket::getid() const {
+int32_t Server::getid() const {
   __ENTER_FUNCTION
     int32_t result = SOCKET_INVALID;
     result = socket_->getid();
@@ -137,4 +138,6 @@ int32_t Socket::getid() const {
     return SOCKET_INVALID;
 }
 
-} //namespace pap_server_common_net
+} //namespace socket
+
+} //namespace ps_common_net
