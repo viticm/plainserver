@@ -19,8 +19,8 @@ namespace scoket {
 
 namespace encode {
 
-bool make(struct encode_param_t* encode_param);
-bool skip(struct encode_param_t* encode_param, int32_t length);
+bool make(struct encodeparam_t& encodeparam);
+bool skip(struct encodeparam_t& encodeparam, int32_t length);
 
 }; //namespace encode
 

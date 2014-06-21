@@ -87,18 +87,18 @@ bool Base::reconnect(const char* host, uint16_t port) {
     return false;
 }
 
-uint32_t Base::send(const void* buffer, uint32_t length, uint32_t flag) {
+int32_t Base::send(const void* buffer, uint32_t length, uint32_t flag) {
   __ENTER_FUNCTION
-    uint32_t result = 0;
+    int32_t result = 0;
     result = api::sendex(socketid_, buffer, length, flag);
     return result;
   __LEAVE_FUNCTION
     return 0;
 }
 
-uint32_t Base::receive(void* buffer, uint32_t length, uint32_t flag) {
+int32_t Base::receive(void* buffer, uint32_t length, uint32_t flag) {
   __ENTER_FUNCTION
-    uint32_t result = 0;
+    int32_t result = 0;
     result = api::recvex(socketid_, buffer, length, flag);
     return result;
   __LEAVE_FUNCTION

@@ -35,8 +35,8 @@ class Base {
    bool connect(); //use self host_ and port_
    bool connect(const char* host, uint16_t port);
    bool reconnect(const char* host, uint16_t port);
-   uint32_t send(const void* buffer, uint32_t length, uint32_t flag = 0);
-   uint32_t receive(void* buffer, uint32_t length, uint32_t flag = 0);
+   int32_t send(const void* buffer, uint32_t length, uint32_t flag = 0);
+   int32_t receive(void* buffer, uint32_t length, uint32_t flag = 0);
    uint32_t available() const;
    int32_t accept(uint16_t port);
    int32_t fastaccept();

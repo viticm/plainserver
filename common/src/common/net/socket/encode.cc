@@ -6,8 +6,7 @@ namespace socket {
 
 namespace encode {
 
-bool make(struct encode_param_t* encode_param) {
-  
+bool make(struct encodeparam_t& encodeparam {
   unsigned char const* in;
   uint32_t insize;
   unsigned char* out;
@@ -16,31 +15,31 @@ bool make(struct encode_param_t* encode_param) {
   uint32_t keysize;
   int32_t keyindex;
   int32_t index;
-  in = (*encode_param).in;
+  in = encodeparam.in;
   if(NULL == in) {
     return false;
   }
-  insize = (*encode_param).insize;
+  insize = encodeparam.insize;
   if(insize <= 0) {
     return false;
   }
-  out = encode_param->out;
+  out = encodeparam->out;
   if(NULL == out) {
     return false;
   }
-  outsize = (*encode_param).outsize;
+  outsize = encodeparam.outsize;
   if(outsize <= 0 || outsize < insize) {
     return false;
   }
-  key = (*encode_param).key;
+  key = encodeparam.key;
   if(NULL == key) {
     return false;
   }
-  keysize = (*encode_param).keysize;
+  keysize = encodeparam.keysize;
   if(keysize <= 0) {
     return false;
   }
-  keyindex = (*encode_param).param[0];
+  keyindex = encodeparam.param[0];
   for(index = 0; (int32_t)insize > index; ++index) {
     out[index] = in[index] ^ key[keyindex];
     ++keyindex;
@@ -48,26 +47,26 @@ bool make(struct encode_param_t* encode_param) {
       keyindex -=keyindex;
     }
   }
-  encode_param->param[0] = keyindex;
+  encodeparam->param[0] = keyindex;
   return true;
 }
 
-bool skip(struct encode_param_t* encode_param, int32_t length) {
+bool skip(struct encodeparam_t& encodeparam, int32_t length) {
   uint32_t keysize = 0;
   int32_t keyindex = 0;
   int32_t index = 0;
-  keysize = (*encode_param).keysize;
+  keysize = encodeparam.keysize;
   if(keysize == 0) {
     return false;
   }
-  keyindex = (*encode_param).param[0];
+  keyindex = encodeparam.param[0];
   for(index = 0; index < length; ++index) {
     ++keyindex;
     if(keyindex >= (int32_t)keysize) {
       keyindex -= keysize;
     }
   }
-  encode_param->param[0] = keyindex;
+  encodeparam->param[0] = keyindex;
   return true;
 }
 
