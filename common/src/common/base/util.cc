@@ -336,6 +336,59 @@ int charset_convert(const char* from,
     return -1;
 }
 
+void get_sizestr(uint64_t size, char* buffer, uint32_t length, int8_t type) {
+  __ENTER_FUNCTION
+    int8_t realtype = 0;
+    if (0 == type) {
+      snprintf(buffer, length, "%.2fbytes", size / 1.0);
+      return;
+    }
+    float lastsize = size / 1.0;
+    float floatsize = size / 1.0;
+    float finalsize = .0f;
+    for (int8_t i = -1 == type ? 4 : type; i > 0; ++i) {
+      lastsize = floatsize;
+      floatsize /= 1024;
+      ++realtype;
+      if ((floatsize < 1.0f && -1 == type) || floatsize < 0.01f) break;
+    }
+    if ((floatsize < 1.0f && -1 == type) || floatsize < 0.01f) {
+      realtype -= 1;
+      finalsize = lastsize;
+    }
+    else {
+      finalsize = floatsize;
+    }
+    switch (realtype) {
+      case 0: {
+        snprintf(buffer, length, "%.2fbytes", finalize);
+        break;
+      }
+      case 1: {
+        snprintf(buffer, length, "%.2fkb", finalize);
+        break;
+      }
+      case 2: {
+        snprintf(buffer, length, "%.2fmb", finalsize);
+        break;
+      }
+      case 3: {
+        snprintf(buffer, length, "%.2fgb", finalsize);
+        break;
+      }
+      case 4: {
+        snprintf(buffer, length, "%.2ft", finalsize);
+        break;
+      }
+      default: {
+        snprintf(buffer, length, "%.2funkown", finalsize);
+        break;
+      }
+    }
+  __LEAVE_FUNCTION
+}
+
+
 } //namespace util
 
 } //namespace ps_common_base

@@ -40,6 +40,16 @@ int charset_convert(const char* from,
                     const char* src, 
                     int srclen) ;
 void password_swap_chars(char* str); //string will more than 32
+/**
+ * 由byte类型获得单位大小字符串如：32bytes,32kb,32mb,32gb,32t
+ * type: -1 获得大于1最大单位字符串，如1023byte则返回1023bytes而非kb
+ * type: 0 - 4 分别对应单位bytes、kb、mb、gb、t，
+ *       不过规则是返回最至少大于1单位的字符串
+ */ 
+void get_sizestr(uint64_t size, 
+                 char* buffer, 
+                 uint32_t length, 
+                 int8_t type = -1);
 
 } //namespace util
 
