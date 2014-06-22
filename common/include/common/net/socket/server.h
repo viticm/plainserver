@@ -25,7 +25,7 @@ class Server {
 
  public:
    void close();
-   bool accept(pap_common_net::socket::Base* socket);
+   bool accept(ps_common_net::socket::Base* socket);
    uint32_t getlinger() const;
    bool setlinger(uint32_t lingertime);
    bool is_nonblocking() const;

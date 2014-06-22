@@ -40,10 +40,10 @@ bool make(struct encodeparam_t& encodeparam {
     return false;
   }
   keyindex = encodeparam.param[0];
-  for(index = 0; (int32_t)insize > index; ++index) {
+  for(index = 0; static_cast<int32_t>(insize) > index; ++index) {
     out[index] = in[index] ^ key[keyindex];
     ++keyindex;
-    if(keyindex >= (int32_t)keysize) {
+    if(keyindex >= static_cast<int32_t>(keysize)) {
       keyindex -=keyindex;
     }
   }
@@ -62,7 +62,7 @@ bool skip(struct encodeparam_t& encodeparam, int32_t length) {
   keyindex = encodeparam.param[0];
   for(index = 0; index < length; ++index) {
     ++keyindex;
-    if(keyindex >= (int32_t)keysize) {
+    if(keyindex >= static_cast<int32_t>(keysize)) {
       keyindex -= keysize;
     }
   }
