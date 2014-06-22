@@ -1,25 +1,26 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id factorymanager.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2014-1-3 10:11:38
- * @uses server and client net packet factory manager
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/22 14:16
+ * @uses net packet factory manager
  */
 #ifndef PAP_COMMON_NET_PACKET_FACTORYMANAGER_H_
 #define PAP_COMMON_NET_PACKET_FACTORYMANAGER_H_
 
+#include "common/sys/thread.h"
+#include "common/base/singleton.h"
 #include "common/net/config.h"
 #include "common/net/packet/factory.h"
-#include "common/sys/thread.h"
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace packet {
 
-class FactoryManager {
+class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
 
  public:
    FactoryManager();
@@ -27,6 +28,10 @@ class FactoryManager {
 
  public:
    uint32_t* packet_alloccount_;
+
+ public:
+   FactoryManager& getsingleton();
+   FactoryManager* getsingleton_pointer();
  
  public:
    bool init();
@@ -43,7 +48,7 @@ class FactoryManager {
  private:
    Factory** factories_;
    uint16_t size_;
-   pap_common_sys::ThreadLock lock_;
+   ps_common_sys::ThreadLock lock_;
 
  private:
    void addfactory(Factory* factory);

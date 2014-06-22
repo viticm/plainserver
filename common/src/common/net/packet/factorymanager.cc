@@ -15,6 +15,18 @@ namespace pap_common_net {
 
 namespace packet {
 
+template<> 
+FactoryManager* ps_common_base::Singleton<FactoryManager>::singleton_ = NULL;
+
+FactoryManager* FactoryManager::getsingleton_pointer() {
+  return singleton_;
+}
+
+FactoryManager& FactoryManager::getsingleton() {
+  Assert(singleton_);
+  return *singleton_;
+}
+
 FactoryManager::FactoryManager() {
   __ENTER_FUNCTION
     using namespace pap_server_common_game::define::id::packet; //every need it

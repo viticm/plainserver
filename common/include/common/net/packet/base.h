@@ -8,8 +8,8 @@
  * @date 2014/06/20 11:54
  * @uses server and client net pakcet class
  */
-#ifndef PAP_COMMON_NET_PACKET_BASE_H_
-#define PAP_COMMON_NET_PACKET_BASE_H_
+#ifndef PS_COMMON_NET_PACKET_BASE_H_
+#define PS_COMMON_NET_PACKET_BASE_H_
 
 #include "common/net/scoket/config.h"
 #include "common/net/socket/inputstream.h"
@@ -71,4 +71,4 @@ class Base {
 
 }; //namespace ps_common_net
 
-#endif //PAP_COMMON_NET_PACKET_BASE_H_
+#endif //PS_COMMON_NET_PACKET_BASE_H_
