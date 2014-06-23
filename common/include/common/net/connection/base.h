@@ -1,15 +1,15 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id connection.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id base.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2014-1-2 11:17:20
- * @uses server net connect information
+ * @user viticm<viticm.ti@gmail.com>
+ * @date 2014/06/23 21:22
+ * @uses net connect information
  */
-#ifndef PAP_SERVER_COMMON_NET_CONNECTION_BASE_H_
-#define PAP_SERVER_COMMON_NET_CONNECTION_BASE_H_
+#ifndef PS_COMMON_NET_CONNECTION_BASE_H_
+#define PS_COMMON_NET_CONNECTION_BASE_H_
 
 #include "common/net/connection/config.h"
 #include "common/net/packet/base.h"
@@ -112,4 +112,4 @@ class Base {
 
 }; //namespace pap_common_net
 
-#endif //PAP_SERVER_COMMON_NET_CONNECTION_BASE_H_
+#endif //PS_COMMON_NET_CONNECTION_BASE_H_
