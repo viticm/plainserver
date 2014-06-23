@@ -9,14 +9,14 @@ Stream::Stream(Base* socket,
                uint32_t bufferlength_max) {
   __ENTER_FUNCTION
     socket_ = socket;
-    memset(&packet_, 0, sizeof(packet_));
+    memset(&streamdata_, 0, sizeof(streamdata_));
     memset(&encodeparam_, 0, sizeof(encodeparam_));
-    packet_.bufferlength = bufferlength;
-    packet_.bufferlength_max = bufferlength_max;
-    packet_.headlength = 0;
-    packet_.taillength = 0;
-    packet_.buffer = new char[sizeof(char) * bufferlength];
-    memset(streamdata_.buffer, 0, sizeof(char) * streamdata_.bufferlength);
+    streamdata_.bufferlength = bufferlength;
+    streamdata_.bufferlength_max = bufferlength_max;
+    streamdata_.headlength = 0;
+    streamdata_.taillength = 0;
+    streamdata_.buffer = new char[sizeof(char) * bufferlength];
+    memset(streamdata_.buffer, 0, streamdata_.bufferlength);
   __LEAVE_FUNCTION
 }
 
@@ -94,7 +94,7 @@ void Stream::cleanup() {
   __LEAVE_FUNCTION
 }
 
-Base* InputStream::getsocket() {
+Base* Stream::getsocket() {
   return socket_;
 }
 

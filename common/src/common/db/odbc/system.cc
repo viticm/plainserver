@@ -9,7 +9,7 @@ System::System() {
   __ENTER_FUNCTION
     result_ = 0;
     result_count_ = 0;
-    op_type_ = DB_INIT_EMPTY;
+    op_type_ = kDBOptionTypeInitEmpty;
   __LEAVE_FUNCTION
 }
 
@@ -73,7 +73,7 @@ bool System::load() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
-    op_type_ = DB_LOAD;
+    op_type_ = kDBOptionTypeLoad;
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -85,7 +85,7 @@ bool System::long_load() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
-    op_type_ = DB_LOAD;
+    op_type_ = kDBOptionTypeLoad;
     result_ = odbc_interface_->long_execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -97,7 +97,7 @@ bool System::add_new() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
-    op_type_ = DB_ADDNEW;
+    op_type_ = kDBOptionTypeAddNew;
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -109,7 +109,7 @@ bool System::delete_() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
-    op_type_ = DB_DELETE;
+    op_type_ = kDBOptionTypeDelete;
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -121,7 +121,7 @@ bool System::save() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
-    op_type_ = DB_SAVE;
+    op_type_ = kDBOptionTypeSave;
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -133,7 +133,7 @@ bool System::long_save() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
-    op_type_ = DB_SAVE;
+    op_type_ = kDBOptionTypeSave;
     result_ = odbc_interface_->long_execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;

@@ -94,6 +94,11 @@ typedef int16_t connectionid_t;
 #endif
 #endif
 
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 //c output/string functions
 #if __WINDOWS__
 #ifndef snprintf

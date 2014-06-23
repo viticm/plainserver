@@ -1,3 +1,4 @@
+#include "common/net/socket/encode.h"
 #include "common/net/socket/outputstream.h"
 
 namespace ps_common_net {
@@ -18,13 +19,13 @@ uint32_t OutputStream::write(const char* buffer, uint32_t length) {
                          bufferlength - taillength + headlength - 1 : 
                          headlength - taillength - 1;
     if (length >= freecount && !resize(length - freecount + 1)) return 0;
-    unsigned char tempbuffer = 
-      new unsigned char[sizeof(unsigned char) * length];
+    unsigned char* tempbuffer = new unsigned char[length];
     if (NULL == tempbuffer) return 0;
-    memset(tempbuffer, 0, sizeof(unsigned char) * length);
-    if (encode_param_.keysize > 0) {
+    memset(tempbuffer, 0, length);
+    if (encodeparam_.keysize > 0) {
       bool encode_result = true;
-      encodeparam_.in = reinterpret_cast<unsigned char*>(buffer);
+      encodeparam_.in = 
+        reinterpret_cast<unsigned char*>(const_cast<char*>(buffer));
       encodeparam_.insize = length;
       encodeparam_.out = tempbuffer;
       encodeparam_.outsize = length;
@@ -40,11 +41,11 @@ uint32_t OutputStream::write(const char* buffer, uint32_t length) {
     if (headlength <= taillength && 
         taillength != 0 && 
         (freecount = bufferlength - taillength) <= length) {
-      memcpy(&(streamdata_->buffer[taillength]), tempbuffer, freecount);
-      memcpy(streamdata_->buffer, &tempbuffer[freecount], length - freecount);
+      memcpy(&(streamdata_.buffer[taillength]), tempbuffer, freecount);
+      memcpy(streamdata_.buffer, &tempbuffer[freecount], length - freecount);
     }
     else {
-      memcpy(&(streamdata_->buffer[taillength]), tempbuffer, length);
+      memcpy(&(streamdata_.buffer[taillength]), tempbuffer, length);
     }
     streamdata_.taillength = (taillength + length) % bufferlength;
     SAFE_DELETE_ARRAY(tempbuffer);

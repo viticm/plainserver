@@ -15,9 +15,10 @@ const char* g_log_file_name[] = {
   "./log/debug", //kDebugLogFile
   "./log/error", //kErrorLogFile
   "./log/sharememory", //kShareMemoryLogFile
-  "./log/billing", //kBillingLogFile
-  "./log/world", //kWorldLogFile
+  "./log/gateway", //kGatewayLogFile
+  "./log/center", //kCenterLogFile
   "./log/server", //kServerLogFile
+  "./log/net", //kNetLogFile
   '\0',
 };
 

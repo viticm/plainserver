@@ -8,8 +8,8 @@
  * @date 2014/06/22 14:16
  * @uses net packet factory manager
  */
-#ifndef PAP_COMMON_NET_PACKET_FACTORYMANAGER_H_
-#define PAP_COMMON_NET_PACKET_FACTORYMANAGER_H_
+#ifndef PS_COMMON_NET_PACKET_FACTORYMANAGER_H_
+#define PS_COMMON_NET_PACKET_FACTORYMANAGER_H_
 
 #include "common/sys/thread.h"
 #include "common/base/singleton.h"
@@ -30,8 +30,8 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
    uint32_t* packet_alloccount_;
 
  public:
-   FactoryManager& getsingleton();
-   FactoryManager* getsingleton_pointer();
+   static FactoryManager& getsingleton();
+   static FactoryManager* getsingleton_pointer();
  
  public:
    bool init();
@@ -52,11 +52,11 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
 
  private:
    void addfactory(Factory* factory);
-   void addfactories_for_billinglogin();
+   void addfactories_for_gatewaylogin();
    void addfactories_for_serverserver();
    void addfactories_for_clientlogin();
-   void addfactories_for_loginworld();
-   void addfactories_for_serverworld();
+   void addfactories_for_logincenter();
+   void addfactories_for_servercenter();
    void addfactories_for_clientserver();
 
 };
@@ -65,6 +65,6 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
 
 }; //namespace pap_common_net
 
-extern pap_common_net::packet::FactoryManager* g_packetfactory_manager;
+extern ps_common_net::packet::FactoryManager* g_packetfactory_manager;
 
-#endif //COMMON_NET_PACKETFACTORY_H_
+#endif //PS_COMMON_NET_PACKETFACTORY_H_

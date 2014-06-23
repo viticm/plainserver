@@ -22,8 +22,12 @@
 #include <winsock.h>
 #include <ws2tcpip.h>
 #endif
+#include <errno.h>
 
 #define SOCKET_ERROR_WOULD_BLOCK -100
+
+//解决系统函数名和命名空间冲突
+int32_t sys_socket(int32_t domain, int32_t type, int32_t protocol);
 
 namespace ps_common_net {
 
@@ -106,6 +110,10 @@ int32_t selectex(int32_t maxfdp,
                  fd_set* writeset, 
                  fd_set* exceptset, 
                  struct timeval* timeout);
+
+int32_t getsockname_ex(int32_t socketid, 
+                       struct sockaddr* name, 
+                       int32_t* namelength);
 
 int32_t getlast_errorcode();
 void getlast_errormessage(char* buffer, uint16_t length);

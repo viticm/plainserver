@@ -1,30 +1,32 @@
-#include "server/billing/connection/pool.h"
+#include "common/net/connection/pool.h"
 
-billingconnection::Pool* g_connectionpool;
+ps_common_net::connection::Pool* g_connectionpool = NULL;
 
-namespace billingconnection {
+namespace ps_common_net {
+
+namespace connection {
 
 Pool::Pool() {
-  connection_ = NULL;
+  connections_ = NULL;
   position_ = 0;
   count_ = 0;
 }
 
 Pool::~Pool() {
-  SAFE_DELETE_ARRAY(connection_);
+  SAFE_DELETE_ARRAY(connections_);
 }
 
 bool Pool::init() {
   __ENTER_FUNCTION
-    connection_ = new Server[kPoolSizeMax];
-    Assert(connection_);
+    connections_ = new Server[NET_CONNECTION_POOL_SIZE_MAX];
+    Assert(connections_);
     uint16_t i;
-    for(i = 0; i < kPoolSizeMax; ++i) {
-      connection_[i].setid(i);
-      connection_[i].setempty(true);
+    for(i = 0; i < NET_CONNECTION_POOL_SIZE_MAX; ++i) {
+      connections_[i].setid(i);
+      connections_[i].setempty(true);
     }
     position_ = 0;
-    count_ = kPoolSizeMax;
+    count_ = NET_CONNECTION_POOL_SIZE_MAX;
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -33,8 +35,8 @@ bool Pool::init() {
 Server* Pool::get(int16_t id) {
   __ENTER_FUNCTION
     Server* connection = NULL;
-    if (id > kPoolSizeMax) return NULL;
-    connection = &(connection_[id]);
+    if (id > NET_CONNECTION_POOL_SIZE_MAX) return NULL;
+    connection = &(connections_[id]);
     return connection;
   __LEAVE_FUNCTION
     return NULL;
@@ -45,18 +47,18 @@ Server* Pool::create() {
     Server* connection = NULL;
     lock();
     uint16_t result = 0, i;
-    for (i = 0; i < kPoolSizeMax; ++i) {
-      if (connection_[position_].isempty()) { //找出空闲位置
+    for (i = 0; i < NET_CONNECTION_POOL_SIZE_MAX; ++i) {
+      if (connections_[position_].isempty()) { //找出空闲位置
         result = static_cast<uint16_t>(position_);
-        connection_[position_].setempty(false);
+        connections_[position_].setempty(false);
         ++position_;
-        if (position_ >= kPoolSizeMax) position_ = 0;
+        if (position_ >= NET_CONNECTION_POOL_SIZE_MAX) position_ = 0;
         --count_;
-        connection = &(connection_[result]);
+        connection = &(connections_[result]);
         break;
       }
       ++position_;
-      if (position_ >= kPoolSizeMax) position_ = 0;
+      if (position_ >= NET_CONNECTION_POOL_SIZE_MAX) position_ = 0;
     }
     unlock();
     return connection;
@@ -68,12 +70,12 @@ Server* Pool::create() {
 void Pool::remove(int16_t id) {
   __ENTER_FUNCTION
     lock();
-    if (id > kPoolSizeMax) {
+    if (id > NET_CONNECTION_POOL_SIZE_MAX) {
       Assert(false);
       unlock();
       return;
     }
-    connection_[id].setempty(true);
+    connections_[id].setempty(true);
     ++count_;
     unlock();
   __LEAVE_FUNCTION
@@ -89,3 +91,5 @@ void Pool::unlock() {
 }
 
 } //namespace connection
+
+} //namespace ps_common_net

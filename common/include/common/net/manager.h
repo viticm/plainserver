@@ -1,44 +1,40 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id servermanager.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id manager.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2014-1-11 23:38:58
- * @uses billing server manager
+ * @user viticm<viticm.ti@gmail.com>
+ * @date 2014/06/23 14:58
+ * @uses net manager class
+ *       根据不同的服务器，可以继承该类来实现不同的需求
  */
-#ifndef PAP_SERVER_BILLING_MAIN_SERVERMANAGER_H_
-#define PAP_SERVER_BILLING_MAIN_SERVERMANAGER_H_
+#ifndef PS_COMMON_NET_MANAGER_H_
+#define PS_COMMON_NET_MANAGER_H_
 
-/*system include {*/
-#if defined(__LINUX__)
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#elif defined(__WINDOWS__)
-#include <winsock.h>
-#endif
-/*system include }*/
-
-#include "server/billing/connection/manager.h"
-#include "server/billing/connection/server.h"
-#include "server/common/net/socket.h"
-#include "server/common/base/define.h"
+#include "common/base/singleton.h"
 #include "common/sys/thread.h"
+#include "common/net/connection/manager.h"
+#include "common/net/connection/server.h"
+#include "common/net/socket/server.h"
 
+namespace ps_common_net {
 
-class ServerManager : public billingconnection::Manager {
+class Manager : public ps_common_base::Singleton<Manager>, 
+  connection::Manager {
 
  public:
-   ServerManager();
-   ~ServerManager();
+   Manager(uint16_t port = 0);
+   ~Manager();
+ 
+ public:
+   static Manager* getsingleton_pointer();
+   static Manager& getsingleton();
 
  public:
    bool init(); //初始化
    bool select(); //网络侦测
-   bool processinput(); //数据接受接口
+   bool processinput(); //数据接收接口
    bool processoutput(); //数据发送接口
    bool processexception(); //异常连接处理
    bool processcommand(); //消息执行
@@ -50,25 +46,31 @@ class ServerManager : public billingconnection::Manager {
 
  public:
    //将connection数据加入系统中
-   bool addconnection(pap_server_common_net::connection::Base* connection);
+   bool addconnection(connection::Base* connection);
    //将拥有fd句柄的玩家(服务器)数据从当前系统中清除
-   bool deleteconnection(pap_server_common_net::connection::Base* connection);
+   bool deleteconnection(connection::Base* connection);
    //出现异常后将connection信息清除，并将系统中的信息也清除 断开玩家(服务器)的连接
-   bool removeconnection(pap_server_common_net::connection::Base* connection);
+   bool removeconnection(connection::Base* connection);
    void remove_allconnection();
    //获得服务器连接指针
-   billingconnection::Server* get_serverconnection(uint16_t id);
+   connection::Server* get_serverconnection(uint16_t id);
    //服务器广播
-   void broadcast(pap_common_net::packet::Base* packet);
+   void broadcast(packet::Base* packet);
    bool connectserver(); //just test
 
  public:
+   int32_t get_onestep_accept() const;
+   void set_onestep_accept(int32_t count);
+   uint64_t get_send_bytes() const;
+   uint64_t get_receive_bytes() const;
+
+ public:
    uint64_t threadid_;
-   int16_t serverhash_[OVER_SERVER_MAX];
+   int16_t serverhash_[NET_OVER_SERVER_MAX];
 
  private:
    //用于侦听的服务器Socket
-   pap_server_common_net::Socket* serversocket_;
+   socket::Server* serversocket_;
    //用于侦听的服务器SOCKET句柄值（此数据即serversocket_内拥有的SOCKET句柄值）
    int32_t socketid_;
    //网络相关数据
@@ -81,14 +83,20 @@ class ServerManager : public billingconnection::Manager {
    fd_set writefds_[kSelectMax];
    fd_set exceptfds_[kSelectMax];
    timeval timeout_[kSelectMax];
+   int32_t listenport_;
    int32_t maxfd_;
    int32_t minfd_;
    int32_t fdsize_;
    bool active_;
-   billingconnection::Server billing_serverconnection_;
+   uint64_t send_bytes_; //发送字节数
+   uint64_t receive_bytes_; //接收字节数
+   int32_t onestep_accept_; //一帧内接受的新连接数量, -1无限制
+   connection::Server billing_serverconnection_; //for debug
 
 };
 
-extern ServerManager* g_servermanager;
+}; //namespace ps_common_net
 
-#endif //PAP_SERVER_BILLING_MAIN_SERVERMANAGER_H_
+extern ps_common_net::Manager* g_netmanager;
+
+#endif //PS_COMMON_NET_MANAGER_H_

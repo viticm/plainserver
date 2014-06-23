@@ -8,19 +8,61 @@
  * @date 2013-12-31 17:34:43
  * @uses server and client net model base config file
  */
-#ifndef PAP_COMMON_NET_CONFIG_H_
-#define PAP_COMMON_NET_CONFIG_H_
+#ifndef PS_COMMON_NET_CONFIG_H_
+#define PS_COMMON_NET_CONFIG_H_
 
-#include "common/base/type.h"
+#include "common/base/config.h"
 
-#define CONNECTION_MAX 1024
-#define CONNECTION_CACHESIZE_MAX 1024
-#define CONNECTION_KICKTIME 6000000 //超过该时间则断开连接
-#define CONNECTION_INCOME_KICKTIME 60000
+#define NET_CONNECTION_MAX 1024
+#define NET_CONNECTION_CACHESIZE_MAX 1024
+#define NET_CONNECTION_KICKTIME 6000000 //超过该时间则断开连接
+#define NET_CONNECTION_INCOME_KICKTIME 60000
+#define NET_OVER_SERVER_MAX 256
+#define NET_ONESTEP_ACCEPT_DEFAULT 50 //每帧接受新连接的默认值
 
-typedef enum {
-  kPacketFlagNone = 0,
-  kPacketFlagRemove,
-} packetflag_enum;
+namespace ps_common_net {
 
-#endif //PAP_COMMON_NET_CONFIG_H_
+namespace packet {
+class Base;
+class Factory;
+class FactoryManager;
+}; //namespace packet
+
+namespace connection {
+class Base;
+class Server;
+class Pool;
+class Manager;
+}; //namespace connection
+
+namespace socket {
+
+class Base;
+class Server;
+class Stream;
+class InputStream;
+class OutputStream;
+
+typedef struct {
+  char* buffer;
+  uint32_t bufferlength;
+  uint32_t bufferlength_max;
+  uint32_t headlength;
+  uint32_t taillength;
+} streamdata_t;
+
+typedef struct {
+  unsigned char* in;
+  uint32_t insize;
+  unsigned char* out;
+  uint32_t outsize;
+  unsigned char const* key;
+  uint32_t keysize;
+  uint32_t param[2];
+} encodeparam_t;
+
+}; //namespace socket
+
+}; //namespace ps_common_net
+
+#endif //PS_COMMON_NET_CONFIG_H_

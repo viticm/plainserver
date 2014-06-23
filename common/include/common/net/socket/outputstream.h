@@ -11,14 +11,15 @@
 #ifndef PS_COMMON_NET_SOCKET_OUTPUTSTREAM_H_
 #define PS_COMMON_NET_SOCKET_OUTPUTSTREAM_H_
 
-#include "common/net/socket/base.h"
 #include "common/net/packet/base.h"
+#include "common/net/socket/base.h"
+#include "common/net/socket/stream.h"
 
 namespace ps_common_net {
 
 namespace socket {
 
-class OutputStream {
+class OutputStream : public Stream {
 
  public:
    OutputStream(

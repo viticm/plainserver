@@ -14,11 +14,11 @@
 #include "common/net/packet/base.h"
 #include "common/net/socket/stream.h"
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace socket {
 
-class InputStream : public  {
+class InputStream : public Stream {
 
  public: //construct and destruct
    InputStream(

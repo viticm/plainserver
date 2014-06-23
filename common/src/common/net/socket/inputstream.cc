@@ -2,7 +2,7 @@
 #include "common/net/socket/encode.h"
 #include "common/net/socket/inputstream.h"
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace socket {
 
@@ -14,7 +14,7 @@ uint32_t InputStream::read(char* buffer, uint32_t length) {
     uint32_t headlength = streamdata_.headlength;
     uint32_t taillength = streamdata_.taillength;
     if (0 == length || length > reallength()) return 0;
-    char* tempbuffer = new char[sizeof(char) * length];
+    unsigned char* tempbuffer = new unsigned char[length];
     if (0 == tempbuffer) return 0;
     if (headlength < taillength) {
       memcpy(tempbuffer, &stream_buffer[headlength], length);
@@ -107,7 +107,7 @@ bool InputStream::skip(uint32_t length) {
 
 uint32_t InputStream::fill() {
   __ENTER_FUNCTION
-    if (!socket_->isvalid()) return result;
+    if (!socket_->isvalid()) return 0;
     uint32_t fillcount = 0;
     uint32_t receivecount = 0;
     uint32_t freecount = 0;
@@ -142,7 +142,7 @@ uint32_t InputStream::fill() {
         return SOCKET_ERROR - 3;
       }
       if (!resize(available + 1)) return 0;
-      receivecount = socket_->(&stream_buffer[taillength], available);
+      receivecount = socket_->receive(&stream_buffer[taillength], available);
       if (SOCKET_ERROR_WOULD_BLOCK == receivecount) return 0;
       if (SOCKET_ERROR == SOCKET_ERROR_WOULD_BLOCK) return SOCKET_ERROR - 4;
       if (0 == receivecount) return SOCKET_ERROR - 5;

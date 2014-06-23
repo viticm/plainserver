@@ -11,6 +11,7 @@
 #ifndef PS_COMMON_NET_SOCKET_EXTEND_INL_
 #define PS_COMMON_NET_SOCKET_EXTEND_INL_
 
+#include "common/file/api.h"
 #if __LINUX__
 #include <sys/epoll.h>
 #include <poll.h>

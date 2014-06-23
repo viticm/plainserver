@@ -1,15 +1,15 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
- * $Id ptype.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
+ * $Id manager.h
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-11-22 19:29:37
- * @uses the db manager class, just for server use dbs.
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/23 10:33
+ * @uses db module odbc manager class
  */
-#ifndef PAP_SERVER_COMMON_DB_MANAGER_H_
-#define PAP_SERVER_COMMON_DB_MANAGER_H_
+#ifndef PS_COMMON_DB_ODBC_MANAGER_H_
+#define PS_COMMON_DB_ODBC_MANAGER_H_
 
 #include "common/base/singleton.h"
 #include "common/db/odbc/config.h"
@@ -40,4 +40,4 @@ class Manager : public ps_common_base::Singleton<Manager> {
 
 }; //namespace ps_common_db
 
-#endif //PAP_SERVER_COMMON_DB_DB_MANAGER_H_
+#endif //PS_COMMON_DB_ODBC_MANAGER_H_

@@ -35,6 +35,7 @@ class Server {
    uint32_t getsend_buffersize() const;
    bool setsend_buffersize(uint32_t size);
    int32_t getid() const;
+   uint16_t getport() const;
 
  protected:
    ps_common_net::socket::Base* socket_;

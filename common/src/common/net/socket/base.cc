@@ -137,7 +137,7 @@ int32_t Base::fastaccept() {
     int32_t result = SOCKET_ERROR;
     uint32_t addrlength = 0;
     addrlength = sizeof(struct sockaddr_in);
-    result = api::acceptex(socketid, NULL, &addrlength);
+    result = api::acceptex(socketid_, NULL, &addrlength);
     return result;
   __LEAVE_FUNCTION
     return SOCKET_ERROR;
@@ -150,10 +150,21 @@ bool Base::bind() {
     connect_sockaddr_in.sin_family = AF_INET;
     connect_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
     connect_sockaddr_in.sin_port = htons(port_);
-    result = socketapi_bindex(
+    result = api::bindex(
         socketid_, 
         reinterpret_cast<const struct sockaddr*>(&connect_sockaddr_in), 
         sizeof(connect_sockaddr_in));
+    if (0 == port_) {
+      int32_t inlength = sizeof(connect_sockaddr_in);
+      if (SOCKET_ERROR == 
+          api::getsockname_ex(socketid_, 
+            reinterpret_cast<struct sockaddr*>(&connect_sockaddr_in), 
+            &inlength)) {
+        ERRORPRINTF("[net]socket::Base::bind() error, can't get port");
+        return SOCKET_ERROR;
+      }
+      port_ = ntohs(connect_sockaddr_in.sin_port);
+    }
     return result;
   __LEAVE_FUNCTION
     return false;
@@ -178,10 +189,10 @@ bool Base::listen(uint32_t backlog) {
     return false;
 }
 int32_t Base::select(int32_t maxfdp, 
-                     void* readset, 
-                     void* writeset, 
-                     void* exceptset,
-                     void* timeout) {
+                     fd_set* readset, 
+                     fd_set* writeset, 
+                     fd_set* exceptset,
+                     timeval* timeout) {
   __ENTER_FUNCTION
     int32_t result = SOCKET_ERROR;
     result = api::selectex(maxfdp, readset, writeset, exceptset, timeout);
@@ -265,9 +276,8 @@ void Base::getlast_errormessage(char* buffer, uint16_t length) const {
 bool Base::iserror() const {
   __ENTER_FUNCTION
     bool result = true;
-    result = 1 == vnet_socketbase_iserror(socketid_);
     int32_t option_value = 0;
-    int32_t option_length = sizeof(option_value);
+    uint32_t option_length = sizeof(option_value);
     api::getsockopt_exu(socketid_, 
                         SOL_SOCKET, 
                         SO_ERROR, 

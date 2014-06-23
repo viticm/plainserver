@@ -1,22 +1,22 @@
-#include "server/common/net/connection/base.h"
-#include "server/common/base/log.h"
-#include "server/common/base/time_manager.h"
+#include "common/base/log.h"
+#include "common/base/time_manager.h"
 #include "common/net/packet/factorymanager.h"
+#include "common/net/connection/base.h"
 
-namespace pap_server_common_net {
+namespace ps_common_net {
 
 namespace connection {
 
-#if defined(_PAP_BILLING) /* { */
-const char* g_kModelName = "billing";    
-const uint8_t g_kModelSaveLogId = kBillingLogFile;
-#elif defined(_PAP_LOGIN) /* }{ */
+#if defined(_PS_GATEWAY) /* { */
+const char* g_kModelName = "gateway";    
+const uint8_t g_kModelSaveLogId = kGatewayLogFile;
+#elif defined(_PS_LOGIN) /* }{ */
 const char* g_kModelName = "login";
 const uint8_t g_kModelSaveLogId = kLoginLogFile;
-#elif defined(_PAP_WORLD) /* }{ */
-const char* g_kModelName = "world";
-const uint8_t g_kModelSaveLogId = kWorldLogFile;
-#elif defined(_PAP_SERVER) /* }{ */
+#elif defined(_PS_CENTER) /* }{ */
+const char* g_kModelName = "center";
+const uint8_t g_kModelSaveLogId = kCenterLogFile;
+#elif defined(_PS_SERVER) /* }{ */
 const char* g_kModelName = "server";
 const uint8_t g_kModelSaveLogId = kServerLogFile;
 #endif /* } */
@@ -26,22 +26,22 @@ Base::Base(bool flag_isserver) {
     id_ = ID_INVALID;
     userid_ = ID_INVALID;
     managerid_ = ID_INVALID;
-    socket_ = new pap_common_net::socket::Base();
+    socket_ = new socket::Base();
     Assert(socket_);
     if (!flag_isserver) {
-      socket_inputstream_ = new pap_common_net::socket::InputStream(socket_);
+      socket_inputstream_ = new socket::InputStream(socket_);
       Assert(socket_inputstream_);
-      socket_outputstream_ = new pap_common_net::socket::OutputStream(socket_);
+      socket_outputstream_ = new socket::OutputStream(socket_);
       Assert(socket_outputstream_);
     }
     else {
-      socket_inputstream_ = new pap_common_net::socket::InputStream(
+      socket_inputstream_ = new socket::InputStream(
           socket_,
           SOCKETINPUT_BUFFERSIZE_DEFAULT,
           64 * 1024 * 1024
           );
       Assert(socket_inputstream_);
-      socket_outputstream_ = new pap_common_net::socket::OutputStream(
+      socket_outputstream_ = new socket::OutputStream(
           socket_,
           SOCKETOUTPUT_BUFFERSIZE_DEFAULT,
           64 * 1024 * 1024);
@@ -50,6 +50,7 @@ Base::Base(bool flag_isserver) {
     isempty_ = true;
     isdisconnect_ = false;
     packetindex_ = 0;
+    execute_count_pretick_ = NET_CONNECTION_EXECUTE_COUNT_PRE_TICK_DEFAULT;
   __LEAVE_FUNCTION
 }
 
@@ -63,7 +64,7 @@ Base::~Base() {
 
 bool Base::processinput() {
   __ENTER_FUNCTION
-    using namespace pap_server_common_base;
+    using namespace ps_common_base;
     bool result = false;
     if (isdisconnect()) return true;
     try {
@@ -96,16 +97,15 @@ bool Base::processinput() {
 
 bool Base::processoutput() {
   __ENTER_FUNCTION
-    using namespace pap_server_common_base;
+    using namespace ps_common_base;
     bool result = false;
     if (isdisconnect()) return true;
     try {
       uint32_t size = socket_outputstream_->reallength();
       if (0 == size) return true;
-      uint32_t flushresult = socket_outputstream_->flush();
-      if (static_cast<int32_t>(flushresult) <= SOCKET_ERROR) {
-        char errormessage[FILENAME_MAX];
-        memset(errormessage, '\0', sizeof(errormessage));
+      int32_t flushresult = socket_outputstream_->flush();
+      if (flushresult <= SOCKET_ERROR) {
+        char errormessage[FILENAME_MAX] = {0};
         socket_inputstream_->getsocket()->getlast_errormessage(
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
@@ -131,7 +131,6 @@ bool Base::processoutput() {
 
 bool Base::processcommand(bool option) {
   __ENTER_FUNCTION
-    using namespace pap_common_net;
     bool result = false;
     char packetheader[PACKET_HEADERSIZE] = {'\0'};
     uint16_t packetid;
@@ -141,9 +140,8 @@ bool Base::processcommand(bool option) {
     try {
       if (option) { //执行选项操作
       }
-      const uint8_t kExecuteCountPreTick = 12; //每帧可以执行的消息数量上限
       uint32_t i;
-      for (i = 0; i < kExecuteCountPreTick; ++i) {
+      for (i = 0; i < execute_count_pretick_; ++i) {
         if (!socket_inputstream_->peek(&packetheader[0], PACKET_HEADERSIZE)) {
           //数据不能填充消息头
           break;
@@ -240,18 +238,18 @@ bool Base::processcommand(bool option) {
     return false;
 }
 
-bool Base::sendpacket(pap_common_net::packet::Base* packet) {
+bool Base::sendpacket(packet::Base* packet) {
   __ENTER_FUNCTION
     bool result = false;
     if (isdisconnect()) return true;
     if (socket_outputstream_ != NULL) {
       packet->setindex(++packetindex_);
-#if defined(_PAP_SERVER)
+#if defined(_PS_SERVER)
       uint32_t before_writesize = socket_outputstream_->reallength();
 #endif
       result = socket_outputstream_->writepacket(packet);
       Assert(result);
-#if defined(_PAP_SERVER)
+#if defined(_PS_SERVER)
       uint32_t after_writesize = socket_outputstream_->reallength();
       if (packet->getsize() != after_writesize - before_writesize - 6) {
         g_log->fast_save_log(g_kModelSaveLogId,
@@ -301,8 +299,16 @@ void Base::set_managerid(int16_t id) {
   managerid_ = id;
 }
 
-pap_common_net::socket::Base* Base::getsocket() {
+socket::Base* Base::getsocket() {
   return socket_;
+}
+
+uint8_t Base::get_execute_count_pretick() const {
+  return execute_count_pretick_;
+}
+
+void Base::set_execute_count_pretick(uint8_t count) {
+  execute_count_pretick_ = count;
 }
 
 void Base::disconnect() {
@@ -329,6 +335,7 @@ void Base::cleanup() {
     set_managerid(ID_INVALID);
     set_userid(ID_INVALID);
     packetindex_ = 0;
+    execute_count_pretick_ = NET_CONNECTION_EXECUTE_COUNT_PRE_TICK_DEFAULT;
     setdisconnect(false);
   __LEAVE_FUNCTION
 }
@@ -355,4 +362,4 @@ void Base::resetkick() {
 
 } //namespace connection
 
-} //namespace pap_server_common_net
+} //namespace ps_common_net

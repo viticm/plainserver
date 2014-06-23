@@ -1,6 +1,6 @@
-#include "server/common/net/connection/server.h"
+#include "common/net/connection/server.h"
 
-namespace pap_server_common_net {
+namespace ps_common_net {
 
 namespace connection {
 
@@ -92,7 +92,7 @@ bool Server::isvalid() {
     return false;
 }
 
-bool Server::sendpacket(pap_common_net::packet::Base* packet) {
+bool Server::sendpacket(packet::Base* packet) {
   __ENTER_FUNCTION
     bool result = false;
     result = Base::sendpacket(packet);

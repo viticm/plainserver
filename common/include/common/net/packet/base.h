@@ -11,7 +11,7 @@
 #ifndef PS_COMMON_NET_PACKET_BASE_H_
 #define PS_COMMON_NET_PACKET_BASE_H_
 
-#include "common/net/scoket/config.h"
+#include "common/net/socket/config.h"
 #include "common/net/socket/inputstream.h"
 #include "common/net/socket/outputstream.h"
 
@@ -56,8 +56,7 @@ class Base {
    virtual void cleanup() {};
    virtual bool read(socket::InputStream& inputstream) = 0;
    virtual bool write(socket::OutputStream& outputstream) const = 0;
-   virtual uint32_t execute(
-       ps_common_net::connection::Base* connection) = 0;
+   virtual uint32_t execute(connection::Base* connection) = 0;
    virtual uint16_t getid() const = 0;
    virtual uint32_t getsize() const = 0;
    int8_t getindex() const;

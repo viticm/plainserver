@@ -1,22 +1,22 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id pool.h
- * @link https://github.com/viticm/pap for the canonical source repository
- * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
+ * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
- * @user viticm<viticm@126.com>
- * @date 2013-12-31 17:34:43
- * @uses billing connection pool class
+ * @user viticm<viticm.it@gmail.com>
+ * @date 2014/06/23 14:10
+ * @uses net connection pool class
  */
-#ifndef PAP_SERVER_BILLING_CONNECTION_POOL_H_
-#define PAP_SERVER_BILLING_CONNECTION_POOL_H_
+#ifndef PS_NET_CONNECTION_POOL_H_
+#define PS_NET_CONNECTION_POOL_H_
 
 #include "common/sys/thread.h"
-#include "server/billing/connection/server.h"
+#include "common/net/connection/server.h"
 
-namespace billingconnection {
+namespace ps_common_net {
 
-const uint16_t kPoolSizeMax = 1280;
+namespace connection {
 
 class Pool {
 
@@ -33,15 +33,17 @@ class Pool {
    void unlock();
 
  private:
-   Server* connection_;
+   Server* connections_; //注意，这是一个指向Server对象的数组指针
    uint32_t position_;
-   pap_common_sys::ThreadLock lock_;
+   ps_common_sys::ThreadLock lock_;
    uint32_t count_;
 
 };
 
 }; //namespace connection
 
-extern billingconnection::Pool* g_connectionpool;
+}; //namespace ps_common_net
 
-#endif //PAP_SERVER_BILLING_CONNECTION_POOL_H_
+extern ps_common_net::connection::Pool* g_connectionpool;
+
+#endif //PS_COMMON_NET_CONNECTION_POOL_H_

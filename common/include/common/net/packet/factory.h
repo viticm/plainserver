@@ -8,12 +8,12 @@
  * @date 2014-1-3 10:11:38
  * @uses server and client net packet factory class interface
  */
-#ifndef PAP_COMMON_NET_PACKET_FACTORY_H_
-#define PAP_COMMON_NET_PACKET_FACTORY_H_
+#ifndef PS_COMMON_NET_PACKET_FACTORY_H_
+#define PS_COMMON_NET_PACKET_FACTORY_H_
 
 #include "common/net/config.h"
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace packet {
 
@@ -29,6 +29,6 @@ class Factory {
 
 }; //namespace packet
 
-}; //namespace pap_common_net
+}; //namespace ps_common_net
 
-#endif //COMMON_NET_PACKET_FACTORY_H_
+#endif //PS_COMMON_NET_PACKET_FACTORY_H_

@@ -138,6 +138,14 @@ int32_t Server::getid() const {
     return SOCKET_INVALID;
 }
 
+uint16_t Server::getport() const {
+  __ENTER_FUNCTION
+    uint16_t port = socket_->getport();
+    return port;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
 } //namespace socket
 
 } //namespace ps_common_net

@@ -6,7 +6,7 @@ namespace socket {
 
 namespace encode {
 
-bool make(struct encodeparam_t& encodeparam {
+bool make(encodeparam_t& encodeparam) {
   unsigned char const* in;
   uint32_t insize;
   unsigned char* out;
@@ -23,7 +23,7 @@ bool make(struct encodeparam_t& encodeparam {
   if(insize <= 0) {
     return false;
   }
-  out = encodeparam->out;
+  out = encodeparam.out;
   if(NULL == out) {
     return false;
   }
@@ -47,11 +47,11 @@ bool make(struct encodeparam_t& encodeparam {
       keyindex -=keyindex;
     }
   }
-  encodeparam->param[0] = keyindex;
+  encodeparam.param[0] = keyindex;
   return true;
 }
 
-bool skip(struct encodeparam_t& encodeparam, int32_t length) {
+bool skip(encodeparam_t& encodeparam, int32_t length) {
   uint32_t keysize = 0;
   int32_t keyindex = 0;
   int32_t index = 0;
@@ -66,7 +66,7 @@ bool skip(struct encodeparam_t& encodeparam, int32_t length) {
       keyindex -= keysize;
     }
   }
-  encodeparam->param[0] = keyindex;
+  encodeparam.param[0] = keyindex;
   return true;
 }
 

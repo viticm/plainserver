@@ -20,9 +20,10 @@ typedef enum {
   kDebugLogFile = 1,
   kErrorLogFile = 2,
   kShareMemoryLogFile = 3,
-  kBillingLogFile = 4,
-  kWorldLogFile = 5,
+  kGatewayLogFile = 4,
+  kCenterLogFile = 5,
   kServerLogFile = 6,
+  kNetLogFile = 7,
   kLogFileCount,
 } enum_log_id;
 

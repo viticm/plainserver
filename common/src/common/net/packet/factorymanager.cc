@@ -1,17 +1,16 @@
 #include "common/net/packet/factorymanager.h"
 #include "common/net/packet/base.h"
-#include "server/common/game/define/all.h"
+#include "common/net/packets/id/all.h"
 
-#include "server/common/net/packets/serverserver/connect.h"
+/* packets { */
+#include "common/net/packets/serverserver/connect.h"
+/* } packets */
 
-#if defined(_PAP_NET_BILLING) || defined(_PAP_NET_LOGIN) /* { */
-#include "server/common/net/packets/login_tobilling/askauth.h"
-#include "server/common/net/packets/billing_tologin/resultauth.h"
-#endif /* } */
+#include "common/net/packet/factorymanager.h"
 
-pap_common_net::packet::FactoryManager* g_packetfactory_manager = NULL;
+ps_common_net::packet::FactoryManager* g_packetfactory_manager = NULL;
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace packet {
 
@@ -29,15 +28,17 @@ FactoryManager& FactoryManager::getsingleton() {
 
 FactoryManager::FactoryManager() {
   __ENTER_FUNCTION
-    using namespace pap_server_common_game::define::id::packet; //every need it
+    using namespace ps_common_net::packets::id;
     factories_ = NULL;
     size_ = 0;
     size_ = serverserver::kLast - serverserver::kFirst; //common for server
+/**
 #if defined(_PAP_NET_BILLING) || defined(_PAP_NET_LOGIN)
     size_ += billinglogin::kLast - billinglogin::kFirst - 1;
     size_ += billing_tologin::kLast - billing_tologin::kFirst - 1;
     size_ += login_tobilling::kLast - billing_tologin::kFirst - 1;
 #endif
+**/
     Assert(size_ > 0);
     factories_ = new Factory * [size_];
     Assert(factories_);
@@ -64,10 +65,10 @@ FactoryManager::~FactoryManager() {
 bool FactoryManager::init() {
   __ENTER_FUNCTION
     addfactories_for_serverserver();
-    addfactories_for_billinglogin();
-    addfactories_for_loginworld();
+    addfactories_for_gatewaylogin();
+    addfactories_for_logincenter();
     addfactories_for_clientlogin();
-    addfactories_for_serverworld();
+    addfactories_for_servercenter();
     addfactories_for_clientserver();
     return true;
   __LEAVE_FUNCTION
@@ -152,63 +153,55 @@ void FactoryManager::addfactory(Factory* factory) {
   __LEAVE_FUNCTION
 }
 
-void FactoryManager::addfactories_for_billinglogin() {
-#if defined(_PAP_NET_BILLING) || defined(_PAP_NET_LOGIN) /* { */
+void FactoryManager::addfactories_for_gatewaylogin() {
+#if defined(_PS_NET_GATEWAY) || defined(_PS_NET_LOGIN) /* { */
   __ENTER_FUNCTION
-    using namespace pap_server_common_net::packets;
-    addfactory(new login_tobilling::AskAuthFactory());
-    addfactory(new billing_tologin::ResultAuthFactory());
   __LEAVE_FUNCTION
 #endif /* } */
 }
 
 void FactoryManager::addfactories_for_clientlogin() {
-#if defined(_PAP_NET_LOGIN) || defined(_PAP_NET_CLIENT)
+#if defined(_PS_NET_LOGIN) || defined(_PS_NET_CLIENT)
 
 #endif
 }
 
-void FactoryManager::addfactories_for_loginworld() {
-#if defined(_PAP_NET_LOGIN) || defined(_PAP_NET_WORLD)
+void FactoryManager::addfactories_for_logincenter() {
+#if defined(_PS_NET_LOGIN) || defined(_PAP_NET_CENTER)
 
 #endif
 }
 
-void FactoryManager::addfactories_for_serverworld() {
-#if defined(_PAP_NET_SERVER) || defined(_PAP_NET_WORLD)
+void FactoryManager::addfactories_for_servercenter() {
+#if defined(_PS_NET_SERVER) || defined(_PS_NET_CENTER)
 
 #endif
 }
 
 void FactoryManager::addfactories_for_clientserver() {
-#if defined(_PAP_NET_CLIENT) || defined(_PAP_NET_SERVER)
+#if defined(_PS_NET_CLIENT) || defined(_PS_NET_SERVER)
 
 #endif
 }
 
 void FactoryManager::addfactories_for_serverserver() {
   __ENTER_FUNCTION
-    using namespace pap_server_common_net::packets;
+    using namespace ps_common_net::packets;
     addfactory(new serverserver::ConnectFactory());
   __LEAVE_FUNCTION
 }
 
 bool FactoryManager::isvalid_packetid(uint16_t id) {
-  using namespace pap_server_common_game::define::id::packet;
-#if defined(_PAP_NET_LOGIN) || defined(_PAP_NET_SERVER) || \
-defined(_PAP_NET_CLIENT)
-  using namespace pap_common_game::define::id::packet;
-#endif 
   bool result = false;
   __ENTER_FUNCTION
-#if defined(_PAP_NET_BILLING) /* { */
+#if defined(_PS_NET_GATEWAY) /* { */
     result = (serverserver::kFirst < id && id < serverserver::kLast) ||  
-             (billinglogin::kFirst < id && id < billinglogin::kLast) ||
-             (billing_tologin::kFirst < id && id < billing_tologin::kLast) || 
-             (login_tobilling::kFirst < id && id < login_tobilling::kLast);
-#elif defined(_PAP_NET_LOGIN) /* }{ */
+             (gatewaylogin::kFirst < id && id < gatewaylogin::kLast) ||
+             (gateway_tologin::kFirst < id && id < gateway_tologin::kLast) || 
+             (login_togateway::kFirst < id && id < login_togateway::kLast);
+#elif defined(_PS_NET_LOGIN) /* }{ */
 
-#elif defined(_PAP_NET_WORLD) /* }{ */
+#elif defined(_PS_NET_CENTER) /* }{ */
 
 #elif defined(_PAP_NET_SERVER) /* }{ */
 
@@ -221,4 +214,4 @@ defined(_PAP_NET_CLIENT)
 
 } //namespace packet
 
-} //namespace pap_common_net
+} //namespace ps_common_net

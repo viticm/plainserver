@@ -40,30 +40,4 @@
 #define SOCKET_CONNECT_ERROR EINPROGRESS
 #define SOCKET_CONNECT_TIMEOUT 10
 
-namespace ps_common_net {
-
-namespace socket {
-
-typedef struct {
-  char* buffer;
-  uint32_t bufferlength;
-  uint32_t bufferlength_max;
-  uint32_t headlength;
-  uint32_t taillength;
-} streamdata_t;
-
-typedef struct {
-  unsigned char* in;
-  uint32_t insize;
-  unsigned char* out;
-  uint32_t outsize;
-  unsigned char const* key;
-  uint32_t keysize;
-  uint32_t param[2];
-} encodeparam_t;
-
-}; //namespace socket
-
-}; //namespace ps_common_net
-
 #endif //PS_COMMON_NET_SOCKET_CONFIG_H_

@@ -11,14 +11,14 @@
 #ifndef PAP_SERVER_COMMON_NET_CONNECTION_BASE_H_
 #define PAP_SERVER_COMMON_NET_CONNECTION_BASE_H_
 
-#include "server/common/net/config.h"
+#include "common/net/connection/config.h"
 #include "common/net/packet/base.h"
 #include "common/net/socket/base.h"
 #include "common/net/socket/inputstream.h"
 #include "common/net/socket/outputstream.h"
 
 struct packet_async_t {
-  pap_common_net::packet::Base* packet;
+  ps_common_net::packet::Base* packet;
   uint16_t packetid;
   uint32_t flag;
   packet_async_t() {
@@ -34,7 +34,7 @@ struct packet_async_t {
   };
 };
 
-namespace pap_server_common_net {
+namespace ps_common_net {
 
 namespace connection {
 
@@ -52,7 +52,7 @@ class Base {
    virtual bool processoutput();
    virtual bool processcommand(bool option = true);
    virtual bool heartbeat(uint32_t time = 0, uint32_t flag = 0);
-   virtual bool sendpacket(pap_common_net::packet::Base* packet);
+   virtual bool sendpacket(packet::Base* packet);
 
  public:
    virtual bool isserver() = 0;
@@ -71,7 +71,7 @@ class Base {
    int16_t get_managerid();
    void set_managerid(int16_t id);
    //读取当前连接的socket对象
-   pap_common_net::socket::Base* getsocket();
+   socket::Base* getsocket();
    //断开网络连接
    virtual void disconnect();
    //当前连接是否有效
@@ -83,15 +83,18 @@ class Base {
    bool isdisconnect();
    void setdisconnect(bool status = true);
    virtual void resetkick();
+   uint8_t get_execute_count_pretick() const;
+   void set_execute_count_pretick(uint8_t count);
 
  protected:
    int16_t id_;
    int16_t userid_;
    int16_t managerid_;
-   pap_common_net::socket::Base* socket_;
-   pap_common_net::socket::InputStream* socket_inputstream_;
-   pap_common_net::socket::OutputStream* socket_outputstream_;
+   socket::Base* socket_;
+   socket::InputStream* socket_inputstream_;
+   socket::OutputStream* socket_outputstream_;
    int8_t packetindex_;
+   uint8_t execute_count_pretick_;
 
  private:
    bool isempty_;

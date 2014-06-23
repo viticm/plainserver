@@ -15,12 +15,12 @@
 
 namespace ps_common_net {
 
-namespace scoket {
+namespace socket {
 
 namespace encode {
 
-bool make(struct encodeparam_t& encodeparam);
-bool skip(struct encodeparam_t& encodeparam, int32_t length);
+bool make(encodeparam_t& encodeparam);
+bool skip(encodeparam_t& encodeparam, int32_t length);
 
 }; //namespace encode
 

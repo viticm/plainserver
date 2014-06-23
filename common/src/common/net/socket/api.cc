@@ -1,6 +1,11 @@
 #include "common/file/api.h"
 #include "common/net/socket/api.h"
 
+int32_t sys_socket(int32_t domain, int32_t type, int32_t protocol) {
+  int32_t result = socket(domain, type, protocol);
+  return result;
+}
+
 namespace ps_common_net {
 
 namespace socket {
@@ -16,7 +21,7 @@ char errormessage[FILENAME_MAX] = {'\0'};
 
 int32_t socketex(int32_t domain, int32_t type, int32_t protocol) {
   
-  int32_t socketid = socket(domain, type, protocol);
+  int32_t socketid = sys_socket(domain, type, protocol); //remember it
 
   if (socketid == ID_INVALID) {
 #if __LINUX__
@@ -982,7 +987,7 @@ bool closeex(int32_t socketid) {
 
   bool result = true;
 #if __LINUX__
-  if (SOCKET_ERROR == ps_common_file::api::closeex(socketid)) result = false;
+  ps_common_file::api::closeex(socketid);
 #elif __WINDOWS__
   if (SOCKET_ERROR == closesocket(socketid)) {
     error = WSAGetLastError();
@@ -1153,6 +1158,56 @@ int32_t selectex(int32_t maxfdp,
                  struct timeval* timeout) {
   int32_t result = 0;
   result = select(maxfdp, readset, writeset, exceptset, timeout);
+  if(SOCKET_ERROR == result) {
+#if __LINUX__
+
+#elif __WINDOWS__
+    error = WSAGetLastError();
+    switch (error) {
+      case WSANOTINITIALISED : {
+        strncpy(errormessage, "WSANOTINITIALISED", sizeof(errormessage) - 1);
+        break;
+      }
+      case WSAEFAULT: {
+        strncpy(errormessage, "WSAEFAULT", sizeof(errormessage) - 1);
+        break;
+      }
+      case WSAENETDOWN: {
+        strncpy(errormessage, "WSAENETDOWN", sizeof(errormessage) - 1);
+        break;
+      }
+      case WSAEINVAL: {
+        strncpy(errormessage, "WSAEINVAL", sizeof(errormessage) - 1);
+        break;
+      }
+      case WSAEINTR: {
+        strncpy(errormessage, "WSAEINTR", sizeof(errormessage) - 1);
+        break;
+      }
+      case WSAEINPROGRESS: {
+        strncpy(errormessage, "WSAEINPROGRESS", sizeof(errormessage) - 1);
+        break;
+      }
+      case WSAENOTSOCK: {
+        strncpy(errormessage, "WSAENOTSOCK", sizeof(errormessage) - 1);
+        break;
+      }
+      default : {
+        strncpy(errormessage, "UNKNOWN", sizeof(errormessage) - 1);
+        break;
+      }
+    }
+#endif
+  }
+  return result;
+}
+
+int32_t getsockname_ex(int32_t socketid, 
+                       struct sockaddr* name, 
+                       int32_t* namelength) {
+  int32_t result = 0;
+  result = 
+    getsockname(socketid, name, reinterpret_cast<socklen_t*>(namelength));
   if(SOCKET_ERROR == result) {
 #if __LINUX__
 

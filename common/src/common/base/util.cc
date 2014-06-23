@@ -261,6 +261,7 @@ void simple_encrypt_decrypt(char* str, uint32_t strlength, uint32_t key_begin) {
   __LEAVE_FUNCTION
 }
 
+
 /**
  * @desc this function can convert charset with diffrent
  * @param from source charset(example: utf8)
@@ -270,6 +271,7 @@ void simple_encrypt_decrypt(char* str, uint32_t strlength, uint32_t key_begin) {
  * @param src want convert string
  * @param srclen want convert string length
  */
+/**
 int charset_convert(const char* from, 
                     const char* to, 
                     char* save, 
@@ -335,6 +337,7 @@ int charset_convert(const char* from,
   __LEAVE_FUNCTION
     return -1;
 }
+**/
 
 void get_sizestr(uint64_t size, char* buffer, uint32_t length, int8_t type) {
   __ENTER_FUNCTION
@@ -387,7 +390,6 @@ void get_sizestr(uint64_t size, char* buffer, uint32_t length, int8_t type) {
     }
   __LEAVE_FUNCTION
 }
-
 
 } //namespace util
 

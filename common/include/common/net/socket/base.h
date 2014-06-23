@@ -13,7 +13,7 @@
 
 #include "common/net/socket/api.h"
 
-namespace pap_common_net {
+namespace ps_common_net {
 
 namespace socket {
 
@@ -44,10 +44,10 @@ class Base {
    bool bind(uint16_t port);
    bool listen(uint32_t backlog);
    static int32_t select(int32_t maxfdp, 
-                         void* readset, 
-                         void* writeset, 
-                         void* exceptset,
-                         void* timeout);
+                         fd_set* readset, 
+                         fd_set* writeset, 
+                         fd_set* exceptset,
+                         timeval* timeout);
 
  public: //socket check and set functions
    uint32_t getlinger() const;

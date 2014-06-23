@@ -23,7 +23,7 @@ class Stream {
    Stream(
        Base* socket, 
        uint32_t bufferlength = SOCKETINPUT_BUFFERSIZE_DEFAULT, 
-       uint32_t bufferlength_max = SOCKETINPUT_DISCONNECT_MAXSIZE) 
+       uint32_t bufferlength_max = SOCKETINPUT_DISCONNECT_MAXSIZE); 
    virtual ~Stream();
 
  public:
@@ -37,8 +37,8 @@ class Stream {
 
  protected:
    Base* socket_;
-   struct streamdata_t streamdata_;
-   struct encodeparam_t encodeparam_;
+   streamdata_t streamdata_;
+   encodeparam_t encodeparam_;
 
 };
 
