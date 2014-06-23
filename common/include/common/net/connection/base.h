@@ -86,6 +86,10 @@ class Base {
    uint8_t get_execute_count_pretick() const;
    void set_execute_count_pretick(uint8_t count);
 
+ public:
+   uint32_t get_receive_bytes(); //获取流中接收的字节数，获取一次则重新计数
+   uint32_t get_send_bytes(); //获取流中发送的字节数，获取一次则重新计数
+
  protected:
    int16_t id_;
    int16_t userid_;
@@ -99,6 +103,8 @@ class Base {
  private:
    bool isempty_;
    bool isdisconnect_;
+   uint32_t receive_bytes_;
+   uint32_t send_bytes_;
 
 };
 

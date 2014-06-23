@@ -17,6 +17,8 @@ Stream::Stream(Base* socket,
     streamdata_.taillength = 0;
     streamdata_.buffer = new char[sizeof(char) * bufferlength];
     memset(streamdata_.buffer, 0, streamdata_.bufferlength);
+    send_bytes_ = 0;
+    receive_bytes_ = 0;
   __LEAVE_FUNCTION
 }
 

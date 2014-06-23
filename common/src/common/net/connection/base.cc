@@ -51,6 +51,8 @@ Base::Base(bool flag_isserver) {
     isdisconnect_ = false;
     packetindex_ = 0;
     execute_count_pretick_ = NET_CONNECTION_EXECUTE_COUNT_PRE_TICK_DEFAULT;
+    receive_bytes_ = 0;
+    send_bytes_ = 0;
   __LEAVE_FUNCTION
 }
 
@@ -68,8 +70,9 @@ bool Base::processinput() {
     bool result = false;
     if (isdisconnect()) return true;
     try {
-      uint32_t fillresult = socket_inputstream_->fill();
-      if (static_cast<int32_t>(fillresult) <= SOCKET_ERROR) {
+      int32_t fillresult = socket_inputstream_->fill();
+      
+      if (fillresult <= SOCKET_ERROR) {
         char errormessage[FILENAME_MAX];
         memset(errormessage, '\0', sizeof(errormessage));
         socket_inputstream_->getsocket()->getlast_errormessage(
@@ -85,6 +88,7 @@ bool Base::processinput() {
       }
       else {
         result = true;
+        receive_bytes_ += static_cast<uint32_t>(fillresult); //网络流量
       }
     }
     catch(...) {
@@ -119,6 +123,7 @@ bool Base::processoutput() {
       }
       else {
         result = true;
+        send_bytes_ += static_cast<uint32_t>(flushresult);
       }
     }
     catch(...) {
@@ -358,6 +363,24 @@ void Base::setdisconnect(bool status) {
 
 void Base::resetkick() {
   //do nothing
+}
+
+uint32_t Base::get_receive_bytes() {
+  __ENTER_FUNCTION
+    uint32_t result = receive_bytes_;
+    receive_bytes_ = 0;
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+uint32_t Base::get_send_bytes() {
+  __ENTER_FUNCTION
+    uint32_t result = send_bytes_;
+    send_bytes_ = 0;
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
 }
 
 } //namespace connection

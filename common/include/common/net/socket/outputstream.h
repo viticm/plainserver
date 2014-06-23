@@ -33,7 +33,7 @@ class OutputStream : public Stream {
    uint32_t write(const char* buffer, uint32_t length);
    bool writepacket(const packet::Base* packet);
    int32_t flush();
-
+ 
 };
 
 }; //namespace socket

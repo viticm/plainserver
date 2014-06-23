@@ -33,7 +33,7 @@ class InputStream : public Stream {
    bool readpacket(packet::Base* packet);
    bool peek(char* buffer, uint32_t length);
    bool skip(uint32_t length);
-   uint32_t fill();
+   int32_t fill();
 
 };
 

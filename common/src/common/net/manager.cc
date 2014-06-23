@@ -126,8 +126,12 @@ bool Manager::processinput() {
         }
         else {
           try {
-            if (!serverconnection->processinput()) 
+            if (!serverconnection->processinput()) { 
               removeconnection(serverconnection);
+            }
+            else {
+              receive_bytes_ += serverconnection->get_receive_bytes();
+            }
           }
           catch(...) {
             removeconnection(serverconnection);
@@ -151,7 +155,7 @@ bool Manager::processoutput() {
       connection::Server* serverconnection = NULL;
       serverconnection = g_connectionpool->get(connection_idset_[i]);
       //serverconnection = &billing_serverconnection_;
-	    Assert(serverconnection);
+      Assert(serverconnection);
       int32_t socketid = serverconnection->getsocket()->getid();
       if (socketid_ == socketid) continue;
       if (FD_ISSET(socketid, &writefds_[kSelectUse])) {
@@ -160,8 +164,12 @@ bool Manager::processoutput() {
         }
         else {
           try {
-            if (!serverconnection->processoutput()) 
+            if (!serverconnection->processoutput()) { 
               removeconnection(serverconnection);
+            }
+            else {
+              send_bytes_ += serverconnection->get_send_bytes();
+            }
           }
           catch(...) {
             removeconnection(serverconnection);

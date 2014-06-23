@@ -39,6 +39,8 @@ class Stream {
    Base* socket_;
    streamdata_t streamdata_;
    encodeparam_t encodeparam_;
+   uint64_t send_bytes_;
+   uint64_t receive_bytes_;
 
 };
 

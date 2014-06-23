@@ -105,7 +105,7 @@ bool InputStream::skip(uint32_t length) {
     return false;
 }
 
-uint32_t InputStream::fill() {
+int32_t InputStream::fill() {
   __ENTER_FUNCTION
     if (!socket_->isvalid()) return 0;
     uint32_t fillcount = 0;
