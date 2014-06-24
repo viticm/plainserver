@@ -50,16 +50,28 @@ class Log : public Singleton<Log> {
  public:
    static void disk_log(const char* file_name_prefix, const char* format, ...);
    bool init(int32_t cache_size = kDefaultLogCacheSize);
-   void fast_save_log(enum_log_id log_id, const char* format, ...); //save in memory
+   void fast_log(enum_log_id log_id, const char* format, ...); //save in memory
+   void fast_errorlog(enum_log_id log_id, const char* format, ...);
+   void fast_warninglog(enum_log_id log_id, const char* format, ...);
+   //模板函数 type 0 普通日志 1 警告日志 2 错误日志
+   template <uint8_t type>
+   void fast_save_log(enum_log_id log_id, const char* buffer); 
    void flush_log(enum_log_id log_id);
    int32_t get_log_size(enum_log_id log_id);
    void get_log_file_name(enum_log_id log_id, char* file_name);
    static void get_log_file_name(const char* file_name_prefix, char* file_name);
    void flush_all_log();
    static void get_serial(char* serial, int16_t world_id, int16_t server_id);
-   static void save_log(const char* file_name_prefix, const char* format, ...);
    static void remove_log(const char* file_name);
    static void get_log_time_str(char* time_str, int32_t length);
+   static void log(const char* file_name_prefix, const char* format, ...);
+   static void errorlog(const char* file_name_prefix, const char* format, ...);
+   static void warninglog(const char* file_name_prefix, 
+                          const char* format, 
+                          ...);
+   //模板函数 type 0 普通日志 1 警告日志 2 错误日志
+   template <uint8_t type>
+   static void save_log(const char* file_name_prefix, const char* buffer);
 
  private:
    char* log_cache_[kLogFileCount];
