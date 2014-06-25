@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES(baselib)
 
-SET(TF_CURRENT_BINARY_PATH_LIB "../dynamic")
+SET(TF_CURRENT_BINARY_PATH_LIB "../static")
 SET(SRC_LIST lvm.h
              ldebug.h
              lmem.c
@@ -75,7 +75,7 @@ endif()
 
 SET(LIBRARY_OUTPUT_PATH ${TF_CURRENT_BINARY_PATH_LIB})
 
-ADD_LIBRARY(luascript SHARED ${SRC_LIST} ${BASELIB_LIST})
+ADD_LIBRARY(luascript STATIC ${SRC_LIST} ${BASELIB_LIST})
 
 IF(CMAKE_SYSTEM MATCHES Windows)
   
