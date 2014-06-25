@@ -1,9 +1,11 @@
 #include "common/base/log.h"
-#include "common/sys/allocator.h"
+#include "common/sys/memory/static_allocator.h"
 
 namespace ps_common_sys {
 
-Allocator::Allocator() {
+namespace memory {
+
+StaticAllocator::StaticAllocator() {
   __ENTER_FUNCTION
     buffer_ = NULL;
     size_ = 0;
@@ -11,23 +13,23 @@ Allocator::Allocator() {
   __LEAVE_FUNCTION
 }
 
-Allocator::~Allocator() {
+StaticAllocator::~StaticAllocator() {
   //do nothing
 }
 
-void Allocator::init(char* buffer, size_t size) {
+void StaticAllocator::init(char* buffer, size_t size) {
   __ENTER_FUNCTION
     buffer_ = buffer;
     size_ = size;
   __LEAVE_FUNCTION
 }
 
-void* Allocator::malloc(size_t size) {
+void* StaticAllocator::malloc(size_t size) {
   __ENTER_FUNCTION
     using namespace ps_common_base;
     if (offset_ + size > size_) {
-      Log::errorlog("error",
-                    "Allocator::malloc: out of memory allocating %d bytes",
+      SLOW_ERRORLOG("error",
+                    "StaticAllocator::malloc: out of memory allocating %d bytes",
                     size);
       Assert(false);
       return NULL;
@@ -39,7 +41,7 @@ void* Allocator::malloc(size_t size) {
     return NULL;
 }
 
-void* Allocator::calloc(size_t count, size_t size) {
+void* StaticAllocator::calloc(size_t count, size_t size) {
   __ENTER_FUNCTION
     void* pointer = malloc(count * size);
     memset(pointer, 0, count * size);
@@ -48,16 +50,15 @@ void* Allocator::calloc(size_t count, size_t size) {
     return NULL;
 }
 
-void* Allocator::realloc(void* data, size_t newsize) {
+void* StaticAllocator::realloc(void* data, size_t newsize) {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     Assert(data >= buffer_ && data < buffer_ + size_);
     size_t size_ofdata = 
       offset_ - static_cast<size_t>(reinterpret_cast<char*>(data) - buffer_);
     size_t size = newsize - size_ofdata;
     if (offset_ + size > size_) {
-      Log::errorlog("error",
-                    "Allocator::malloc: out of memory allocating %d bytes",
+      SLOW_ERRORLOG("error",
+                    "StaticAllocator::malloc: out of memory allocating %d bytes",
                     size);
       Assert(false);
       return NULL;
@@ -70,10 +71,12 @@ void* Allocator::realloc(void* data, size_t newsize) {
     return NULL;
 }
 
-void Allocator::free(void* data) {
+void StaticAllocator::free(void* data) {
   __ENTER_FUNCTION
     Assert(data >= buffer_ && data < buffer_ + size_);
   __LEAVE_FUNCTION
 }
+
+}; //namespace memory
 
 }; //namespace ps_common_sys

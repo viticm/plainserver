@@ -381,7 +381,6 @@ template <class T> class Lunar {
      T* ap = new T(L);
      T** a = static_cast<T**>(lua_newuserdata(L, sizeof(T *))); // Push value = userdata
      *a = ap;
-    
      luaL_getmetatable(L, T::className); // Fetch global metatable T::classname
      lua_setmetatable(L, -2);
      return 1;
@@ -412,7 +411,6 @@ template <class T> class Lunar {
          lua_pushcclosure(L, &Lunar<T>::function_dispatch, 2);
          return 1; // Return a func
        }
-      
        lua_pop(L,2);    // Pop metatable and _index
        lua_remove(L,1); // Remove userdata
        lua_remove(L,1); // Remove [key]
@@ -425,7 +423,6 @@ template <class T> class Lunar {
      lua_getmetatable(L, 1); // Look up the index from name
      lua_pushvalue(L, 2);  //
      lua_rawget(L, -2);    //
-    
      if (lua_isnumber(L, -1)) { // Check if we got a valid index 
        int _index = lua_tonumber(L, -1); 
        T** obj = static_cast<T**>(lua_touserdata(L, 1));
@@ -433,7 +430,6 @@ template <class T> class Lunar {
          luaL_error( L , "Internal error, no object given!" );
          return 0;
        }
-      
        if (_index >> 8) { // Try to set a func
          char c[128] = {0};
          sprintf(c , 
@@ -442,7 +438,6 @@ template <class T> class Lunar {
          luaL_error(L, c);
          return 0;
        }
-      
        lua_pop(L, 2);    // Pop metatable and _index
        lua_remove(L, 1); // Remove userdata
        lua_remove(L, 1); // Remove [key]
@@ -469,7 +464,6 @@ template <class T> class Lunar {
        lua_pushfstring(L, "%s (%p)", T::className, (void*)*obj);
      else
        lua_pushstring(L, "Empty object");
-    
      return 1;
    }
 
@@ -527,7 +521,6 @@ inline void gettable_number(lua_State *L,
   }
   lua_pop(L, 2);
 }
-
 
 template <typename T>
 inline void gettable_number_byindex(lua_State *L, 
