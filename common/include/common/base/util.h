@@ -51,6 +51,8 @@ void get_sizestr(uint64_t size,
                  uint32_t length, 
                  int8_t type = -1);
 
+void path_tounix(char* buffer, uint8_t length);
+
 } //namespace util
 
 } //namespace ps_common_base

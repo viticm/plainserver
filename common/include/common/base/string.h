@@ -43,6 +43,8 @@ void encrypt(const char* in, char* out, int32_t out_length);
 
 void decrypt(const char* in, char* out, int32_t out_length);
 
+char* safecopy(char* dest, const char* src, size_t size);
+
 }; //namespace string
 
 }; //namespace ps_common_base

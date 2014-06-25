@@ -25,15 +25,15 @@ typedef enum {
   kServerLogFile = 6,
   kNetLogFile = 7,
   kLogFileCount,
-} enum_log_id;
+} logid_t;
 
 
 namespace ps_common_base {
 
 extern const char* kBaseLogSaveDir; //如果不要外部使用，就别使用宏
 
-extern bool g_command_log_print; //global if print log to io
-extern bool g_command_log_active; //global if write log to file
+extern bool g_command_logprint; //global if print log to io
+extern bool g_command_logactive; //global if write log to file
 
 const uint32_t kLogBufferTemp = 4096;
 const uint32_t kLogNameTemp = 128;
@@ -50,28 +50,22 @@ class Log : public Singleton<Log> {
  public:
    static void disk_log(const char* file_name_prefix, const char* format, ...);
    bool init(int32_t cache_size = kDefaultLogCacheSize);
-   void fast_log(enum_log_id log_id, const char* format, ...); //save in memory
-   void fast_errorlog(enum_log_id log_id, const char* format, ...);
-   void fast_warninglog(enum_log_id log_id, const char* format, ...);
    //模板函数 type 0 普通日志 1 警告日志 2 错误日志
    template <uint8_t type>
-   void fast_save_log(enum_log_id log_id, const char* buffer); 
-   void flush_log(enum_log_id log_id);
-   int32_t get_log_size(enum_log_id log_id);
-   void get_log_file_name(enum_log_id log_id, char* file_name);
-   static void get_log_file_name(const char* file_name_prefix, char* file_name);
-   void flush_all_log();
-   static void get_serial(char* serial, int16_t world_id, int16_t server_id);
-   static void remove_log(const char* file_name);
-   static void get_log_time_str(char* time_str, int32_t length);
-   static void log(const char* file_name_prefix, const char* format, ...);
-   static void errorlog(const char* file_name_prefix, const char* format, ...);
-   static void warninglog(const char* file_name_prefix, 
-                          const char* format, 
-                          ...);
+   void fast_savelog(logid_t logid, const char* format, ...); 
+   void flush_log(logid_t logid);
+   int32_t get_logsize(logid_t logid);
+   void get_log_filename(logid_t logid, char* filename);
+   static void get_log_filename(const char* filename_prefix, char* filename);
+   void flush_alllog();
+   static void get_serial(char* serial, int16_t worldid, int16_t serverid);
+   static void remove_log(const char* filename);
+   static void get_log_timestr(char* time_str, int32_t length);
    //模板函数 type 0 普通日志 1 警告日志 2 错误日志
    template <uint8_t type>
-   static void save_log(const char* file_name_prefix, const char* buffer);
+   static void slow_savelog(const char* file_nameprefix, 
+                            const char* format, 
+                            ...);
 
  private:
    char* log_cache_[kLogFileCount];
@@ -99,6 +93,15 @@ class Log : public Singleton<Log> {
 #endif
 
 }; //namespace ps_common_base
+
+//log sytem macros
+#define LOGSYTEM_POINTER ps_common_base::Log::getsingleton_pointer()
+#define FAST_LOG LOGSYSTEM_POINTER->fast_savelog<0>
+#define FAST_WARNINGLOG LOGSYSTEM_POINTER->fast_savelog<1>
+#define FAST_ERRORLOG LOGSYSTEM_POINTER->fast_savelog<2>
+#define SLOW_LOG ps_common_base::Log::slow_savelog<0>
+#define SLOW_WARNINGLOG ps_common_base::Log::slow_savelog<1>
+#define SLOW_ERRORLOG ps_common_base::Log::slow_savelog<2>
 
 extern ps_common_base::Log* g_log;
 

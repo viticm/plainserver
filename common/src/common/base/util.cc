@@ -391,6 +391,14 @@ void get_sizestr(uint64_t size, char* buffer, uint32_t length, int8_t type) {
   __LEAVE_FUNCTION
 }
 
+void path_tounix(char* buffer, uint8_t length) {
+  __ENTER_FUNCTION
+    for (uint8_t i = 0; i < length; ++i) {
+      if ('\\' == buffer[i]) buffer[i] = '/';
+    }
+  __LEAVE_FUNCTION
+}
+
 } //namespace util
 
 } //namespace ps_common_base

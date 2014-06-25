@@ -6,11 +6,11 @@ ps_common_base::Log* g_log = NULL;
 
 namespace ps_common_base {
 
-bool g_command_log_print = true;
-bool g_command_log_active = true;
+bool g_command_logprint = true;
+bool g_command_logactive = true;
 const char* kBaseLogSaveDir = "./log";
 
-const char* g_log_file_name[] = {
+const char* g_log_filename[] = {
   "./log/login", //kLoginLogFile
   "./log/debug", //kDebugLogFile
   "./log/error", //kErrorLogFile
@@ -57,7 +57,7 @@ Log::~Log() {
   __LEAVE_FUNCTION
 }
 
-void Log::get_log_time_str(char* time_str, int32_t length) {
+void Log::get_log_timestr(char* time_str, int32_t length) {
   __ENTER_FUNCTION
     if (g_time_manager) {
         g_time_manager->reset_time();
@@ -75,10 +75,10 @@ void Log::get_log_time_str(char* time_str, int32_t length) {
   __LEAVE_FUNCTION
 }
 
-void Log::disk_log(const char* file_name_prefix, const char* format, ...) {
+void Log::disk_log(const char* file_nameprefix, const char* format, ...) {
   __ENTER_FUNCTION
-    if (g_command_log_active != true) return;
-    if (NULL == file_name_prefix || 0 == file_name_prefix[0]) return;
+    if (g_command_logactive != true) return;
+    if (NULL == file_nameprefix || 0 == file_nameprefix[0]) return;
     char buffer[kLogBufferTemp];
     memset(buffer, '\0', sizeof(buffer));
     va_list argptr;
@@ -92,21 +92,21 @@ void Log::disk_log(const char* file_name_prefix, const char* format, ...) {
       if (g_time_manager) {
         char time_str[kLogNameTemp] ;
         memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);        
+        get_log_timestr(time_str, sizeof(time_str) - 1);        
         strncat(buffer, time_str, strlen(time_str));
       }
       strncat(buffer, LF, sizeof(LF)); //add wrap
     }
     catch(...) {
-      if (g_command_log_print) printf("ERROR: SaveLog unknown error!%s", LF); 
+      if (g_command_logprint) printf("ERROR: SaveLog unknown error!%s", LF); 
       return;
     }
 
-    if (true == g_command_log_print) {
+    if (true == g_command_logprint) {
       printf("%s", buffer);
     }
 
-    if (!g_command_log_active) return;
+    if (!g_command_logactive) return;
 
     char log_file_name[FILENAME_MAX] = {0};
     try {
@@ -114,7 +114,7 @@ void Log::disk_log(const char* file_name_prefix, const char* format, ...) {
       snprintf(log_file_name, 
                sizeof(log_file_name) - 1, 
                "%s_%.4d-%.2d-%.2d.%u.log", 
-               file_name_prefix, 
+               file_nameprefix, 
                g_file_name_fix / 10000,
                (g_file_name_fix % 10000) / 100,
                g_file_name_fix % 100,
@@ -161,124 +161,71 @@ bool Log::init(int32_t cache_size) {
     return false;
 }
 
-void Log::fast_log(enum_log_id log_id, const char* format, ...) {
-  __ENTER_FUNCTION
-    if (log_id < 0 || log_id >= kLogFileCount) return;
-    char buffer[2049] = {0};
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256] = {0};
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-    }
-    catch(...) {
-      Assert(false);
-      return;
-    }
-    fast_save_log<0>(log_id, buffer);
-  __LEAVE_FUNCTION
-}
-
-void Log::fast_warninglog(enum_log_id log_id, const char* format, ...) {
-  __ENTER_FUNCTION
-    if (log_id < 0 || log_id >= kLogFileCount) return;
-    char buffer[2049] = {0};
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256] = {0};
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-    }
-    catch(...) {
-      Assert(false);
-      return;
-    }
-    fast_save_log<1>(log_id, buffer);
-  __LEAVE_FUNCTION
-}
-
-void Log::fast_errorlog(enum_log_id log_id, const char* format, ...) {
-  __ENTER_FUNCTION
-    if (log_id < 0 || log_id >= kLogFileCount) return;
-    char buffer[2049] = {0};
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256] = {0};
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-    }
-    catch(...) {
-      Assert(false);
-      return;
-    }
-    fast_save_log<1>(log_id, buffer);
-  __LEAVE_FUNCTION
-}
-
 template <uint8_t type>
-void Log::fast_save_log(enum_log_id log_id, const char* buffer) {
+void Log::fast_savelog(logid_t logid, const char* format, ...) {
   __ENTER_FUNCTION
-    if (g_command_log_print) {
+    if (logid < 0 || logid >= kLogFileCount) return;
+    char buffer[2049] = {0};
+    va_list argptr;
+    try {
+      va_start(argptr, format);
+      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+      va_end(argptr);
+      if (g_time_manager) {
+        char time_str[256] = {0};
+        memset(time_str, '\0', sizeof(time_str));
+        get_log_timestr(time_str, sizeof(time_str) - 1);
+        strncat(buffer, time_str, strlen(time_str));
+      }
+    }
+    catch(...) {
+      Assert(false);
+      return;
+    }
+
+    if (g_command_logprint) {
       switch (type) {
         case 1:
           WARNINGPRINTF(buffer);
           break;
         case 2:
           ERRORPRINTF(buffer);
+          break;
         default:
-          printf(buffer);
+          printf("%s"LF"", buffer);
+          break;
       }
     }
-    if (!g_command_log_active) return; //save log condition
+    strncat(buffer, LF, sizeof(LF)); //add wrap
+    if (!g_command_logactive) return; //save log condition
     int32_t length = static_cast<int32_t>(strlen(buffer));
     if (length <= 0) return;
     if (g_log_in_one_file) {
       //do nothing(one log file is not active in pap)
     }
-    log_lock_[log_id].lock();
+    log_lock_[logid].lock();
     try {
-      memcpy(log_cache_[log_id] + log_position_[log_id], buffer, length);
+      memcpy(log_cache_[logid] + log_position_[logid], buffer, length);
     }
     catch(...) {
       //do nogthing
     }
-    log_position_[log_id] += length;
-    log_lock_[log_id].unlock();
-    if (log_position_[log_id] > 
+    log_position_[logid] += length;
+    log_lock_[logid].unlock();
+    if (log_position_[logid] > 
         static_cast<int32_t>((kDefaultLogCacheSize * 2) / 3)) {
-      flush_log(log_id);
+      flush_log(logid);
     }
   __LEAVE_FUNCTION
 }
 
-void Log::get_log_file_name(enum_log_id log_id, char* file_name) {
+void Log::get_log_filename(logid_t logid, char* file_name) {
   __ENTER_FUNCTION
     if (g_time_manager) {
       snprintf(file_name,
                FILENAME_MAX - 1,
                "%s_%d_%d_%d.log",
-               g_log_file_name[log_id],
+               g_log_filename[logid],
                g_time_manager->get_year(),
                g_time_manager->get_month() + 1,
                g_time_manager->get_day());
@@ -287,21 +234,21 @@ void Log::get_log_file_name(enum_log_id log_id, char* file_name) {
       snprintf(file_name,
                FILENAME_MAX - 1,
                "%s_%d.log",
-               g_log_file_name[log_id],
+               g_log_filename[logid],
                day_time_);
     }
   __LEAVE_FUNCTION
 }
 
-void Log::get_log_file_name(const char* file_name_prefix, char* file_name) { 
-//remember the file_name_prefix is model name
+void Log::get_log_filename(const char* file_nameprefix, char* file_name) { 
+//remember the file_nameprefix is model name
   __ENTER_FUNCTION
      if (g_time_manager) {
       snprintf(file_name,
                FILENAME_MAX - 1,
                "%s/%s_%d_%d_%d.log", //structure BASE_SAVE_LOG_DIR/logfilename.log
                kBaseLogSaveDir,
-               file_name_prefix,
+               file_nameprefix,
                g_time_manager->get_year(),
                g_time_manager->get_month() + 1,
                g_time_manager->get_day());
@@ -310,139 +257,79 @@ void Log::get_log_file_name(const char* file_name_prefix, char* file_name) {
       snprintf(file_name,
                FILENAME_MAX - 1,
                "%s_%d.log",
-               file_name_prefix,
+               file_nameprefix,
                999999);
     }
    
   __LEAVE_FUNCTION
 }
 
-void Log::flush_log(enum_log_id log_id) {
+void Log::flush_log(logid_t logid) {
   __ENTER_FUNCTION
     char log_file_name[FILENAME_MAX];
     memset(log_file_name, '\0', sizeof(log_file_name));
-    get_log_file_name(log_id, log_file_name);
-    log_lock_[log_id].lock();
+    get_log_filename(logid, log_file_name);
+    log_lock_[logid].lock();
     try {
       FILE* fp;
       fp = fopen(log_file_name, "ab");
       if (fp) {
-        fwrite(log_cache_[log_id], 1, log_position_[log_id], fp);
+        fwrite(log_cache_[logid], 1, log_position_[logid], fp);
         fclose(fp);
       }
     }
     catch(...) {
       //do nothing
     }
-    log_lock_[log_id].unlock();
+    log_lock_[logid].unlock();
   __LEAVE_FUNCTION
 }
 
-void Log::flush_all_log() {
+void Log::flush_alllog() {
   __ENTER_FUNCTION
     int32_t i;
     for (i = 0; i < kLogFileCount; ++i) {
-      enum_log_id log_id = static_cast<enum_log_id>(i);
-      flush_log(log_id);
+      logid_t logid = static_cast<logid_t>(i);
+      flush_log(logid);
     }
-  __LEAVE_FUNCTION
-}
-
-void Log::log(const char* filename_prefix, const char* format, ...) {
-  __ENTER_FUNCTION
-    char buffer[2049];
-    memset(buffer, '\0', sizeof(buffer));
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256];
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-    }
-    catch (...) {
-      Assert(false);
-      return;
-    }
-    save_log<0>(filename_prefix, buffer);
-  __LEAVE_FUNCTION
-}
-
-void Log::warninglog(const char* filename_prefix, const char* format, ...) {
-  __ENTER_FUNCTION
-    char buffer[2049];
-    memset(buffer, '\0', sizeof(buffer));
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256];
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-    }
-    catch (...) {
-      Assert(false);
-      return;
-    }
-    save_log<1>(filename_prefix, buffer);
-  __LEAVE_FUNCTION
-}
-
-void Log::errorlog(const char* filename_prefix, const char* format, ...) {
-  __ENTER_FUNCTION
-    char buffer[2049];
-    memset(buffer, '\0', sizeof(buffer));
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256];
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_time_str(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-    }
-    catch (...) {
-      Assert(false);
-      return;
-    }
-    save_log<2>(filename_prefix, buffer);
   __LEAVE_FUNCTION
 }
 
 template <uint8_t type>
-void Log::save_log(const char* filename_prefix, const char* buffer) {
+void Log::slow_savelog(const char* filename_prefix, const char* format, ...) {
   __ENTER_FUNCTION
     g_log_lock.lock();
+    char buffer[2049];
+    memset(buffer, '\0', sizeof(buffer));
+    va_list argptr;
     try {
-      if (g_command_log_print) {
+      va_start(argptr, format);
+      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+      va_end(argptr);
+      if (g_time_manager) {
+        char time_str[256];
+        memset(time_str, '\0', sizeof(time_str));
+        get_log_timestr(time_str, sizeof(time_str) - 1);
+        strncat(buffer, time_str, strlen(time_str));
+      }
+ 
+      if (g_command_logprint) {
         switch (type) {
           case 1:
             WARNINGPRINTF(buffer);
             break;
           case 2:
             ERRORPRINTF(buffer);
+            break;
           default:
-            printf(buffer);
+            printf("%s"LF"", buffer);
         }
       }
-      if (!g_command_log_active) return;
+      strncat(buffer, LF, sizeof(LF)); //add wrap
+      if (!g_command_logactive) return;
       char log_file_name[FILENAME_MAX];
       memset(log_file_name, '\0', sizeof(log_file_name));
-      get_log_file_name(filename_prefix, log_file_name);
+      get_log_filename(filename_prefix, log_file_name);
       FILE* fp;
       fp = fopen(log_file_name, "ab");
       if (fp) {
