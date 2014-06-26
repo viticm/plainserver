@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#define LUA_LIB
 #include "luaextend.h"
 
 //---------------------------------------------------------------------------
@@ -176,7 +177,7 @@ int lua_getvalues_fromstack(lua_State* L, char * format, ...) {
   return  1;
 }
 
-LUA_API int lua_execute(lua_State *L) {
+int lua_execute(lua_State *L) {
     int status;
     status = lua_pcall(L, 0, LUA_MULTRET, 0);  /* call main */
     return status;
