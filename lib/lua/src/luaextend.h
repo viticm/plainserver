@@ -10,6 +10,7 @@
  */
 #ifndef luaextend_h
 #define luaextend_h
+
 #include "lua.h"
 #include "lauxlib.h"
 

@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES(baselib)
 
-SET(TF_CURRENT_BINARY_PATH_LIB "../static")
+SET(TF_CURRENT_BINARY_PATH_LIB "../lib")
 SET(SRC_LIST lvm.h
              ldebug.h
              lmem.c

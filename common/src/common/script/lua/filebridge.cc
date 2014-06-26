@@ -1,18 +1,36 @@
 #include "common/base/util.h"
 #include "common/base/string.h"
 #include "common/base/log.h"
-#include "common/script/lua/vm.h"
 #include "common/script/lua/filebridge.h"
+
+using namespace ps_common_base;
 
 namespace ps_common_script {
 
 namespace lua {
 
-FileBridge::FileBridge() {
+FileBridge::FileBridge(const char* rootpath, const char* workpath) {
   __ENTER_FUNCTION
     fp_ = NULL;
     length_ = 0;
     position_ = 0;
+    memset(rootpath_, 0, sizeof(rootpath_));
+    if (NULL == rootpath) {
+      string::safecopy(rootpath_, 
+                       SCRIPT_LUA_ROOT_PATH_DEFAULT, 
+                       sizeof(rootpath_));
+    }
+    else {
+      string::safecopy(rootpath_, rootpath, sizeof(rootpath_));
+    }
+    if (NULL == workpath) {
+      string::safecopy(workpath_,
+                       SCRIPT_LUA_WORK_PATH_DEFAULT,
+                       sizeof(workpath_));
+    }
+    else {
+      string::safecopy(workpath_, workpath, sizeof(workpath_));
+    }
   __LEAVE_FUNCTION
 }
 
@@ -24,17 +42,13 @@ FileBridge::~FileBridge() {
 
 bool FileBridge::open(const char* filename) {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     if (fp_) close();
     char filepath[FILENAME_MAX] = {0};
-    VM::get_fullpath(filepath, filename);
+    get_fullpath(filepath, filename, sizeof(filepath) - 1);
 #if __WINDOWS__
-    char* temppointer = filepath;
-    util::path_tounix(temppointer, sizeof(filepath) - 1);
+    util::path_tounix(filepath, sizeof(filepath) - 1);
     char casepath[FILENAME_MAX] = {0};
-    char rootpath[FILENAME_MAX] = {0};
-    VM::read_rootpath(rootpath);
-    string::safecopy(casepath, filepath, sizeof(casepath) - 1);
+    string::safecopy(casepath, filepath, sizeof(casepath));
     fp_ = fopen(casepath, "rb");
 #endif
     fp_ = fp_ ? fp_ : fopen(filepath, "rb");
@@ -109,6 +123,55 @@ uint64_t FileBridge::size() {
     return length_;
   __LEAVE_FUNCTION
     return 0;
+}
+
+void FileBridge::set_rootpath(const char* path) {
+  __ENTER_FUNCTION
+    string::safecopy(rootpath_, path, sizeof(rootpath_));
+  __LEAVE_FUNCTION
+}
+
+void FileBridge::set_workpath(const char* path) {
+  __ENTER_FUNCTION
+    string::safecopy(workpath_, path, sizeof(workpath_));
+  __LEAVE_FUNCTION
+}
+
+void FileBridge::get_fullpath(char* path, 
+                              const char* filename, 
+                              size_t length) {
+  __ENTER_FUNCTION
+    if (':' == filename[1]) {
+      string::safecopy(path, filename, length);
+    }
+    if ('\\' == filename[0] || '/' == filename[0]) {
+      string::safecopy(path, rootpath_, length);
+      strncat(path, filename, length - strlen(path));
+      return;
+    }
+#if __WINDOWS__
+    if (':' == workpath_[1]) {
+      string::safecopy(path, workpath_, length);
+      strncat(path, filename, length - strlen(path));
+      return;
+    }
+#endif 
+    string::safecopy(path, rootpath_);
+    if (workpath_ != '\\' && workpath_[0] != '/') {
+#if __WINDOWS__ /* { */
+      strncat(path, "\\", length - strlen(path)); 
+#elif __LINUX__ /* }{ */
+      strncat(path, "/", length - strlen(path)); 
+#endif /* } */
+    }
+    strncat(path, workpath_, length - strlen(path));
+    if ('.' == filename[0] && ('\\' == filename[1] || '/' == filename[1])) {
+      strncat(path, filename + 2, length - strlen(path));      
+    }
+    else {
+      strncat(path, filename, length - strlen(path));
+    }
+  __LEAVE_FUNCTION
 }
 
 } //namespace lua

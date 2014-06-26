@@ -214,6 +214,81 @@ char* safecopy(char* dest, const char* src, size_t size) {
     return NULL;
 }
 
+/**
+ * @desc this function can convert charset with diffrent
+ * @param from source charset(example: utf8)
+ * @param to destination charset
+ * @param save want save string
+ * @param savelen want save string length
+ * @param src want convert string
+ * @param srclen want convert string length
+ */
+int32_t charset_convert(const char* from, 
+                        const char* to, 
+                        char* save, 
+                        int32_t save_length, 
+                        const char* src, 
+                        int32_t src_length) {
+  __ENTER_FUNCTION
+    int32_t status = 0;
+    iconv_t cd;
+    const char *inbuf  = src;
+    char *outbuf       = save;
+    size_t outbufsize  = save_length;
+    size_t savesize    = 0;
+    size_t inbufsize   = src_length;
+    const char* inptr  = inbuf;
+    size_t insize      = inbufsize;
+    char* outptr       = outbuf;
+    size_t outsize     = outbufsize;
+
+    cd = iconv_open(to, from);
+    iconv(cd, NULL, NULL, NULL, NULL);
+    if (0 == inbufsize) {
+      status = -1;
+      goto done;
+    }
+    while (0 < insize) {
+      size_t res = iconv(cd, (const char**)&inptr, &insize, &outptr, &outsize);
+      if (outptr != outbuf) {
+        int32_t saved_errno = errno;
+        int32_t outsize = outptr - outbuf;
+        strncpy(save + savesize, outbuf, outsize);
+        errno = saved_errno;
+      }
+      if ((size_t)(-1) == res) {
+        if (EILSEQ == errno) {
+          int one = 1 ;
+          iconvctl(cd, ICONV_SET_DISCARD_ILSEQ, &one);
+          status = -3;
+        } 
+        else if (EINVAL == errno) {
+          if (0 == inbufsize) {
+            status = -4;
+            goto done;
+          } 
+          else {
+            break;
+          }
+        } 
+        else if (E2BIG == errno) {
+          status = -5;
+          goto done;
+        } 
+        else {
+          status = -6;
+          goto done;
+        }
+      }
+    }
+    status = strlen(save);
+    done:
+    iconv_close(cd);
+    return status;
+  __LEAVE_FUNCTION
+    return -1;
+}
+
 } //namespace string
 
 } //namespace ps_common_base

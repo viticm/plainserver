@@ -33,12 +33,6 @@ void simple_encrypt_decrypt(char* str,
                             uint32_t strlength, 
                             uint32_t key_begin = 0); //use first is encrypt 
                                                      //and next to decrypt
-int charset_convert(const char* from, 
-                    const char* to, 
-                    char* save, 
-                    int savelen, 
-                    const char* src, 
-                    int srclen) ;
 void password_swap_chars(char* str); //string will more than 32
 /**
  * 由byte类型获得单位大小字符串如：32bytes,32kb,32mb,32gb,32t
@@ -51,7 +45,7 @@ void get_sizestr(uint64_t size,
                  uint32_t length, 
                  int8_t type = -1);
 
-void path_tounix(char* buffer, uint8_t length);
+void path_tounix(char* buffer, uint16_t length);
 
 } //namespace util
 

@@ -20,7 +20,7 @@ namespace lua {
 class FileBridge {
 
  public:
-   FileBridge();
+   FileBridge(const char* rootpath = NULL, const char* workpath = NULL);
    ~FileBridge();
 
  public:
@@ -29,6 +29,11 @@ class FileBridge {
      kFileAccessModeCurrent,
      kFileAccessModeEnd
    };
+
+ public:
+   void set_rootpath(const char* path);
+   void set_workpath(const char* path);
+   void get_fullpath(char* path, const char* filename, size_t length);
    
  public:
    bool open(const char*);
@@ -43,6 +48,8 @@ class FileBridge {
    FILE* fp_;
    uint64_t length_;
    int64_t position_;
+   char rootpath_[FILENAME_MAX];
+   char workpath_[FILENAME_MAX];
 
 };
 

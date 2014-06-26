@@ -45,6 +45,13 @@ void decrypt(const char* in, char* out, int32_t out_length);
 
 char* safecopy(char* dest, const char* src, size_t size);
 
+int32_t charset_convert(const char* from, 
+                        const char* to, 
+                        char* save, 
+                        int32_t save_length, 
+                        const char* src, 
+                        int32_t src_length) ;
+
 }; //namespace string
 
 }; //namespace ps_common_base

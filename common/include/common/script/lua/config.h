@@ -13,4 +13,16 @@
 
 #include "common/script/config.h"
 
+#if __WINDOWS__
+#define SCIPRT_LUA_ROOT_PATH_DEFAULT "..\\..\\public\\data\\script"
+#define SCRIPT_LUA_WORK_PATH_DEFAULT "\\"
+#elif __LINUX__
+#define SCIPRT_LUA_ROOT_PATH_DEFAULT "../../public/data/script"
+#define SCRIPT_LUA_WORK_PATH_DEFAULT "/"
+#endif
+
+#define SCRIPT_LUA_STACK_STEP_MAX 48
+#define SCRIPT_LUA_STACK_FUNCTION_LENGTH_MAX 256
+#define SCRIPT_LUA_SCENE_MAX 4096
+
 #endif //PS_COMMON_SCRIPT_LUA_CONFIG_H_
