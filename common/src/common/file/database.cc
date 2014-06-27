@@ -1,7 +1,7 @@
 #include <map>
 #include <assert.h>
 #include <exception>
-#include "common/base/util.h"
+#include "common/base/string.h"
 #include "common/file/database.h"
 
 namespace ps_common_file {
@@ -259,6 +259,7 @@ bool Database::open_from_memory_text(const char* memory,
                                      const char* end, 
                                      const char* filename) {
   __ENTER_FUNCTION
+    using namespace ps_common_base;
     char line[(1024 * 10) + 1]; //long string
     memset(line, '\0', sizeof(line));
     register const char* _memory = memory;
@@ -322,21 +323,25 @@ bool Database::open_from_memory_text(const char* memory,
             break;
           }
           case kTypeString: {
-#if defined(UTF8)
+#ifdef FILE_DATABASE_CONVERT_GBK_TO_UTF8
             const char* value = result[i].c_str();
             //convert charset
-            char convert_str[1024] = {0};
+            //utf8 -> gbk 1.5multiple length
+            int32_t convert_strlength = strlen(value) * 2;
+            char* convert_str = new char[convert_strlength];
+            memset(convert_str, 0, convert_strlength);
             int32_t convert_result = 
-              ps_common_base::util::charset_convert("GBK",
-                                                     "UTF-8",
-                                                     convert_str,
-                                                     sizeof(convert_str) - 1,
-                                                     value,
-                                                     strlen(value));
+              string::charset_convert("GBK",
+                                      "UTF-8",
+                                      convert_str,
+                                      convert_strlength,
+                                      value,
+                                      strlen(value));
             if (convert_result > 0) {
-              value = static_cast<const char*>(convert_str);
-              result[i] = static_cast<std::string>(convert_str);
+              value = convert_str;
+              result[i] = convert_str;
             }
+            SAFE_DELETE_ARRAY(convert_str);
 #endif
             std::map<std::string, int32_t>::iterator it = 
               map_string_buffer.find(result[i]);

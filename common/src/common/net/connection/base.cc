@@ -66,7 +66,6 @@ Base::~Base() {
 
 bool Base::processinput() {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     bool result = false;
     if (isdisconnect()) return true;
     try {
@@ -78,10 +77,9 @@ bool Base::processinput() {
         socket_inputstream_->getsocket()->getlast_errormessage(
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
-        Log::save_log(g_kModelName,
-                      "[net](%d) connection::Base::processinput()"
+        SLOW_ERRORLOG(g_kModelName,
+                      "[net] (connection::Base::processinput)"
                       " socket_inputstream_->fill() result: %d %s",
-                      g_time_manager->tm_todword(), 
                       fillresult,
                       errormessage);
         result = false;
@@ -101,7 +99,6 @@ bool Base::processinput() {
 
 bool Base::processoutput() {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     bool result = false;
     if (isdisconnect()) return true;
     try {
@@ -113,10 +110,9 @@ bool Base::processoutput() {
         socket_inputstream_->getsocket()->getlast_errormessage(
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
-        Log::save_log(g_kModelName,
-                      "[net](%d) Base::processoutput()"
+        SLOW_ERRORLOG(g_kModelName,
+                      "[net] (Base::processoutput)"
                       " socket_outputstream_->flush() result: %d %s",
-                      g_time_manager->tm_todword(), 
                       flushresult,
                       errormessage);
         result = false;
@@ -257,12 +253,12 @@ bool Base::sendpacket(packet::Base* packet) {
 #if defined(_PS_SERVER)
       uint32_t after_writesize = socket_outputstream_->reallength();
       if (packet->getsize() != after_writesize - before_writesize - 6) {
-        g_log->fast_save_log(g_kModelSaveLogId,
-                             "[net] Base::sendpacket() size error"
-                             "id = %d(write: %d, should: %d)",
-                             pakcet->getid(),
-                             after_writesize - before_writesize - 6,
-                             pakcet->getsize());
+        FAST_ERRORLOG(g_kModelSaveLogId,
+                      "[net] (Base::sendpacket) size error"
+                      "id = %d(write: %d, should: %d)",
+                      pakcet->getid(),
+                      after_writesize - before_writesize - 6,
+                      pakcet->getsize());
       }
       if (kPacketIdSCCharacterIdle == packet->getid()) {
         //save heartbeat log

@@ -1,4 +1,5 @@
 #include <limits>
+#include <iconv.h>
 #include "common/base/string.h"
 #include "common/base/base64.hpp"
 

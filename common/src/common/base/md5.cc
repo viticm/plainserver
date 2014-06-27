@@ -56,7 +56,7 @@ documentation and/or software.
 #define S43 15
 #define S44 21
 
-namespace pap_common_base {
+namespace ps_common_base {
 
 ///////////////////////////////////////////////
 // F, G, H and I are basic MD5 functions.

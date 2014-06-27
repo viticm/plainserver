@@ -12,10 +12,19 @@
 #define PS_COMMON_FILE_DATABASE_H_
 
 #include "common/file/config.h"
+
+#undef max
+#undef min
+
 #if __LINUX__
 #include <ext/hash_map>
 #elif __WINDOWS__
 #include <hash_map>
+#endif
+
+#ifndef max
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
 namespace ps_common_file {

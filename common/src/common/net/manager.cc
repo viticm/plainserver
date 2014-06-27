@@ -9,10 +9,6 @@
 #if __WINDOWS__
 #pragma warning(disable : 4127) //why use it? for FD_* functions
 #endif
-#undef max
-#undef min
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
 
 ps_common_net::Manager* g_netmanager = NULL;
 
@@ -93,9 +89,9 @@ bool Manager::select() {
       Assert(result != SOCKET_ERROR);
     }
     catch(...) {
-      g_log->fast_save_log(kNetLogFile, 
-                           "[net]Manager::select have error, result: %d", 
-                           result);
+      FAST_ERRORLOG(kNetLogFile, 
+                    "[net] (Manager::select) have error, result: %d", 
+                    result);
     }
     return true;
   __LEAVE_FUNCTION
@@ -306,9 +302,9 @@ bool Manager::accept_newconnection() {
     catch(...) {
       step += 100000;
     }
-    g_log->fast_save_log(kNetLogFile,
-                         "[net]Manager::accept_newconnection(socketid: %d)",
-                         newconnection->getsocket()->getid());
+    FAST_ERRORLOG(kNetLogFile,
+                  "[net] (Manager::accept_newconnection) socketid: %d ",
+                  newconnection->getsocket()->getid());
     return true;
 EXCEPTION:
     newconnection->cleanup();
@@ -491,9 +487,9 @@ bool Manager::removeconnection(connection::Base* connection) {
     Assert(serverconnection != NULL);
     //second clean in connection pool, free to new connection
     serverconnection->freeown();
-    g_log->fast_save_log(kNetLogFile, 
-                         "[net]Manager::removeconnection(id: %d)", 
-                         connection->getid());
+    FAST_ERRORLOG(kNetLogFile, 
+                  "[net] (Manager::removeconnection) id: %d", 
+                  connection->getid());
     return true;
   __LEAVE_FUNCTION
     return false;

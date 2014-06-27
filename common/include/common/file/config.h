@@ -13,4 +13,7 @@
 
 #include "common/base/config.h"
 
+//定义此宏则文件数据库读取的字符串将从GBK转为UTF-8
+#define FILE_DATABASE_CONVERT_GBK_TO_UTF8
+
 #endif //PS_COMMON_FILE_CONFIG_H_

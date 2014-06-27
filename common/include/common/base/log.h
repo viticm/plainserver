@@ -77,14 +77,14 @@ class Log : public Singleton<Log> {
 };
 
 #if __LINUX__
-#define SaveErrorLog() (ps_common_base::Log::save_log( \
+#define SaveErrorLog() (SLOW_ERRORLOG( \
     "error", \
     "%s %d %s", \
     __FILE__, \
     __LINE__, \
     __PRETTY_FUNCTION__))
 #elif __WINDOWS__
-#define SaveErrorLog() (ps_common_base::Log::save_log( \
+#define SaveErrorLog() (SLOW_ERRORLOG( \
     "error", \
     "%s %d %s", \
     __FILE__, \
@@ -95,7 +95,7 @@ class Log : public Singleton<Log> {
 }; //namespace ps_common_base
 
 //log sytem macros
-#define LOGSYTEM_POINTER ps_common_base::Log::getsingleton_pointer()
+#define LOGSYSTEM_POINTER ps_common_base::Log::getsingleton_pointer()
 #define FAST_LOG LOGSYSTEM_POINTER->fast_savelog<0>
 #define FAST_WARNINGLOG LOGSYSTEM_POINTER->fast_savelog<1>
 #define FAST_ERRORLOG LOGSYSTEM_POINTER->fast_savelog<2>
