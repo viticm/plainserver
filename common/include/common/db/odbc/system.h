@@ -55,7 +55,7 @@ class System {
    bool result_;
    db_type_enum db_type_;
    dboption_type_t op_type_;
-   ODBCInterface* odbc_interface_;
+   Interface* odbc_interface_;
    db_query_t* get_internal_query();
    long_db_query_t* get_long_internal_query();
    int32_t get_internal_affect_count();

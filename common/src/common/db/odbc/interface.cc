@@ -36,7 +36,6 @@ bool Interface::connect(const char* connection_name,
                             const char* user,
                             const char* password) {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     close(); //first disconnect
     strncpy(connection_name_, connection_name, sizeof(connection_name_) - 1);
     strncpy(user_, user, sizeof(user_) - 1);
@@ -62,7 +61,9 @@ bool Interface::connect(const char* connection_name,
                "connection name: %s, connect user: %s", 
                connection_name_,
                user_);
-      Log::save_log("odbc_interface", "[odbc] connect failed, %s", log_buffer);
+      SLOW_ERRORLOG("odbc_interface", 
+                    "[db][odbc] (Interface::connect) failed, %s", 
+                    log_buffer);
       diag_state();
       return false;
     }
@@ -79,7 +80,6 @@ bool Interface::connect(const char* connection_name,
 
 bool Interface::connect() {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     close(); //first disconnect
 #ifdef MUST_CLOSE_HENV_HANDLE
     SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_henv_);
@@ -104,7 +104,9 @@ bool Interface::connect() {
                "connection name: %s connect user: %s", 
                connection_name_,
                user_); 
-      Log::save_log("odbc_interface", "[odbc] connect failed, %s", log_buffer);
+      SLOW_ERRORLOG("odbc_interface", 
+                    "[db][odbc] (Interface::connect) failed, %s", 
+                    log_buffer);
       diag_state();
       return false;
     }
@@ -175,7 +177,7 @@ bool Interface::execute() {
     }
     SQLRowCount(sql_hstmt_, &affect_count_);
     SQLNumResultCols(sql_hstmt_, &column_count_);
-    if (MAX_COLUMN < column_count_) return false;
+    if (COLUMN_MAX < column_count_) return false;
     if (0 >= affect_count_ && 0 >= column_count_) {
       clear();
       return true;
@@ -187,12 +189,12 @@ bool Interface::execute() {
                   column_index + 1, 
                   SQL_C_CHAR,
                   column_[column_index],
-                  MAX_COLUMN_BUFFER,
+                  COLUMN_BUFFER_MAX,
                   &column_locate_[column_index]);
       SQLDescribeCol(sql_hstmt_,
                      column_index + 1,
                      column_name_[column_index],
-                     MAX_COLUMN_NAME,
+                     COLUMN_MAX_NAME,
                      NULL,
                      NULL,
                      NULL,
@@ -232,7 +234,7 @@ bool Interface::long_execute() {
     }
     SQLRowCount(sql_hstmt_, &affect_count_);
     SQLNumResultCols(sql_hstmt_, &column_count_);
-    if (MAX_COLUMN < column_count_) return false;
+    if (COLUMN_MAX < column_count_) return false;
     if (0 >= affect_count_ && 0 >= column_count_) {
       clear();
       return true;
@@ -243,12 +245,12 @@ bool Interface::long_execute() {
                   column_index + 1, 
                   SQL_C_CHAR,
                   column_[column_index],
-                  MAX_COLUMN_BUFFER,
+                  COLUMN_BUFFER_MAX,
                   &column_locate_[column_index]);
       SQLDescribeCol(sql_hstmt_,
                      column_index + 1,
                      column_name_[column_index],
-                     MAX_COLUMN_NAME,
+                     COLUMN_MAX_NAME,
                      NULL,
                      NULL,
                      NULL,
@@ -301,7 +303,7 @@ bool Interface::fetch() {
                                   static_cast<SQLUSMALLINT>(column_index + 1), 
                                   static_cast<SQLUSMALLINT>(SQL_C_CHAR), 
                                   column_[column_index] + get_total, 
-                                  MAX_COLUMN_BUFFER, 
+                                  COLUMN_BUFFER_MAX, 
                                   &data_length)) != SQL_NO_DATA) {
         break;
       }
@@ -327,7 +329,7 @@ bool Interface::long_fetch() {
                                   static_cast<SQLUSMALLINT>(column_index + 1), 
                                   static_cast<SQLUSMALLINT>(SQL_C_CHAR), 
                                   column_[column_index] + get_total, 
-                                  MAX_LONG_COLUMN_BUFFER, 
+                                  LONG_COLUMN_BUFFER_MAX, 
                                   &data_length)) != SQL_NO_DATA) {
         break;
       }
@@ -414,11 +416,11 @@ void Interface::get_string(int32_t column_index,
       Assert(false);
     }
     else {
-      if (MAX_COLUMN_BUFFER > buffer_length) {
+      if (COLUMN_BUFFER_MAX > buffer_length) {
         strncpy(buffer, column_[column_index - 1], buffer_length);
       }
       else {
-        strncpy(buffer, column_[column_index - 1], MAX_COLUMN_BUFFER);
+        strncpy(buffer, column_[column_index - 1], COLUMN_BUFFER_MAX);
       }
       error_code = QUERY_OK;
     }
@@ -442,17 +444,17 @@ void Interface::get_field(int32_t column_index,
       Assert(false);
     }
     else {
-      if (MAX_COLUMN_BUFFER > buffer_length) {
+      if (COLUMN_BUFFER_MAX > buffer_length) {
         uint32_t out_length = 0;
-        pap_common_base::util::string_tobinary(column_[column_index - 1], 
-                                               MAX_COLUMN_BUFFER, 
-                                               buffer, 
-                                               buffer_length, 
-                                               out_length);
+        ps_common_base::util::string_tobinary(column_[column_index - 1], 
+                                              COLUMN_BUFFER_MAX, 
+                                              buffer, 
+                                              buffer_length, 
+                                              out_length);
         Assert(static_cast<int32_t>(out_length) <= buffer_length);
       }
       else {
-        memcpy(buffer, column_[column_index - 1], MAX_COLUMN_BUFFER);
+        memcpy(buffer, column_[column_index - 1], COLUMN_BUFFER_MAX);
         Assert(false);
       }
       error_code = QUERY_OK;
@@ -477,17 +479,17 @@ void Interface::get_long_field(int32_t column_index,
       Assert(false);
     }
     else {
-      if (MAX_COLUMN_BUFFER > buffer_length) {
+      if (COLUMN_BUFFER_MAX > buffer_length) {
         uint32_t out_length = 0;
-        pap_common_base::util::string_tobinary(column_[column_index - 1], 
-                                               MAX_LONG_COLUMN_BUFFER, 
-                                               buffer, 
-                                               buffer_length, 
-                                               out_length);
+        ps_common_base::util::string_tobinary(column_[column_index - 1], 
+                                              LONG_COLUMN_BUFFER_MAX, 
+                                              buffer, 
+                                              buffer_length, 
+                                              out_length);
         Assert(static_cast<int32_t>(out_length) <= buffer_length);
       }
       else {
-        memcpy(buffer, column_[column_index - 1], MAX_LONG_COLUMN_BUFFER);
+        memcpy(buffer, column_[column_index - 1], LONG_COLUMN_BUFFER_MAX);
         Assert(false);
       }
       error_code = QUERY_OK;
@@ -501,7 +503,7 @@ void Interface::diag_state() {
     SQLINTEGER native_error;
     SQLCHAR sql_state[6];
     SQLSMALLINT msg_length;
-    memset(error_message_, 0, MAX_ERROR_MESSAGE_LENGTH);
+    memset(error_message_, 0, ERROR_MESSAGE_LENGTH_MAX);
     while ((result_ = SQLGetDiagRec(SQL_HANDLE_DBC, 
                                     sql_hdbc_,
                                     static_cast<SQLUSMALLINT>(j), 
@@ -512,7 +514,7 @@ void Interface::diag_state() {
                                     &msg_length)) != SQL_NO_DATA) {
       ++j;
     }
-    error_message_[MAX_ERROR_MESSAGE_LENGTH - 1] = '\0';
+    error_message_[ERROR_MESSAGE_LENGTH_MAX - 1] = '\0';
     if (0 == strlen(reinterpret_cast<const char*>(error_message_))) {
       result_ = SQLError(sql_henv_,
                          sql_hdbc_,
@@ -552,7 +554,7 @@ void Interface::diag_state_ex() {
     SQLINTEGER native_error;
     SQLCHAR sql_state[6];
     SQLSMALLINT msg_length;
-    memset(error_message_, 0, MAX_ERROR_MESSAGE_LENGTH);
+    memset(error_message_, 0, ERROR_MESSAGE_LENGTH_MAX);
     while ((result_ = SQLGetDiagRec(SQL_HANDLE_DBC, 
                                     sql_hdbc_,
                                     static_cast<SQLUSMALLINT>(j), 
@@ -563,7 +565,7 @@ void Interface::diag_state_ex() {
                                     &msg_length)) != SQL_NO_DATA) {
       ++j;
     }
-    error_message_[MAX_ERROR_MESSAGE_LENGTH - 1] = '\0';
+    error_message_[ERROR_MESSAGE_LENGTH_MAX - 1] = '\0';
     if (0 == strlen(reinterpret_cast<const char*>(error_message_))) {
       result_ = SQLError(sql_henv_,
                          sql_hdbc_,
@@ -648,7 +650,7 @@ void Interface::dump(int32_t column_index) {
     FILE* f = fopen("./Log/field", "a");
     if (f) {
       fwrite("begin", 1, 5, f);
-      fwrite(column_[column_index - 1], 1, MAX_COLUMN_BUFFER, f);
+      fwrite(column_[column_index - 1], 1, COLUMN_BUFFER_MAX, f);
       fclose(f);
     }
   __LEAVE_FUNCTION

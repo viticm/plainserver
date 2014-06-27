@@ -5,16 +5,14 @@
  * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
  * @user viticm<viticm.ti@gmail.com>
- * @date 2014/06/25 19:04
- * @uses script lua module config file
+ * @date 2014/06/27 14:56
+ * @uses script cache module config
  */
-#ifndef PS_COMMON_SCRIPT_LUA_CONFIG_H_
-#define PS_COMMON_SCRIPT_LUA_CONFIG_H_
+#ifndef PS_COMMON_SCRIPT_CACHE_CONFIG_H_
+#define PS_COMMON_SCRIPT_CACHE_CONFIG_H_
 
 #include "common/script/config.h"
 
-#define SCRIPT_LUA_STACK_STEP_MAX 48
-#define SCRIPT_LUA_STACK_FUNCTION_LENGTH_MAX 256
-#define SCRIPT_LUA_SCENE_MAX 4096
+#define SCRIPT_CACHE_TABLE_DATA_MAX (1024*8)
 
-#endif //PS_COMMON_SCRIPT_LUA_CONFIG_H_
+#endif //PS_COMMON_SCRIPT_CACHE_CONFIG_H_

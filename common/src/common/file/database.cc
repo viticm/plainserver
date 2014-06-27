@@ -233,7 +233,9 @@ const char* Database::get_line_from_memory(char* str,
     return NULL;
 }
 
-bool Database::field_equal(field_type_enum type, const field_data &a, const field_data &b) {
+bool Database::field_equal(field_type_enum type, 
+                           const field_data &a, 
+                           const field_data &b) {
   __ENTER_FUNCTION
     bool result = false;
     if (kTypeInt == type) {

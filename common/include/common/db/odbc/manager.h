@@ -28,12 +28,12 @@ class Manager : public ps_common_base::Singleton<Manager> {
    Manager& getsingleton();
    Manager* getsingleton_pointer();
    bool init(db_type_enum db_type = kAllDatabase);
-   ODBCInterface* get_interface(db_type_enum db_type);
+   Interface* get_interface(db_type_enum db_type);
 
  private:
    db_type_enum db_type_;
-   ODBCInterface* character_interface_;
-   ODBCInterface* user_interface_;
+   Interface* character_interface_;
+   Interface* user_interface_;
 };
 
 }; //namespace odbc

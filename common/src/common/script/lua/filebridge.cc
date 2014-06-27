@@ -17,7 +17,7 @@ FileBridge::FileBridge(const char* rootpath, const char* workpath) {
     memset(rootpath_, 0, sizeof(rootpath_));
     if (NULL == rootpath) {
       string::safecopy(rootpath_, 
-                       SCRIPT_LUA_ROOT_PATH_DEFAULT, 
+                       SCRIPT_ROOT_PATH_DEFAULT, 
                        sizeof(rootpath_));
     }
     else {
@@ -25,7 +25,7 @@ FileBridge::FileBridge(const char* rootpath, const char* workpath) {
     }
     if (NULL == workpath) {
       string::safecopy(workpath_,
-                       SCRIPT_LUA_WORK_PATH_DEFAULT,
+                       SCRIPT_WORK_PATH_DEFAULT,
                        sizeof(workpath_));
     }
     else {

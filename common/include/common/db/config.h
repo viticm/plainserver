@@ -14,6 +14,10 @@
 #include "common/base/config.h"
 #define SQL_LENGTH_MAX 4096
 #define LONG_SQL_LENGTH_MAX 204800
+#define DB_CONNECTION_NAME_LENGTH 128 
+#define DB_DBNAME_LENGTH 128
+#define DB_USER_NAME_LENGTH 32
+#define DB_PASSWORD_LENGTH 32
 
 struct db_query_t {
   char sql_str_[SQL_LENGTH_MAX];

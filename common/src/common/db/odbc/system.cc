@@ -58,7 +58,7 @@ bool System::check_db_connect() {
     if (!odbc_interface_->is_connected()) {
       int i;
       for (i = 0; i <5; ++i) {
-        pap_common_base::util::sleep(5000);
+        ps_common_base::util::sleep(5000);
         if (odbc_interface_->connect()) {
           return true;
         }

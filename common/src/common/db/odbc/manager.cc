@@ -5,7 +5,7 @@ namespace ps_common_db {
 
 namespace odbc {
 
-template<> Manager* Singleton<Manager>::singleton_ = NULL;
+template<> Manager *ps_common_base::Singleton<Manager>::singleton_ = NULL;
 
 Manager* Manager::getsingleton_pointer() {
   return singleton_;
@@ -33,7 +33,6 @@ Manager::~Manager() {
 
 bool Manager::init(db_type_enum db_type) {
   __ENTER_FUNCTION
-    using namespace ps_common_base;
     bool connected = false;
     db_type_ = db_type;
     char host[HOST_LENGTH];
@@ -44,7 +43,7 @@ bool Manager::init(db_type_enum db_type) {
                                        //not encrypt password
     if (kAllDatabase == db_type_ || kCharacterDatabase == db_type_) {
       //init all variable in first(character db)
-      character_interface_ = new ODBCInterface();
+      character_interface_ = new Interface();
       memset(host, 0, sizeof(host));
       port = 3306; //default mysql port
       memset(connection_name, 0, sizeof(connection_name));
@@ -85,7 +84,7 @@ bool Manager::init(db_type_enum db_type) {
                                                 user, 
                                                 password);
       if (!connected) {
-        Log::save_log(
+        SLOW_ERRORLOG(
             "dbmanager", 
             "character_interface_->connect()...get error: %s, db_type: %d", 
             character_interface_->get_error_message(), 
@@ -95,7 +94,7 @@ bool Manager::init(db_type_enum db_type) {
 
     if (kAllDatabase == db_type_ || kUserDatabase == db_type_) {
       //init all variable in first(user db)
-      user_interface_ = new ODBCInterface();
+      user_interface_ = new Interface();
       memset(host, 0, HOST_LENGTH);
       port = 3306; //default mysql port
       memset(connection_name, 0, sizeof(connection_name));
@@ -120,7 +119,7 @@ bool Manager::init(db_type_enum db_type) {
       Assert(user_interface_); //safe code
       connected = user_interface_->connect(connection_name, user, password);
       if (!connected) {
-        Log::save_log(
+        SLOW_ERRORLOG(
             "dbmanager", 
             "character_interface_->connect()...get error: %s, db_type: %d", 
             user_interface_->get_error_message(), 
@@ -132,9 +131,9 @@ bool Manager::init(db_type_enum db_type) {
     return false;
 }
 
-ODBCInterface* Manager::get_interface(db_type_enum db_type) {
+Interface* Manager::get_interface(db_type_enum db_type) {
   __ENTER_FUNCTION
-    ODBCInterface* odbc_interface;
+    Interface* odbc_interface = NULL;
     switch(db_type) {
       case kCharacterDatabase: {
         odbc_interface = character_interface_;
