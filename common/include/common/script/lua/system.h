@@ -7,6 +7,7 @@
  * @user viticm<viticm.ti@gmail.com>
  * @date 2014/06/26 16:48
  * @uses script lua module system class(script interface)
+ *       lua脚本系统基础接口，如需扩展，继承该类
  */
 #ifndef PS_COMMON_SCRIPT_LUA_SYSTEM_H_
 #define PS_COMMON_SCRIPT_LUA_SYSTEM_H_
@@ -43,19 +44,18 @@ class System : public ps_common_base::Singleton<System> {
    void register_function();
    bool find_function(lua_State *L, const char *name);
    bool verify_function(lua_State *L, const char **names);
-   void enter_runstep(int16_t sceneid, 
-                      int32_t scriptid, 
+   void enter_runstep(int32_t scriptid, 
                       const char* function_name);
-   void leave_runstep(int16_t sceneid, 
-                      int32_t scriptid, 
+   void leave_runstep(int32_t scriptid, 
                       const char* function_name);
-   bool reloadscript(int16_t sceneid, int32_t scriptid);
    bool reloadscript(int32_t scriptid);
    void *getscript_byid(int32_t scriptid);
    bool addscript(int32_t scriptid, void *data);
 
  public:
-   bool lua_scriptload(const char *luascript);
+   bool loadscript(const char *filename);
+   static int32_t call_noclosure(lua_State *L);
+   void set_globalfile(const char *filename);
 
  public:
    static bool check_paramnumber(lua_State *L, int32_t count);
@@ -70,44 +70,37 @@ class System : public ps_common_base::Singleton<System> {
    static void check_scriptvalid(void *file, 
                                  int32_t scriptid, 
                                  const char *function_name);
-   static void dumpstack();
+   //static void dumpstack();
 
  public:
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
                               int64_t param2);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
                               int64_t param2,
                               int64_t param3);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
                               int64_t param2,
                               int64_t param3,
                               int64_t param4);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
@@ -115,8 +108,7 @@ class System : public ps_common_base::Singleton<System> {
                               int64_t param3,
                               int64_t param4,
                               int64_t param5);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
@@ -125,8 +117,7 @@ class System : public ps_common_base::Singleton<System> {
                               int64_t param4,
                               int64_t param5,
                               int64_t param6);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
@@ -136,70 +127,59 @@ class System : public ps_common_base::Singleton<System> {
                               int64_t param5,
                               int64_t param6,
                               int64_t param7);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
                               int64_t param2,
                               float param3,
                               float param4);
-   int64_t run_scriptfunction(int16_t sceneid, 
-                              int32_t scriptid, 
+   int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
                               int64_t param2,
                               const char *param3,
                               const char *param4);
+
  public:
    const char *get_rootpath();
 
  protected:
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
-                            const char *function_name);
-   int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
-                            int64_t param0);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
-                            int64_t param1);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
-                            int64_t param2);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
                             int64_t param2,
-                            int64_t param3);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
                             int64_t param2,
                             int64_t param3,
-                            int64_t param4);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
                             int64_t param2,
                             int64_t param3,
                             int64_t param4,
-                            int64_t param5);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
@@ -207,9 +187,8 @@ class System : public ps_common_base::Singleton<System> {
                             int64_t param3,
                             int64_t param4,
                             int64_t param5,
-                            int64_t param6);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
@@ -218,29 +197,40 @@ class System : public ps_common_base::Singleton<System> {
                             int64_t param4,
                             int64_t param5,
                             int64_t param6,
-                            int64_t param7);
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
                             int64_t param2,
-                            float param3);
+                            int64_t param3,
+                            int64_t param4,
+                            int64_t param5,
+                            int64_t param6,
+                            int64_t param7,
+                            bool load = true);
    int64_t run_filefunction(const char *filename, 
-                            int32_t scriptid, 
+                            const char *function_name,
+                            int64_t param0,
+                            int64_t param1,
+                            int64_t param2,
+                            float param3,
+                            bool load = true);
+   int64_t run_filefunction(const char *filename, 
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
                             const char *param2,
-                            const char *param3);
+                            const char *param3,
+                            bool load = true);
 
  private:
    VM VM_;
    ps_common_base::hashmap::Template<int32_t, void *> script_loaded_;
+   global_filename_[FILENAME_MAX];
 
 };
   
-int32_t call_scriptfunction(lua_State *L);
 
 };
 

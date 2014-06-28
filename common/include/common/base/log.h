@@ -24,6 +24,7 @@ typedef enum {
   kCenterLogFile = 5,
   kServerLogFile = 6,
   kNetLogFile = 7,
+  kFunctionLogFile = 8,
   kLogFileCount,
 } logid_t;
 

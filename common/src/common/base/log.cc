@@ -19,6 +19,7 @@ const char* g_log_filename[] = {
   "./log/center", //kCenterLogFile
   "./log/server", //kServerLogFile
   "./log/net", //kNetLogFile
+  "./log/function", //kFunctionLogFile
   '\0',
 };
 
