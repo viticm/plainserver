@@ -11,22 +11,23 @@
 #ifndef PS_COMMON_SCRIPT_LUA_SYSTEM_H_
 #define PS_COMMON_SCRIPT_LUA_SYSTEM_H_
 
-#include "coomon/base/singleton.h"
+#include "common/script/lua/config.h"
+#include "common/base/singleton.h"
 #include "common/script/lua/interface.h"
 
 namespace ps_common_script {
 
 namespace lua {
 
-class System : public Interface, ps_common_base::Singleton<System> {
+class System : public ps_common_base::Singleton<System>, Interface {
 
  public:
    System();
    ~System();
 
  public:
-   static Interface *getsingleton_pointer();
-   static Interface &getsingleton();
+   static System *getsingleton_pointer();
+   static System &getsingleton();
 
  public:
    static int32_t call_noclosure(lua_State *L);

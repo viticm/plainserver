@@ -462,7 +462,7 @@ int64_t Ini::read_int64(const char* section, const char* key) {
     char* str = readstring(data_index);
     int64_t result = ERROR_DATA;
     char* end_convert = NULL;
-    result = strtol(str, &end_convert, 10);
+    result = strtoint64(str, &end_convert, 10);
     return result;
   __LEAVE_FUNCTION
     return ERROR_DATA;
@@ -476,7 +476,7 @@ bool Ini::read_exist_int64(const char* section,
     int32_t data_index = find_key_index(section_index, key);
     char* str = readstring(data_index);
     char* end_convert = NULL;
-    result = strtol(str, &end_convert, 10);
+    result = strtoint64(str, &end_convert, 10);
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -507,7 +507,7 @@ int64_t Ini::read_int64(const char* section, int32_t line) { //read in line
         ++position;
         char* str = readstring(position);
         char* end_convert = NULL;
-        result = strtol(str, &end_convert, 10);
+        result = strtoint64(str, &end_convert, 10);
         break;
       }
       else if ('\r' == data_info_[position] ||

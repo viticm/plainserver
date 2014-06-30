@@ -55,4 +55,7 @@ class Manager : public ps_common_base::Singleton<Manager> {
 
 }; //namespace ps_common_script
 
+#define SCRIPT_CACHE_MANAGER_POINTER \
+ps_common_script::cache::Manager::getsingleton_pointer()
+
 #endif //PS_COMMON_SCRIPT_CACHE_MANAGER_H_

@@ -156,8 +156,8 @@ void FileBridge::get_fullpath(char* path,
       return;
     }
 #endif 
-    string::safecopy(path, rootpath_);
-    if (workpath_ != '\\' && workpath_[0] != '/') {
+    string::safecopy(path, rootpath_, length);
+    if (workpath_[0] != '\\' && workpath_[0] != '/') {
 #if __WINDOWS__ /* { */
       strncat(path, "\\", length - strlen(path)); 
 #elif __LINUX__ /* }{ */

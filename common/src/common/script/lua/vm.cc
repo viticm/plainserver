@@ -472,12 +472,16 @@ bool VM::callfunction(const char *name,
     return false;
 }
 
-bool VM::init() {
+bool VM::init(int32_t stacksize) {
   __ENTER_FUNCTION
     if (!lua_state_) {
       lua_state_ = luaL_newstate();
       if (!lua_state_) {
         on_scripterror(kErrorCodeCreate);
+        return false;
+      }
+      if (lua_checkstack(lua_state_, stacksize) != 0) {
+        on_scripterror(kErrorCodeResize);
         return false;
       }
     }

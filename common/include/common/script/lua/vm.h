@@ -38,10 +38,14 @@ class VM {
      kErrorCodeNotString = 6,
      kErrorCodeNotTable = 7,
      kErrorCodeStateIsNil = 8,
+     kErrorCodeResize = 9,
    } errorcode_t;
 
  public:
-   bool init();
+   lua_State *lua_state_;
+
+ public:
+   bool init(int32_t size = 0);
    void release();
    bool register_function(const char *name, void *pointer);
    bool load(const char *filename);
@@ -115,7 +119,6 @@ class VM {
    void on_scripterror(int32_t, int32_t);
 
  private:
-   lua_State *lua_state_;
    FileBridge filebridge_;
 
 };

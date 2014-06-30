@@ -1,3 +1,4 @@
+#include "common/base/log.h"
 #include "common/script/lua/system.h"
 
 namespace ps_common_script {
@@ -89,7 +90,7 @@ int32_t System::call_noclosure(lua_State *L) {
         char *functionname_x_pointer = functionname_x;
         mark_scriptname(L, filename);
         if (!SCRIPT_LUASYSTEM_POINTER->verify_function(
-              L, &functionname_x_pointer)) {
+              L, (const char **)&functionname_x_pointer)) {
           FAST_ERRORLOG(kErrorLogFile,
                         "[script][lua] (Interface::call_noclosure)"
                         " SCRIPT_LUASYSTEM_POINTER->verify_function(%s) error",
@@ -101,7 +102,7 @@ int32_t System::call_noclosure(lua_State *L) {
         try {
           lua_getglobal(L, functionname_x_pointer);
           int32_t paramindex_begin = 3;
-          for (int32_t index = paramindex_begin; i < argc; ++index) {
+          for (int32_t index = paramindex_begin; index < argc; ++index) {
             switch (lua_type(L, index)) {
               case LUA_TUSERDATA:
                 Assert(false);

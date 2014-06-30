@@ -1,4 +1,5 @@
 #include "common/base/string.h"
+#include "common/base/log.h"
 #include "common/script/cache/manager.h"
 #include "common/script/lua/interface.h"
 
@@ -68,8 +69,8 @@ bool Interface::verify_function(lua_State *L, const char **functionname) {
   __ENTER_FUNCTION
     if (!find_function(L, *functionname)) {
 #ifdef LUA_DISABLE_VERIFYFUNCTION /* { */
-      char *src = strchr(*functionname, '_') + 1;
-      memmove(*functionname, src, strlen(src) + 1);
+      const char *src = strchr(*functionname, '_') + 1;
+      memmove(const_cast<char *>(*functionname), src, strlen(src) + 1);
       if (!find_function(L, *functionname)) {
 #ifdef _DEBUG
         char buffer[256] = {0};
@@ -128,6 +129,16 @@ int64_t Interface::run_filefunction(const char *filename,
     return _result;
   __LEAVE_FUNCTION
     return 0;
+}
+
+
+cache::Base *getscript_filedata(int32_t scriptid) {
+  __ENTER_FUNCTION
+    cache::Base *filedata = NULL;
+    filedata = SCRIPT_CACHE_MANAGER_POINTER->get_filedata(scriptid);
+    return filedata;
+  __LEAVE_FUNCTION
+    return NULL;
 }
 
 int64_t Interface::run_filefunction(const char *filename, 
@@ -467,7 +478,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -483,7 +495,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -524,7 +536,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -540,7 +553,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -586,7 +599,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -602,7 +616,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -651,7 +665,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -667,7 +682,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -719,7 +734,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -735,7 +751,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -790,7 +806,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -806,7 +823,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -864,7 +881,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -880,7 +898,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -941,7 +959,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -957,7 +976,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -1021,7 +1040,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -1037,7 +1057,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -1099,7 +1119,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -1115,7 +1136,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};
@@ -1169,7 +1190,8 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     enter_runstep(scriptid, functionname);
     //取得脚本载入状态
     bool loaded = false;
-    cache::Base cachedata = reinterpret_cast<Base *>(getscript_byid(scriptid));
+    cache::Base *cachedata = 
+      reinterpret_cast<cache::Base *>(getscript_byid(scriptid));
     if (NULL == cachedata) {
       cachedata = getscript_filedata(scriptid);
       script_loaded_.add(scriptid, cachedata);
@@ -1185,7 +1207,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
     //载入成功
     const char *filename = cachedata->get_filename();
     if (NULL == filename) {
-      leave_runstep(filename);
+      leave_runstep(scriptid, functionname);
       return 0;
     }
     char functionname_x[128] = {0};

@@ -80,7 +80,7 @@ bool Manager::init(const char *filename, bool force_arraymode) {
       if (!fp) {
         SLOW_ERRORLOG("scripterror",
                       "[script][cache] (Manager::init) script file [%d:%s]"
-                      "not exist!",
+                      " not exist!",
                       id,
                       _filename);
       }

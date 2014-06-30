@@ -110,9 +110,15 @@ typedef int16_t connectionid_t;
 #ifndef vsnprintf
 #define vsnprintf _vsnprintf
 #endif
+#define strtoint64(pointer,endpointer,base) \
+  _strtoi64(pointer,endpointer,base)
+#define strtouint64(pointer,endpointer,base) \
+  _strtoui64(pointer,endpointer,base)
 #elif __LINUX__
 #ifndef stricmp
 #define stricmp strcasecmp
+#define strtoint64(pointer,endpointer,base) strtoll(pointer,endpointer,base)
+#define strtouint64(pointer,endpointer,base) strtoull(pointer,endpointer,base) 
 #endif
 #endif
 

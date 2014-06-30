@@ -14,6 +14,7 @@
 
 #include "common/script/lua/config.h"
 #include "common/base/hashmap/template.h"
+#include "common/script/cache/base.h" 
 #include "common/script/lua/vm.h"
 #include "common/script/lua/stack.h"
 
@@ -47,6 +48,7 @@ class Interface {
    bool reloadscript(int32_t scriptid);
    void *getscript_byid(int32_t scriptid);
    bool addscript(int32_t scriptid, void *data);
+   static cache::Base *getscript_filedata(int32_t scriptid);
 
  public:
    bool loadscript(const char *filename);
@@ -126,16 +128,14 @@ class Interface {
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
-                              int64_t param2,
-                              float param3,
-                              float param4);
+                              float param2,
+                              float param3);
    int64_t run_scriptfunction(int32_t scriptid, 
                               const char *function_name,
                               int64_t param0,
                               int64_t param1,
-                              int64_t param2,
-                              const char *param3,
-                              const char *param4);
+                              const char *param2,
+                              const char *param3);
 
  public:
    const char *get_rootpath();
@@ -208,7 +208,7 @@ class Interface {
                             const char *function_name,
                             int64_t param0,
                             int64_t param1,
-                            int64_t param2,
+                            float param2,
                             float param3,
                             bool load = true);
    int64_t run_filefunction(const char *filename, 
@@ -222,7 +222,7 @@ class Interface {
  private:
    VM VM_;
    ps_common_base::hashmap::Template<int32_t, void *> script_loaded_;
-   global_filename_[FILENAME_MAX];
+   char global_filename_[FILENAME_MAX];
 
 };
   
