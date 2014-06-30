@@ -33,8 +33,8 @@ Interface::~Interface() {
 }
 
 bool Interface::connect(const char* connection_name,
-                            const char* user,
-                            const char* password) {
+                        const char* user,
+                        const char* password) {
   __ENTER_FUNCTION
     close(); //first disconnect
     strncpy(connection_name_, connection_name, sizeof(connection_name_) - 1);

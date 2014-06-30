@@ -5,27 +5,23 @@ namespace ps_common_net {
 namespace connection {
 
 Manager::Manager() {
-  count_ = 0;
-  uint16_t i;
-  for (i = 0; i < NET_CONNECTION_MAX; ++i) {
-    connection_idset_[i] = ID_INVALID;
-  }
+  //do nothing  
 }
 
 Manager::~Manager() {
   __ENTER_FUNCTION
-    cleanup();
+    SAFE_DELETE_ARRAY(connection_idset_);
   __LEAVE_FUNCTION
 }
 
-void Manager::cleanup() {
-  count_ = 0;
-  uint16_t i;
-  //for (i = 0; i < sizeof(connectionids_); ++i) {
-  //上面的注释是一个错误的用法，它代表数组的大小，却不是数组的容量
-  for (i = 0; i < NET_CONNECTION_MAX; ++i) {
-    connection_idset_[i] = ID_INVALID;
-  }
+void Manager::init(uint16_t maxcount) {
+  __ENTER_FUNCTION
+    count_ = 0;
+    maxcount_ = maxcount;
+    connection_idset_ = new int16_t[maxcount_];
+    Assert(connection_idset_);
+    memset(connection_idset_, 0, maxcount_);
+  __ENTER_FUNCTION
 }
 
 bool Manager::heartbeat(uint32_t time) {
@@ -44,7 +40,7 @@ bool Manager::add(Base* connection) {
       connection_idset_[count_] = connection->getid();
       connection->set_managerid(count_);
       ++count_;
-      Assert(count_ < NET_CONNECTION_MAX);
+      Assert(count_ < maxcount_);
     }
     else {
       Assert(false);

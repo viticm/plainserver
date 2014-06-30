@@ -14,25 +14,27 @@
 
 #include "common/base/singleton.h"
 #include "common/sys/thread.h"
+#include "common/net/connection/pool.h"
 #include "common/net/connection/manager.h"
 #include "common/net/connection/server.h"
 #include "common/net/socket/server.h"
 
 namespace ps_common_net {
 
-class Manager : public ps_common_base::Singleton<Manager>, 
-  connection::Manager {
+class Manager : public connection::Manager {
 
  public:
    Manager(uint16_t port = 0);
    ~Manager();
- 
+
+/**
  public:
    static Manager* getsingleton_pointer();
    static Manager& getsingleton();
+**/
 
  public:
-   bool init(); //初始化
+   bool init(uint16_t connectionmax = NET_CONNECTION_MAX); //初始化
    bool select(); //网络侦测
    bool processinput(); //数据接收接口
    bool processoutput(); //数据发送接口
@@ -63,12 +65,14 @@ class Manager : public ps_common_base::Singleton<Manager>,
    void set_onestep_accept(int32_t count);
    uint64_t get_send_bytes() const;
    uint64_t get_receive_bytes() const;
+   uint16_t get_listenport() const;
+   uint16_t get_connectionmax() const;
 
  public:
    uint64_t threadid_;
-   int16_t serverhash_[NET_OVER_SERVER_MAX];
+   int16_t serverhash_[NET_OVER_SERVER_MAX]; //服务器连接ID池
 
- private:
+ protected:
    //用于侦听的服务器Socket
    socket::Server* serversocket_;
    //用于侦听的服务器SOCKET句柄值（此数据即serversocket_内拥有的SOCKET句柄值）
@@ -84,6 +88,7 @@ class Manager : public ps_common_base::Singleton<Manager>,
    fd_set exceptfds_[kSelectMax];
    timeval timeout_[kSelectMax];
    int32_t listenport_;
+   uint16_t connectionmax_;
    int32_t maxfd_;
    int32_t minfd_;
    int32_t fdsize_;
@@ -91,12 +96,13 @@ class Manager : public ps_common_base::Singleton<Manager>,
    uint64_t send_bytes_; //发送字节数
    uint64_t receive_bytes_; //接收字节数
    int32_t onestep_accept_; //一帧内接受的新连接数量, -1无限制
+   connection::Pool connectionpool_;   
    connection::Server billing_serverconnection_; //for debug
 
 };
 
 }; //namespace ps_common_net
 
-extern ps_common_net::Manager* g_netmanager;
+//extern ps_common_net::Manager* g_netmanager;
 
 #endif //PS_COMMON_NET_MANAGER_H_

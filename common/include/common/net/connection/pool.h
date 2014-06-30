@@ -11,6 +11,7 @@
 #ifndef PS_NET_CONNECTION_POOL_H_
 #define PS_NET_CONNECTION_POOL_H_
 
+#include "common/net/connection/config.h"
 #include "common/sys/thread.h"
 #include "common/net/connection/server.h"
 
@@ -25,18 +26,20 @@ class Pool {
    ~Pool();
 
  public:
-   bool init();
+   bool init(uint32_t maxcount = NET_CONNECTION_POOL_SIZE_DEFAULT);
    Server* get(int16_t id);
    Server* create(); //new
    void remove(int16_t id); //delete
    void lock();
    void unlock();
+   uint32_t get_maxcount() const { return maxcount_; }   
 
  private:
    Server* connections_; //注意，这是一个指向Server对象的数组指针
    uint32_t position_;
    ps_common_sys::ThreadLock lock_;
    uint32_t count_;
+   uint32_t maxcount_;
 
 };
 
@@ -44,6 +47,6 @@ class Pool {
 
 }; //namespace ps_common_net
 
-extern ps_common_net::connection::Pool* g_connectionpool;
+//extern ps_common_net::connection::Pool* g_connectionpool;
 
 #endif //PS_COMMON_NET_CONNECTION_POOL_H_

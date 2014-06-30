@@ -1,4 +1,5 @@
 #include "common/base/util.h"
+#include "common/base/log.h"
 #include "common/db/odbc/system.h"
 
 namespace ps_common_db {
@@ -10,11 +11,37 @@ System::System() {
     result_ = 0;
     result_count_ = 0;
     op_type_ = kDBOptionTypeInitEmpty;
+    odbc_interface_ = NULL;
   __LEAVE_FUNCTION
 }
 
 System::~System() {
-  //do nothing
+  __ENTER_FUNCTION
+    SAFE_DELETE(odbc_interface_);
+  __LEAVE_FUNCTION
+}
+
+bool System::init(const char *connectionname,
+                  const char *username,
+                  const char *password) {
+  __ENTER_FUNCTION
+    bool connected = true;
+    odbc_interface_ = new Interface();
+    Assert(odbc_interface_);
+    connected = odbc_interface_->connect(connectionname, username, password);
+    if (!connected) {
+      SLOW_ERRORLOG("database",
+                    "[db][odbc] (System::init) failed,"
+                    " connectionname: %s, username: %s, password: %s"
+                    " errormessage: %s",
+                    connectionname,
+                    username,
+                    password,
+                    get_error_message());
+    }
+    return connected;
+  __LEAVE_FUNCTION
+    return false;
 }
 
 uint32_t System::get_result_count() {
@@ -57,7 +84,7 @@ bool System::check_db_connect() {
     Assert(odbc_interface_);
     if (!odbc_interface_->is_connected()) {
       int i;
-      for (i = 0; i <5; ++i) {
+      for (i = 0; i < 5; ++i) {
         ps_common_base::util::sleep(5000);
         if (odbc_interface_->connect()) {
           return true;
@@ -75,6 +102,30 @@ bool System::load() {
     if (!odbc_interface_) return false;
     op_type_ = kDBOptionTypeLoad;
     result_ = odbc_interface_->execute();
+    result_count_ = odbc_interface_->get_affect_row_count();
+    return result_;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool System::query() {
+  __ENTER_FUNCTION
+    if (!is_prepare()) return false;
+    if (!odbc_interface_) return false;
+    op_type_ = kDBOptionTypeQuery;
+    result_ = odbc_interface_->execute();
+    result_count_ = odbc_interface_->get_affect_row_count();
+    return result_;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool System::long_query() {
+  __ENTER_FUNCTION
+    if (!is_prepare()) return false;
+    if (!odbc_interface_) return false;
+    op_type_ = kDBOptionTypeQuery;
+    result_ = odbc_interface_->long_execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
   __LEAVE_FUNCTION
@@ -105,7 +156,7 @@ bool System::add_new() {
     return false;
 }
 
-bool System::delete_() {
+bool System::_delete() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
@@ -141,12 +192,6 @@ bool System::long_save() {
     return false;
 }
 
-void System::set_db_type(db_type_enum db_type) {
-  __ENTER_FUNCTION
-    db_type_ = db_type;
-  __LEAVE_FUNCTION
-}
-
 int32_t System::get_error_code() {
   __ENTER_FUNCTION
     return odbc_interface_->get_error_code();
@@ -154,7 +199,7 @@ int32_t System::get_error_code() {
     return -1;
 }
 
-char* System::get_error_message() {
+const char *System::get_error_message() {
   __ENTER_FUNCTION
     return odbc_interface_->get_error_message();
   __LEAVE_FUNCTION

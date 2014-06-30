@@ -25,13 +25,14 @@ class System {
      kDBOptionTypeSave, //insert and update
      kDBOptionTypeAddNew,
      kDBOptionTypeDelete,
+     kDBOptionTypeQuery,
      kDBOptionTypeInitEmpty, //db at init state
    };
-#if defined(__WINDOWS__)
+#if __WINDOWS__
    enum odbc_error_t {
      kODBCErrorSamePrimaryKey = 2601, //repeat primary key
    };
-#elif defined(__LINUX__)
+#elif __LINUX__
    enum odbc_error_t {
      kODBCErrorSamePrimaryKey = 1026, //repeat primary key
    };
@@ -40,28 +41,37 @@ class System {
  public:
    System();
    ~System();
-   void set_db_type(db_type_enum db_type);
+
+ public:
+   bool init(const char *connectionname,
+             const char *username,
+             const char *password);
+
+ public:
    uint32_t get_result_count();
    int get_error_code();
-   char* get_error_message();
+   const char *get_error_message();
    virtual bool load();
    virtual bool add_new();
-   virtual bool delete_();
+   virtual bool _delete();
    virtual bool save();
-   virtual bool parse_result(void* result) = 0;
+   db_query_t *get_internal_query();
+   long_db_query_t *get_long_internal_query();
+   virtual bool query();
+   virtual bool long_query();
+   bool check_db_connect(); //check the connect if work, 
+                            //and repeat 5 times when fails
+
 
  protected:
    int32_t result_count_;
    bool result_;
-   db_type_enum db_type_;
    dboption_type_t op_type_;
-   Interface* odbc_interface_;
-   db_query_t* get_internal_query();
-   long_db_query_t* get_long_internal_query();
+   Interface *odbc_interface_;
+
+ protected:
    int32_t get_internal_affect_count();
    bool is_prepare();
-   bool check_db_connect(); //check the connect if work, 
-                            //and repeat 5 times when fails
    bool long_load();
    bool long_save();
 };

@@ -60,9 +60,7 @@ struct long_db_query_t {
 };
 
 typedef enum {
-  kAllDatabase = -1,
-  kCharacterDatabase = 1,
-  kUserDatabase = 2,
-} db_type_enum;
+  kConnectorTypeODBC = 0, //方便以后扩展
+} connector_type_t;
 
 #endif //PS_COMMON_DB_DEFINE_H_

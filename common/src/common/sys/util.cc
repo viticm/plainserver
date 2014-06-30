@@ -72,6 +72,6 @@ void dumpstack(const char* log_fileprefix, const char* type) {
   __LEAVE_FUNCTION
 }
 
-}
+} //namespace util
 
-}
+} //namespace ps_common_sys

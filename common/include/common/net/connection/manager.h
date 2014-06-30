@@ -26,17 +26,19 @@ class Manager {
    ~Manager();
 
  public:
-   void cleanup();
+   void init(uint16_t maxcount = NET_CONNECTION_MAX);
    virtual bool heartbeat(uint32_t time = 0);
    bool add(Base* connection);
    bool add(int16_t id);
    virtual void remove(int16_t id);
    int16_t* get_idset();
    uint16_t getcount();
+   uint16_t get_maxcount() const { return maxcount_; }
    bool hash();
 
  protected:
-   int16_t connection_idset_[NET_CONNECTION_MAX];
+   int16_t *connection_idset_;
+   uint16_t maxcount_;
    uint16_t count_;
 
 };
