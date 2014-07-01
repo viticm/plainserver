@@ -36,6 +36,18 @@ void Interface::set_globalfile(const char *filename) {
   __LEAVE_FUNCTION
 }
 
+void Interface::set_rootpath(const char *path) {
+  __ENTER_FUNCTION
+    VM_.set_rootpath(path); 
+  __LEAVE_FUNCTION
+}
+
+void Interface::set_workpath(const char *path) {
+  __ENTER_FUNCTION
+    VM_.set_workpath(path);
+  __LEAVE_FUNCTION
+}
+
 void Interface::init() {
   __ENTER_FUNCTION
     bool result = VM_.init(4 * 1024);

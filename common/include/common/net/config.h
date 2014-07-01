@@ -13,10 +13,6 @@
 
 #include "common/base/config.h"
 
-#define NET_CONNECTION_MAX 1024
-#define NET_CONNECTION_CACHESIZE_MAX 1024
-#define NET_CONNECTION_KICKTIME 6000000 //超过该时间则断开连接
-#define NET_CONNECTION_INCOME_KICKTIME 60000
 #define NET_OVER_SERVER_MAX 256
 #define NET_ONESTEP_ACCEPT_DEFAULT 50 //每帧接受新连接的默认值
 

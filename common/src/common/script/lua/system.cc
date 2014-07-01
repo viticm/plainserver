@@ -1,6 +1,8 @@
 #include "common/base/log.h"
 #include "common/script/lua/system.h"
 
+ps_common_script::lua::System *g_script_luasystem = NULL;
+
 namespace ps_common_script {
 
 namespace lua {
@@ -15,7 +17,6 @@ System &System::getsingleton() {
   Assert(singleton_);
   return *singleton_;
 }
-
 
 System::System() {
   //do nothing

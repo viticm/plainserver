@@ -59,8 +59,12 @@ struct long_db_query_t {
   }
 };
 
+//namespace ps_common_db {
+
 typedef enum {
-  kConnectorTypeODBC = 0, //方便以后扩展
-} connector_type_t;
+  kDBConnectorTypeODBC = 0, //方便以后扩展
+} dbconnector_type_t;
+
+//} //namespace ps_common_db
 
 #endif //PS_COMMON_DB_DEFINE_H_

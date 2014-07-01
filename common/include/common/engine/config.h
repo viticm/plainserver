@@ -13,4 +13,18 @@
 
 #include "common/base/config.h"
 
+#define ENGINE_CONFIG_DB_ISACTIVE "db_isactive"
+#define ENGINE_CONFIG_NET_ISACTIVE "net_isactive"
+#define ENGINE_CONFIG_SCRIPT_ISACTIVE "script_isactive"
+#define ENGINE_CONFIG_PERFORMANCE_ISACTIVE "performance_isactive"
+#define ENGINE_CONFIG_DB_CONNECTOR_TYPE "db_connector_type"
+#define ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME "db_connection_or_dbname"
+#define ENGINE_CONFIG_DB_USERNAME "db_username"
+#define ENGINE_CONFIG_DB_PASSWORD "db_password"
+#define ENGINE_CONFIG_NET_LISTEN_PORT "net_listenport"
+#define ENGINE_CONFIG_NET_CONNECTION_MAX "net_connectionmax"
+#define ENGINE_CONFIG_SCRIPT_ROOTPATH "script_rootpath"
+#define ENGINE_CONFIG_SCRIPT_WORKPATH "script_workpath"
+#define ENGINE_CONFIG_SCRIPT_GLOBALFILE "script_globalfile"
+
 #endif //PS_COMMON_ENGINE_CONFIG_H_

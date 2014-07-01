@@ -76,4 +76,7 @@ extern ps_common_base::TimeManager* g_time_manager;
 extern uint32_t g_file_name_fix_last;
 extern int32_t g_file_name_fix;
 
+#define TIME_MANAGER_POINTER \
+  ps_common_base::TimeManager::getsingleton_pointer()
+
 #endif //PS__COMMON_BASE_TIME_MANAGER_H_

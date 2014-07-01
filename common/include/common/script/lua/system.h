@@ -19,7 +19,7 @@ namespace ps_common_script {
 
 namespace lua {
 
-class System : public ps_common_base::Singleton<System>, Interface {
+class System : public ps_common_base::Singleton<System>, public Interface {
 
  public:
    System();
@@ -28,6 +28,7 @@ class System : public ps_common_base::Singleton<System>, Interface {
  public:
    static System *getsingleton_pointer();
    static System &getsingleton();
+   void registerfunctions() {};
 
  public:
    static int32_t call_noclosure(lua_State *L);
@@ -40,5 +41,7 @@ class System : public ps_common_base::Singleton<System>, Interface {
 
 #define SCRIPT_LUASYSTEM_POINTER \
 ps_common_script::lua::System::getsingleton_pointer()
+
+extern ps_common_script::lua::System *g_script_luasystem;
 
 #endif //PS_COMMON_SCRIPT_LUA_SYSTEM_H_

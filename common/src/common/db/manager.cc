@@ -2,7 +2,7 @@
 
 namespace ps_common_db {
 
-Manager::Manager(connector_type_t connector_type) {
+Manager::Manager(dbconnector_type_t connector_type) {
   __ENTER_FUNCTION
     connector_type_ = connector_type;
     odbc_system_ = NULL;

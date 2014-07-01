@@ -50,7 +50,13 @@ Manager::~Manager() {
 
 bool Manager::init(uint16_t connectionmax) {
   __ENTER_FUNCTION
-    connectionmax_ = connectionmax;
+    /* init packet factory manager { */
+    if (!NET_PACKET_FACTORYMANAGER_POINTER)
+      g_packetfactory_manager = new packet::FactoryManager();
+    Assert(NET_PACKET_FACTORYMANAGER_POINTER);  
+    /* } init packet factory manager */
+
+    /* server main socket { */
     serversocket_ = new socket::Server(listenport_);
     Assert(serversocket_);
     listenport_ = 0 == listenport_ ? serversocket_->getport() : listenport_;
@@ -67,10 +73,14 @@ bool Manager::init(uint16_t connectionmax) {
     for (i = 0; i < NET_OVER_SERVER_MAX; ++i) {
       serverhash_[i] = ID_INVALID;
     }
-    //connection pool
-    connectionpool_.init(connectionmax_);
-    //connection manager
+    /* } server main socket */
+
+    /* connection init { */
+    connectionmax_ = connectionmax;
+    if (!connectionpool_.init(connectionmax_)) return false;
     connection::Manager::init(connectionmax_);
+    /* } connection init */
+
     return true;
   __LEAVE_FUNCTION
     return false;

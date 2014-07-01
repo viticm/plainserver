@@ -1,6 +1,6 @@
-#include "common/db/odbc/interface.h"
 #include "common/base/log.h"
 #include "common/base/util.h"
+#include "common/db/odbc/interface.h"
 
 namespace ps_common_db {
 

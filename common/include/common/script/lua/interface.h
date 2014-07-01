@@ -38,7 +38,6 @@ class Interface {
  public:
    void init();
    void release();
-   void register_function();
    bool find_function(lua_State *L, const char *name);
    bool verify_function(lua_State *L, const char **names);
    void enter_runstep(int32_t scriptid, 
@@ -53,6 +52,8 @@ class Interface {
  public:
    bool loadscript(const char *filename);
    void set_globalfile(const char *filename);
+   void set_rootpath(const char *path);
+   void set_workpath(const char *path);
 
  public:
    static bool check_paramnumber(lua_State *L, int32_t count);

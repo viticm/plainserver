@@ -67,4 +67,7 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
 
 extern ps_common_net::packet::FactoryManager* g_packetfactory_manager;
 
+#define NET_PACKET_FACTORYMANAGER_POINTER \
+  ps_common_net::packet::FactoryManager::getsingleton_pointer()
+
 #endif //PS_COMMON_NET_PACKETFACTORY_H_

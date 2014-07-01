@@ -16,14 +16,14 @@ namespace ps_common_db {
 class Manager {
 
  public:
-   Manager(connector_type_t connector_type = kConnectorTypeODBC);
+   Manager(dbconnector_type_t connector_type = kDBConnectorTypeODBC);
    ~Manager();
 
  public:
    bool init(const char *connection_or_dbname,
              const char *username,
              const char *password);
-   connector_type_t get_connector_type() const;
+   dbconnector_type_t get_connector_type() const;
    db_query_t *get_internal_query();
    long_db_query_t *get_long_internal_query();
    bool query();
@@ -32,7 +32,7 @@ class Manager {
    bool check_db_connect();
 
  protected:
-   connector_type_t connector_type_;
+   dbconnector_type_t connector_type_;
    odbc::System *odbc_system_;
 
 };
