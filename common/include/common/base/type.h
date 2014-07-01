@@ -12,6 +12,14 @@
 #ifndef PS_COMMON_BASE_TYPE_H_
 #define PS_COMMON_BASE_TYPE_H_
 
+//platform define
+#ifndef __WINDOWS__
+#define __WINDOWS__ (defined(_MSC_VER) || defined(__ICL))
+#endif
+#ifndef __LINUX__
+#define __LINUX__ !(__WINDOWS__)
+#endif
+
 #if defined(GAME_CLIENT)
 #define __ENTER_FUNCTION 
 #define __LEAVE_FUNCTION
@@ -62,11 +70,10 @@
 //typedef char byte; //-128~127 --use int8_t
 typedef int16_t connectionid_t;
 
-
 #define IP_SIZE 24 //max ip size
-#if defined(__LINUX__)
+#if __LINUX__
 #define HANDLE_INVALID (-1)
-#elif defined(__WINDOWS__)
+#elif __WINDOWS__
 #define HANDLE_INVALID ((VOID*)0)
 #endif
 #define ID_INVALID (-1)

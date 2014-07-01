@@ -10,12 +10,13 @@
 
 ps_common_net::packet::FactoryManager* g_packetfactory_manager = NULL;
 
+template<> 
+ps_common_net::packet::FactoryManager 
+  *ps_common_base::Singleton<ps_common_net::packet::FactoryManager>::singleton_ = NULL;
+
 namespace ps_common_net {
 
 namespace packet {
-
-template<> 
-FactoryManager* ps_common_base::Singleton<FactoryManager>::singleton_ = NULL;
 
 FactoryManager* FactoryManager::getsingleton_pointer() {
   return singleton_;
@@ -194,6 +195,7 @@ void FactoryManager::addfactories_for_serverserver() {
 bool FactoryManager::isvalid_packetid(uint16_t id) {
   bool result = false;
   __ENTER_FUNCTION
+    using namespace ps_common_net::packets::id;
 #if defined(_PS_NET_GATEWAY) /* { */
     result = (serverserver::kFirst < id && id < serverserver::kLast) ||  
              (gatewaylogin::kFirst < id && id < gatewaylogin::kLast) ||

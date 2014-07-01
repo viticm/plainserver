@@ -159,18 +159,18 @@ uint32_t writeex(int32_t fd, const void* buffer, uint32_t length) {
 
 
 void closeex(int32_t fd) {
-  if (close(fd) < 0) {
+ 
 #if __LINUX__
-    switch ( errno ) {
-      case EBADF : 
-      default : {
-          break;
-      }
+  close(fd);
+  switch ( errno ) {
+    case EBADF : 
+    default : {
+        break;
     }
-#elif __WINDOWS__
-//do nothing
-#endif
   }
+#elif __WINDOWS__
+  _close(fd);
+#endif
 }
 
 int32_t fcntlex(int32_t fd, int32_t cmd) {

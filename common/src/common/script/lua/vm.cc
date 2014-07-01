@@ -26,8 +26,8 @@ bool VM::loadbuffer(unsigned char *buffer, uint64_t length) {
       on_scripterror(kErrorCodeLength);
       return false;
     }
-    char *_buffer = reinterpret_cast<char *>(_buffer);
-    if (luaL_loadbuffer(lua_state_, _buffer, length, NULL) != 0) {
+    char *_buffer = reinterpret_cast<char *>(buffer);
+    if (luaL_loadbuffer(lua_state_, _buffer, static_cast<size_t>(length), NULL) != 0) {
       on_scripterror(kErrorCodeLoadBuffer);
       return false;
     }
@@ -137,7 +137,7 @@ bool VM::callfunction(const char *name,
           break;
         }
         case 'd': { //int
-          number = static_cast<double>(va_arg(vlist, int64_t));
+          number = static_cast<lua_Number>(va_arg(vlist, int64_t));
           lua_pushnumber(lua_state_, number);
           ++args_number;
           break;
@@ -213,7 +213,7 @@ bool VM::callfunction(const char *name, int32_t result, int64_t param0) {
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
     int32_t call_result = lua_pcall(lua_state_, 1, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -234,8 +234,8 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
     int32_t call_result = lua_pcall(lua_state_, 2, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -257,9 +257,9 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
     int32_t call_result = lua_pcall(lua_state_, 3, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -282,10 +282,10 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
-    lua_pushnumber(lua_state_, param3);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param3));
     int32_t call_result = lua_pcall(lua_state_, 4, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -309,11 +309,11 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
-    lua_pushnumber(lua_state_, param3);
-    lua_pushnumber(lua_state_, param4);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param3));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param4));
     int32_t call_result = lua_pcall(lua_state_, 5, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -338,12 +338,12 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
-    lua_pushnumber(lua_state_, param3);
-    lua_pushnumber(lua_state_, param4);
-    lua_pushnumber(lua_state_, param5);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param3));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param4));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param5));
     int32_t call_result = lua_pcall(lua_state_, 6, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -369,13 +369,13 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
-    lua_pushnumber(lua_state_, param3);
-    lua_pushnumber(lua_state_, param4);
-    lua_pushnumber(lua_state_, param5);
-    lua_pushnumber(lua_state_, param6);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param3));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param4));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param5));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param6));
     int32_t call_result = lua_pcall(lua_state_, 7, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -402,14 +402,14 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
-    lua_pushnumber(lua_state_, param3);
-    lua_pushnumber(lua_state_, param4);
-    lua_pushnumber(lua_state_, param5);
-    lua_pushnumber(lua_state_, param6);
-    lua_pushnumber(lua_state_, param7);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param3));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param4));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param5));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param6));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param7));
     int32_t call_result = lua_pcall(lua_state_, 8, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -432,10 +432,10 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
-    lua_pushnumber(lua_state_, param2);
-    lua_pushnumber(lua_state_, param3);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param2));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param3));
     int32_t call_result = lua_pcall(lua_state_, 4, result, NULL);
     if (call_result != 0) {
       on_scripterror(kErrorCodeExecute, result);
@@ -458,8 +458,8 @@ bool VM::callfunction(const char *name,
       return false;
     }
     lua_getglobal(lua_state_, name);
-    lua_pushnumber(lua_state_, param0);
-    lua_pushnumber(lua_state_, param1);
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param0));
+    lua_pushnumber(lua_state_, static_cast<lua_Number>(param1));
     lua_pushstring(lua_state_, param2);
     lua_pushstring(lua_state_, param3);
     int32_t call_result = lua_pcall(lua_state_, 4, result, NULL);
@@ -557,6 +557,14 @@ void VM::callfunction_leave(int32_t index) {
     if (!lua_state_) return;
     lua_settop(lua_state_, index);
   __LEAVE_FUNCTION
+}
+
+const char *VM::get_rootpath() {
+  __ENTER_FUNCTION
+    const char *path = filebridge_.get_rootpath();
+    return path;
+  __LEAVE_FUNCTION
+    return NULL;
 }
 
 } //namespace lua

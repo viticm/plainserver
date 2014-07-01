@@ -1206,12 +1206,13 @@ int32_t getsockname_ex(int32_t socketid,
                        struct sockaddr* name, 
                        int32_t* namelength) {
   int32_t result = 0;
-  result = 
-    getsockname(socketid, name, reinterpret_cast<socklen_t*>(namelength));
   if(SOCKET_ERROR == result) {
 #if __LINUX__
-
+    result = 
+      getsockname(socketid, name, reinterpret_cast<socklen_t*>(namelength));
 #elif __WINDOWS__
+    result = 
+      getsockname(socketid, name, namelength);
     error = WSAGetLastError();
     switch (error) {
       case WSANOTINITIALISED : {

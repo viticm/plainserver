@@ -21,7 +21,7 @@ void Manager::init(uint16_t maxcount) {
     connection_idset_ = new int16_t[maxcount_];
     Assert(connection_idset_);
     memset(connection_idset_, 0, maxcount_);
-  __ENTER_FUNCTION
+  __LEAVE_FUNCTION
 }
 
 bool Manager::heartbeat(uint32_t time) {

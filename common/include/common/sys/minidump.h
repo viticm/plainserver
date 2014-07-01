@@ -3,6 +3,8 @@
 
 #include "common/sys/config.h"
 
+extern const char* g_dump_exename;
+
 namespace pap_common_sys {
 
 namespace minidump {

@@ -76,7 +76,7 @@ uint64_t FileBridge::read(void* buffer, uint64_t read_bytes) {
   __ENTER_FUNCTION
     if (!fp_) return 0;
     uint64_t _read_bytes;
-    _read_bytes = fread(buffer, 1, read_bytes, fp_);  
+    _read_bytes = fread(buffer, 1, static_cast<size_t>(read_bytes), fp_);  
     position_ += _read_bytes;
     return _read_bytes;
   __LEAVE_FUNCTION
@@ -87,7 +87,7 @@ uint64_t FileBridge::write(void* buffer, uint64_t write_bytes) {
   __ENTER_FUNCTION
     if (!fp_) return 0;
     uint64_t _write_bytes;
-    _write_bytes = fwrite(buffer, 1, write_bytes, fp_); 
+    _write_bytes = fwrite(buffer, 1, static_cast<size_t>(write_bytes), fp_); 
     position_ += _write_bytes;
     return _write_bytes;
   __LEAVE_FUNCTION
@@ -97,7 +97,7 @@ uint64_t FileBridge::write(void* buffer, uint64_t write_bytes) {
 int64_t FileBridge::seek(int64_t position, file_accessmode accessmode) {
   __ENTER_FUNCTION
     if (!fp_) return -1;
-    fseek(fp_, position_, accessmode);
+    fseek(fp_, static_cast<long>(position), accessmode);
     position_ = ftell(fp_);
     return position_;
   __LEAVE_FUNCTION
@@ -172,6 +172,13 @@ void FileBridge::get_fullpath(char* path,
       strncat(path, filename, length - strlen(path));
     }
   __LEAVE_FUNCTION
+}
+
+const char *FileBridge::get_rootpath() {
+  __ENTER_FUNCTION
+    return rootpath_;
+  __LEAVE_FUNCTION
+    return NULL;
 }
 
 } //namespace lua

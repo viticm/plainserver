@@ -8,6 +8,9 @@ namespace ps_common_engine {
 
 Kernel::Kernel() {
   __ENTER_FUNCTION
+    config_int32_.init(100);
+    config_string_.init(100);
+    config_bool_.init(100);
     registerconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
     registerconfig(ENGINE_CONFIG_NET_ISACTIVE, true);
     registerconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
@@ -105,87 +108,87 @@ void Kernel::stop() {
   __LEAVE_FUNCTION
 }
 
-void Kernel::registerconfig(const char *name, int32_t value) {
+void Kernel::registerconfig(int32_t key, int32_t value) {
   __ENTER_FUNCTION
-    if (config_int32_.isfind(name)) {
+    if (config_int32_.isfind(key)) {
       SLOW_WARNINGLOG("engine",
-                      "[engine] (Kernel::registerconfig) repeat the name: %s",
-                      name);
+                      "[engine] (Kernel::registerconfig) repeat the key: %d",
+                      key);
       return;
     }
-    config_int32_.add(name, value);
+    config_int32_.add(key, value);
   __LEAVE_FUNCTION
 }
 
-void Kernel::registerconfig(const char *name, bool value) {
+void Kernel::registerconfig(int32_t key, bool value) {
   __ENTER_FUNCTION
-    if (config_bool_.isfind(name)) {
+    if (config_bool_.isfind(key)) {
       SLOW_WARNINGLOG("engine",
-                      "[engine] (Kernel::registerconfig) repeat the name: %s",
-                      name);
+                      "[engine] (Kernel::registerconfig) repeat the key: %d",
+                      key);
       return;
     }
-    config_bool_.add(name, value);
+    config_bool_.add(key, value);
   __LEAVE_FUNCTION
 }
 
-void Kernel::registerconfig(const char *name, const char *value) {
+void Kernel::registerconfig(int32_t key, const char *value) {
   __ENTER_FUNCTION
-    if (config_string_.isfind(name)) {
+    if (config_string_.isfind(key)) {
       SLOW_WARNINGLOG("engine",
-                      "[engine] (Kernel::registerconfig) repeat the name: %s",
-                      name);
+                      "[engine] (Kernel::registerconfig) repeat the key: %d",
+                      key);
       return;
     }
-    config_string_.add(name, value);
+    config_string_.add(key, value);
   __LEAVE_FUNCTION
 }
 
-bool Kernel::setconfig(const char *name, int32_t value) {
+bool Kernel::setconfig(int32_t key, int32_t value) {
   __ENTER_FUNCTION
-    bool result = config_int32_.set(name, value);
+    bool result = config_int32_.set(key, value);
     return result;
   __LEAVE_FUNCTION
     return false;
 }
 
-bool Kernel::setconfig(const char *name, bool value) {
+bool Kernel::setconfig(int32_t key, bool value) {
   __ENTER_FUNCTION
-    bool result = config_bool_.set(name, value);
+    bool result = config_bool_.set(key, value);
     return result;
   __LEAVE_FUNCTION
     return false;
 }
 
-bool Kernel::setconfig(const char *name, const char *value) {
+bool Kernel::setconfig(int32_t key, const char *value) {
   __ENTER_FUNCTION
-    bool result = config_string_.set(name, value);
+    bool result = config_string_.set(key, value);
     return result;
   __LEAVE_FUNCTION
     return false;
 }
 
-int32_t Kernel::getconfig_int32value(const char *name) {
+int32_t Kernel::getconfig_int32value(int32_t key) {
   __ENTER_FUNCTION
-    int32_t result = config_int32_.get(name);
+    int32_t result = config_int32_.get(key);
     return result;
   __LEAVE_FUNCTION
     return 0;
 }
    
-bool Kernel::getconfig_boolvalue(const char *name) {
+bool Kernel::getconfig_boolvalue(int32_t key) {
   __ENTER_FUNCTION
-    bool result = config_bool_.get(name);
+    bool result = config_bool_.get(key);
     return result;
   __LEAVE_FUNCTION
     return false;
 }
    
-const char *Kernel::getconfig_stringvalue(const char *name) {
+const char *Kernel::getconfig_stringvalue(int32_t key) {
   __ENTER_FUNCTION
     const char *result = NULL;
-    result = config_string_.get(name);
-    return result;
+    result = config_string_.get(key);
+    return 0 == strlen(result) ? NULL : result;
   __LEAVE_FUNCTION
     return NULL;
 }
@@ -247,8 +250,8 @@ bool Kernel::init_net() {
   __ENTER_FUNCTION
     using namespace ps_common_net;
     if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
-      net_manager_ = 
-        new Manager(getconfig_int32value(ENGINE_CONFIG_NET_LISTEN_PORT));
+      int32_t listenport = getconfig_int32value(ENGINE_CONFIG_NET_LISTEN_PORT);
+      net_manager_ = new Manager(static_cast<uint16_t>(listenport));
       if (NULL == net_manager_) return false;
       int32_t connectionmax = 
         getconfig_int32value(ENGINE_CONFIG_NET_CONNECTION_MAX);

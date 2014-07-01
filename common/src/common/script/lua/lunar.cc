@@ -53,6 +53,7 @@ int32_t gettable(lua_State *L, int32_t table_index, const char *key) {
       return lua_gettop(L);
     }
   __LEAVE_FUNCTION
+    return -1;
 }
 
 int32_t gettable(lua_State *L, int32_t table_index, int32_t index) {
@@ -70,6 +71,7 @@ int32_t gettable(lua_State *L, int32_t table_index, int32_t index) {
       return lua_gettop(L);
     }
   __LEAVE_FUNCTION
+    return -1;
 }
 
 int32_t dofile(lua_State* L, const char *filename ) {

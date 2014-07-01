@@ -161,7 +161,7 @@ bool Base::bind() {
             reinterpret_cast<struct sockaddr*>(&connect_sockaddr_in), 
             &inlength)) {
         ERRORPRINTF("[net]socket::Base::bind() error, can't get port");
-        return SOCKET_ERROR;
+        return false;
       }
       port_ = ntohs(connect_sockaddr_in.sin_port);
     }
@@ -333,7 +333,6 @@ bool Base::setreceive_buffersize(uint32_t size) {
 
 uint32_t Base::getsend_buffersize() const {
   __ENTER_FUNCTION
-    uint32_t result = 0;
     uint32_t option_value = 0;
     uint32_t option_length = sizeof(option_value);
     api::getsockopt_exb(socketid_, 

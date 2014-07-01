@@ -10,7 +10,7 @@ Pool::Pool() {
   connections_ = NULL;
   position_ = 0;
   count_ = 0;
-  maxcount_ = maxcount;
+  maxcount_ = NET_CONNECTION_POOL_SIZE_DEFAULT;
 }
 
 Pool::~Pool() {
@@ -39,7 +39,7 @@ bool Pool::init(uint32_t maxcount) {
 Server* Pool::get(int16_t id) {
   __ENTER_FUNCTION
     Server* connection = NULL;
-    if (id > maxcount_) return NULL;
+    if (static_cast<uint32_t>(id) > maxcount_) return NULL;
     connection = &(connections_[id]);
     return connection;
   __LEAVE_FUNCTION
@@ -74,7 +74,7 @@ Server* Pool::create() {
 void Pool::remove(int16_t id) {
   __ENTER_FUNCTION
     lock();
-    if (id > maxcount_) {
+    if (static_cast<uint32_t>(id) > maxcount_) {
       Assert(false);
       unlock();
       return;

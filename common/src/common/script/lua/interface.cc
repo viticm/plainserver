@@ -48,11 +48,18 @@ void Interface::set_workpath(const char *path) {
   __LEAVE_FUNCTION
 }
 
+const char *Interface::get_rootpath() {
+  __ENTER_FUNCTION
+    const char *path = VM_.get_rootpath();
+    return path;
+  __LEAVE_FUNCTION
+    return NULL;
+}
+
 void Interface::init() {
   __ENTER_FUNCTION
     bool result = VM_.init(4 * 1024);
     Assert(result && "VM_.init(4 * 1024) failed");
-    register_function();
     result = loadscript(global_filename_);
     script_loaded_.init(kLuaScriptCountMax);
   __LEAVE_FUNCTION
@@ -124,6 +131,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                  const char *functionname, 
                                  bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -144,7 +152,7 @@ int64_t Interface::run_filefunction(const char *filename,
 }
 
 
-cache::Base *getscript_filedata(int32_t scriptid) {
+cache::Base *Interface::getscript_filedata(int32_t scriptid) {
   __ENTER_FUNCTION
     cache::Base *filedata = NULL;
     filedata = SCRIPT_CACHE_MANAGER_POINTER->get_filedata(scriptid);
@@ -158,6 +166,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param0,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -185,6 +194,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param1,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -214,6 +224,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param2,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -245,6 +256,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param3,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -283,6 +295,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param4,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -322,9 +335,54 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param3,
                                     int64_t param4,
                                     int64_t param5,
+                                    bool load) {
+  __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
+    mark_scriptname(VM_.lua_state_, filename);
+    if (!verify_function(VM_.lua_state_, &functionname)) return 0;
+    int32_t topindex = 0;
+    VM_.callfunction_enter(&topindex);
+    bool result = VM_.callfunction(functionname, 
+                                   1, 
+                                   param0, 
+                                   param1,
+                                   param2,
+                                   param3,
+                                   param4,
+                                   param5);
+    int64_t _result = static_cast<int64_t>(lua_tonumber(VM_.lua_state_, -1));
+    VM_.callfunction_leave(topindex);
+    if (!result) {
+      FAST_ERRORLOG(kErrorLogFile,
+                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    " have some error, file: %s, functionname: %s"
+                    " params: (%d, %d, %d, %d, %d)",
+                    filename,
+                    functionname,
+                    param0,
+                    param1,
+                    param2,
+                    param3,
+                    param4,
+                    param5);
+    }
+    return _result;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+int64_t Interface::run_filefunction(const char *filename, 
+                                    const char *functionname, 
+                                    int64_t param0,
+                                    int64_t param1,
+                                    int64_t param2,
+                                    int64_t param3,
+                                    int64_t param4,
+                                    int64_t param5,
                                     int64_t param6,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -372,6 +430,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     int64_t param7,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -417,6 +476,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     float param3,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -454,6 +514,7 @@ int64_t Interface::run_filefunction(const char *filename,
                                     const char *param3,
                                     bool load) {
   __ENTER_FUNCTION
+    USE_PARAM(load); //以后扩展后去掉此宏
     mark_scriptname(VM_.lua_state_, filename);
     if (!verify_function(VM_.lua_state_, &functionname)) return 0;
     int32_t topindex = 0;
@@ -1354,6 +1415,7 @@ bool Interface::check_paramnumber(lua_State *L, int32_t count) {
 }
 
 int32_t Interface::getscript_stepid(lua_State *L) {
+  USE_PARAM(L); //以后扩展后去掉此宏
   return -1;
 }
 

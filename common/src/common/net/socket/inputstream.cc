@@ -144,7 +144,7 @@ int32_t InputStream::fill() {
       if (!resize(available + 1)) return 0;
       receivecount = socket_->receive(&stream_buffer[taillength], available);
       if (SOCKET_ERROR_WOULD_BLOCK == receivecount) return 0;
-      if (SOCKET_ERROR == SOCKET_ERROR_WOULD_BLOCK) return SOCKET_ERROR - 4;
+      if (SOCKET_ERROR == receivecount) return SOCKET_ERROR - 4;
       if (0 == receivecount) return SOCKET_ERROR - 5;
       streamdata_.taillength += receivecount;
       fillcount += receivecount; 

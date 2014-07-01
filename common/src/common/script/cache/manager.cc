@@ -4,11 +4,13 @@
 #include "common/script/lua/system.h"
 #include "common/script/cache/manager.h"
 
+template <> 
+ps_common_script::cache::Manager 
+  *ps_common_base::Singleton<ps_common_script::cache::Manager>::singleton_ = NULL;
+
 namespace ps_common_script {
 
 namespace cache {
-
-template <> Manager *ps_common_base::Singleton<Manager>::singleton_ = NULL;
 
 Manager *Manager::getsingleton_pointer() {
   return singleton_;
@@ -54,6 +56,7 @@ void Manager::clear() {
 bool Manager::init(const char *filename, bool force_arraymode) {
   __ENTER_FUNCTION
     using namespace ps_common_file;
+    USE_PARAM(force_arraymode); //扩展后去掉
     enum {kFileDataIndex = 0, kFileDataName};
     Database db(0); 
     bool result = db.open_from_txt(filename);

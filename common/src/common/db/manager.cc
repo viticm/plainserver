@@ -20,7 +20,7 @@ bool Manager::init(const char *connection_or_dbname,
   __ENTER_FUNCTION
     bool result = true;
     switch (connector_type_) {
-      case kConnectorTypeODBC: {
+      case kDBConnectorTypeODBC: {
         odbc_system_ = new odbc::System();
         Assert(odbc_system_);
         result = 
@@ -36,7 +36,7 @@ bool Manager::init(const char *connection_or_dbname,
     return false;
 }
 
-connector_type_t Manager::get_connector_type() const {
+dbconnector_type_t Manager::get_connector_type() const {
   return connector_type_;
 }
 
@@ -44,7 +44,7 @@ bool Manager::query() {
   __ENTER_FUNCTION
     bool result = true;
     switch (connector_type_) {
-      case kConnectorTypeODBC:
+      case kDBConnectorTypeODBC:
         result = odbc_system_->query();
         break;
       default:
@@ -60,7 +60,7 @@ bool Manager::long_query() {
   __ENTER_FUNCTION
     bool result = true;
     switch (connector_type_) {
-      case kConnectorTypeODBC:
+      case kDBConnectorTypeODBC:
         result = odbc_system_->long_query();
         break;
       default:
@@ -76,7 +76,7 @@ db_query_t *Manager::get_internal_query() {
   __ENTER_FUNCTION
     db_query_t *query_pointer = NULL;
     switch (connector_type_) {
-      case kConnectorTypeODBC:
+      case kDBConnectorTypeODBC:
         query_pointer = odbc_system_->get_internal_query();
         break;
       default:
@@ -92,7 +92,7 @@ long_db_query_t *Manager::get_long_internal_query() {
   __ENTER_FUNCTION
     long_db_query_t *query_pointer = NULL;
     switch (connector_type_) {
-      case kConnectorTypeODBC:
+      case kDBConnectorTypeODBC:
         query_pointer = odbc_system_->get_long_internal_query();
         break;
       default:
@@ -108,7 +108,7 @@ int32_t Manager::get_affectcount() const {
   __ENTER_FUNCTION
     int32_t result = 0;
     switch (connector_type_) {
-      case kConnectorTypeODBC:
+      case kDBConnectorTypeODBC:
         result = odbc_system_->get_result_count();
         break;
       default:
@@ -124,7 +124,7 @@ bool Manager::check_db_connect() {
   __ENTER_FUNCTION
     bool result = true;
     switch (connector_type_) {
-      case kConnectorTypeODBC:
+      case kDBConnectorTypeODBC:
         result = odbc_system_->check_db_connect();
         break;
       default:

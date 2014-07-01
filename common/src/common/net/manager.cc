@@ -566,7 +566,7 @@ void Manager::broadcast(packet::Base* packet) {
 }
 
 bool Manager::connectserver() {
-  uint8_t step = 0;
+  //uint8_t step = 0;
   __ENTER_FUNCTION
     /**
     bool result = false;

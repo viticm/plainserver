@@ -3,11 +3,13 @@
 
 ps_common_script::lua::System *g_script_luasystem = NULL;
 
+template <> 
+ps_common_script::lua::System 
+  *ps_common_base::Singleton<ps_common_script::lua::System>::singleton_ = NULL;
+
 namespace ps_common_script {
 
 namespace lua {
-
-template <> System *ps_common_base::Singleton<System>::singleton_ = NULL;
 
 System *System::getsingleton_pointer() {
   return singleton_;
@@ -42,7 +44,7 @@ int32_t System::call_noclosure(lua_State *L) {
       lua_pushnumber(L, -1);
       return 1;
     }
-    int32_t scriptid = lua_tonumber(L, 1);
+    int32_t scriptid = static_cast<int32_t>(lua_tonumber(L, 1));
     const char *functionname = lua_tostring(L, 2);
     try {
       SCRIPT_LUASYSTEM_POINTER->enter_runstep(scriptid, functionname);
@@ -112,7 +114,7 @@ int32_t System::call_noclosure(lua_State *L) {
                 lua_pushnil(L);
                 break;
               case LUA_TNUMBER: {
-                int32_t number = lua_tonumber(L, index);
+                int32_t number = static_cast<int32_t>(lua_tonumber(L, index));
                 lua_pushnumber(L, number);
                 break;
               }
@@ -146,7 +148,7 @@ int32_t System::call_noclosure(lua_State *L) {
                 lua_pushnil(L);
                 break;
               case LUA_TNUMBER: {
-                int32_t number = lua_tonumber(L, index);
+                int32_t number = static_cast<int32_t>(lua_tonumber(L, index));
                 lua_pushnumber(L, number);
                 break;
               }

@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include "common/base/time_manager.h"
 #include "common/base/log.h"
 
 ps_common_base::Log* g_log = NULL;
@@ -9,6 +8,7 @@ namespace ps_common_base {
 bool g_command_logprint = true;
 bool g_command_logactive = true;
 const char* kBaseLogSaveDir = "./log";
+ps_common_sys::ThreadLock g_log_lock;
 
 const char* g_log_filename[] = {
   "./log/login", //kLoginLogFile
@@ -23,7 +23,6 @@ const char* g_log_filename[] = {
   '\0',
 };
 
-ps_common_sys::ThreadLock g_log_lock;
 bool g_log_in_one_file = false;
 template<> Log* Singleton<Log>::singleton_ = NULL;
 
@@ -162,64 +161,6 @@ bool Log::init(int32_t cache_size) {
     return false;
 }
 
-template <uint8_t type>
-void Log::fast_savelog(logid_t logid, const char* format, ...) {
-  __ENTER_FUNCTION
-    if (logid < 0 || logid >= kLogFileCount) return;
-    char buffer[2049] = {0};
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256] = {0};
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_timestr(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
-    }
-    catch(...) {
-      Assert(false);
-      return;
-    }
-
-    if (g_command_logprint) {
-      switch (type) {
-        case 1:
-          WARNINGPRINTF(buffer);
-          break;
-        case 2:
-          ERRORPRINTF(buffer);
-          break;
-        default:
-          printf("%s"LF"", buffer);
-          break;
-      }
-    }
-    strncat(buffer, LF, sizeof(LF)); //add wrap
-    if (!g_command_logactive) return; //save log condition
-    int32_t length = static_cast<int32_t>(strlen(buffer));
-    if (length <= 0) return;
-    if (g_log_in_one_file) {
-      //do nothing(one log file is not active in pap)
-    }
-    log_lock_[logid].lock();
-    try {
-      memcpy(log_cache_[logid] + log_position_[logid], buffer, length);
-    }
-    catch(...) {
-      //do nogthing
-    }
-    log_position_[logid] += length;
-    log_lock_[logid].unlock();
-    if (log_position_[logid] > 
-        static_cast<int32_t>((kDefaultLogCacheSize * 2) / 3)) {
-      flush_log(logid);
-    }
-  __LEAVE_FUNCTION
-}
-
 void Log::get_log_filename(logid_t logid, char* file_name) {
   __ENTER_FUNCTION
     if (g_time_manager) {
@@ -257,7 +198,8 @@ void Log::get_log_filename(const char* file_nameprefix, char* file_name) {
     else {
       snprintf(file_name,
                FILENAME_MAX - 1,
-               "%s_%d.log",
+               "%s/%s_%d.log",
+               kBaseLogSaveDir,
                file_nameprefix,
                999999);
     }
@@ -293,56 +235,6 @@ void Log::flush_alllog() {
       logid_t logid = static_cast<logid_t>(i);
       flush_log(logid);
     }
-  __LEAVE_FUNCTION
-}
-
-template <uint8_t type>
-void Log::slow_savelog(const char* filename_prefix, const char* format, ...) {
-  __ENTER_FUNCTION
-    g_log_lock.lock();
-    char buffer[2049];
-    memset(buffer, '\0', sizeof(buffer));
-    va_list argptr;
-    try {
-      va_start(argptr, format);
-      vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-      va_end(argptr);
-      if (g_time_manager) {
-        char time_str[256];
-        memset(time_str, '\0', sizeof(time_str));
-        get_log_timestr(time_str, sizeof(time_str) - 1);
-        strncat(buffer, time_str, strlen(time_str));
-      }
- 
-      if (g_command_logprint) {
-        switch (type) {
-          case 1:
-            WARNINGPRINTF(buffer);
-            break;
-          case 2:
-            ERRORPRINTF(buffer);
-            break;
-          default:
-            printf("%s"LF"", buffer);
-        }
-      }
-      strncat(buffer, LF, sizeof(LF)); //add wrap
-      if (!g_command_logactive) return;
-      char log_file_name[FILENAME_MAX];
-      memset(log_file_name, '\0', sizeof(log_file_name));
-      get_log_filename(filename_prefix, log_file_name);
-      FILE* fp;
-      fp = fopen(log_file_name, "ab");
-      if (fp) {
-        fwrite(buffer, 1, strlen(buffer), fp);
-        fclose(fp);
-      }
-    }
-    catch(...) {
-      ERRORPRINTF("ps_common_base::Log::save_log have some log error here%s", 
-                  LF);
-    }
-    g_log_lock.unlock();
   __LEAVE_FUNCTION
 }
 

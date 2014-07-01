@@ -15,7 +15,7 @@ Integer::~Integer() {
 void Integer::init(uint32_t count) {
   __ENTER_FUNCTION
     hashmap_.clear();
-    maxcount_ = 0;
+    maxcount_ = count;
   __LEAVE_FUNCTION
 }
 

@@ -24,6 +24,7 @@ void Base::clear() {
 
 bool Base::init(int32_t id, const char *filename, FILE *fp) {
   __ENTER_FUNCTION
+    USE_PARAM(fp); //¿©’π∫Û»•µÙ
     using namespace ps_common_base;
     Assert(filename != NULL);
     id_ = id;

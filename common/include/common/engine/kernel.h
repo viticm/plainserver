@@ -28,24 +28,24 @@ class Kernel {
    bool init();
    void run();
    void stop();
-   void registerconfig(const char *name, int32_t value);
-   void registerconfig(const char *name, bool value);
-   void registerconfig(const char *name, const char *value);
-   bool setconfig(const char *name, int32_t value);
-   bool setconfig(const char *name, bool value);
-   bool setconfig(const char *name, const char *value);
-   int32_t getconfig_int32value(const char *name);
-   bool getconfig_boolvalue(const char *name);
-   const char *getconfig_stringvalue(const char *name);
+   void registerconfig(int32_t key, int32_t value);
+   void registerconfig(int32_t key, bool value);
+   void registerconfig(int32_t key, const char *value);
+   bool setconfig(int32_t key, int32_t value);
+   bool setconfig(int32_t key, bool value);
+   bool setconfig(int32_t key, const char *value);
+   int32_t getconfig_int32value(int32_t key);
+   bool getconfig_boolvalue(int32_t key);
+   const char *getconfig_stringvalue(int32_t key);
 
  public: //kernel for set_* functions
    void set_base_logprint(bool flag);
    void set_base_logactive(bool flag);
 
  protected:
-   ps_common_base::hashmap::Template<const char *, const char *> config_string_;
-   ps_common_base::hashmap::Template<const char *, int32_t> config_int32_;
-   ps_common_base::hashmap::Template<const char *, bool> config_bool_;
+   ps_common_base::hashmap::Template<int32_t, const char *> config_string_;
+   ps_common_base::hashmap::Template<int32_t, int32_t> config_int32_;
+   ps_common_base::hashmap::Template<int32_t, bool> config_bool_;
    ps_common_db::Manager *db_manager_;
    ps_common_net::Manager *net_manager_;
 

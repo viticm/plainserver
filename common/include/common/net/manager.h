@@ -87,7 +87,7 @@ class Manager : public connection::Manager {
    fd_set writefds_[kSelectMax];
    fd_set exceptfds_[kSelectMax];
    timeval timeout_[kSelectMax];
-   int32_t listenport_;
+   uint16_t listenport_;
    uint16_t connectionmax_;
    int32_t maxfd_;
    int32_t minfd_;

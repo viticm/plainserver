@@ -14,6 +14,7 @@
 #include "common/base/config.h"
 #include "common/sys/thread.h"
 #include "common/base/singleton.h"
+#include "common/base/time_manager.h"
 
 typedef enum {
   kLoginLogFile = 0,
@@ -35,6 +36,8 @@ extern const char* kBaseLogSaveDir; //如果不要外部使用，就别使用宏
 
 extern bool g_command_logprint; //global if print log to io
 extern bool g_command_logactive; //global if write log to file
+extern bool g_log_in_one_file;
+extern ps_common_sys::ThreadLock g_log_lock;
 
 const uint32_t kLogBufferTemp = 4096;
 const uint32_t kLogNameTemp = 128;
@@ -51,9 +54,6 @@ class Log : public Singleton<Log> {
  public:
    static void disk_log(const char* file_name_prefix, const char* format, ...);
    bool init(int32_t cache_size = kDefaultLogCacheSize);
-   //模板函数 type 0 普通日志 1 警告日志 2 错误日志
-   template <uint8_t type>
-   void fast_savelog(logid_t logid, const char* format, ...); 
    void flush_log(logid_t logid);
    int32_t get_logsize(logid_t logid);
    void get_log_filename(logid_t logid, char* filename);
@@ -62,11 +62,119 @@ class Log : public Singleton<Log> {
    static void get_serial(char* serial, int16_t worldid, int16_t serverid);
    static void remove_log(const char* filename);
    static void get_log_timestr(char* time_str, int32_t length);
+
+ public:
    //模板函数 type 0 普通日志 1 警告日志 2 错误日志
    template <uint8_t type>
-   static void slow_savelog(const char* file_nameprefix, 
-                            const char* format, 
-                            ...);
+   void fast_savelog(logid_t logid, const char* format, ...) {
+     __ENTER_FUNCTION
+       if (logid < 0 || logid >= kLogFileCount) return;
+     char buffer[2049] = {0};
+     va_list argptr;
+     try {
+       va_start(argptr, format);
+       vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+       va_end(argptr);
+       if (g_time_manager) {
+         char time_str[256] = {0};
+         memset(time_str, '\0', sizeof(time_str));
+         get_log_timestr(time_str, sizeof(time_str) - 1);
+         strncat(buffer, time_str, strlen(time_str));
+       }
+     }
+     catch(...) {
+       Assert(false);
+       return;
+     }
+
+     if (g_command_logprint) {
+       switch (type) {
+        case 1:
+          WARNINGPRINTF(buffer);
+          break;
+        case 2:
+          ERRORPRINTF(buffer);
+          break;
+        default:
+          printf("%s"LF"", buffer);
+          break;
+       }
+     }
+     strncat(buffer, LF, sizeof(LF)); //add wrap
+     if (!g_command_logactive) return; //save log condition
+     int32_t length = static_cast<int32_t>(strlen(buffer));
+     if (length <= 0) return;
+     if (g_log_in_one_file) {
+       //do nothing(one log file is not active in pap)
+     }
+     log_lock_[logid].lock();
+     try {
+       memcpy(log_cache_[logid] + log_position_[logid], buffer, length);
+     }
+     catch(...) {
+       //do nogthing
+     }
+     log_position_[logid] += length;
+     log_lock_[logid].unlock();
+     if (log_position_[logid] > 
+       static_cast<int32_t>((kDefaultLogCacheSize * 2) / 3)) {
+         flush_log(logid);
+     }
+     __LEAVE_FUNCTION
+   }
+
+   //模板函数 type 0 普通日志 1 警告日志 2 错误日志
+   template <uint8_t type>
+   static void slow_savelog(const char* filename_prefix, 
+                            const char* format, ...) {
+       __ENTER_FUNCTION
+       g_log_lock.lock();
+       char buffer[2049];
+       memset(buffer, '\0', sizeof(buffer));
+       va_list argptr;
+       try {
+         va_start(argptr, format);
+         vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+         va_end(argptr);
+         if (g_time_manager) {
+           char time_str[256];
+           memset(time_str, '\0', sizeof(time_str));
+           get_log_timestr(time_str, sizeof(time_str) - 1);
+           strncat(buffer, time_str, strlen(time_str));
+         }
+
+         if (g_command_logprint) {
+           switch (type) {
+          case 1:
+            WARNINGPRINTF(buffer);
+            break;
+          case 2:
+            ERRORPRINTF(buffer);
+            break;
+          default:
+            printf("%s"LF"", buffer);
+           }
+         }
+         strncat(buffer, LF, sizeof(LF)); //add wrap
+         if (!g_command_logactive) return;
+         char log_file_name[FILENAME_MAX];
+         memset(log_file_name, '\0', sizeof(log_file_name));
+         get_log_filename(filename_prefix, log_file_name);
+         FILE* fp;
+         fp = fopen(log_file_name, "ab");
+         if (fp) {
+           fwrite(buffer, 1, strlen(buffer), fp);
+           fclose(fp);
+         }
+       }
+       catch(...) {
+         ERRORPRINTF("ps_common_base::Log::save_log have some log error here%s", 
+           LF);
+       }
+       g_log_lock.unlock();
+       __LEAVE_FUNCTION
+   }
+
 
  private:
    char* log_cache_[kLogFileCount];
@@ -77,23 +185,8 @@ class Log : public Singleton<Log> {
 
 };
 
-#if __LINUX__
-#define SaveErrorLog() (SLOW_ERRORLOG( \
-    "error", \
-    "%s %d %s", \
-    __FILE__, \
-    __LINE__, \
-    __PRETTY_FUNCTION__))
-#elif __WINDOWS__
-#define SaveErrorLog() (SLOW_ERRORLOG( \
-    "error", \
-    "%s %d %s", \
-    __FILE__, \
-    __LINE__, \
-    __FUNCTION__))
-#endif
-
 }; //namespace ps_common_base
+
 
 //log sytem macros
 #define LOGSYSTEM_POINTER ps_common_base::Log::getsingleton_pointer()
@@ -103,6 +196,22 @@ class Log : public Singleton<Log> {
 #define SLOW_LOG ps_common_base::Log::slow_savelog<0>
 #define SLOW_WARNINGLOG ps_common_base::Log::slow_savelog<1>
 #define SLOW_ERRORLOG ps_common_base::Log::slow_savelog<2>
+
+#if __LINUX__
+#define SaveErrorLog() (SLOW_ERRORLOG( \
+  "error", \
+  "%s %d %s", \
+  __FILE__, \
+  __LINE__, \
+  __PRETTY_FUNCTION__))
+#elif __WINDOWS__
+#define SaveErrorLog() (SLOW_ERRORLOG( \
+  "error", \
+  "%s %d %s", \
+  __FILE__, \
+  __LINE__, \
+  __FUNCTION__))
+#endif
 
 extern ps_common_base::Log* g_log;
 

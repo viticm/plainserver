@@ -34,6 +34,7 @@ class FileBridge {
    void set_rootpath(const char* path);
    void set_workpath(const char* path);
    void get_fullpath(char* path, const char* filename, size_t length);
+   const char *get_rootpath();
    
  public:
    bool open(const char*);

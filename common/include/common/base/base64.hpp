@@ -161,7 +161,7 @@ int base64decode(char * buf, const char * base64code, int src_len) {
   int b0 = 0;
   int b1 = 0;
   int b2 = 0;
-  int b3 = 0;    
+  //int b3 = 0;
   int rest = 0;
   unsigned long ulTmp = 0;
   unsigned char* psrc = (unsigned char*)base64code;
@@ -195,20 +195,20 @@ int base64decode(char * buf, const char * base64code, int src_len) {
     
     int b0 = (getb64index((char)B0(ulTmp)) << 2 | 
         getb64index((char)B1(ulTmp)) << 2 >> 6) & 0xFF;
-    *pbuf++ = b0;
+    *pbuf++ = static_cast<char>(b0);
     len++;
 
     if ('=' != B1(ulTmp) && '=' != B2(ulTmp)) {
        int b1 = (getb64index((char)B1(ulTmp)) << 4 | 
            getb64index((char)B2(ulTmp)) << 2 >> 4) & 0xFF;
-      *pbuf++ = b1;
+      *pbuf++ = static_cast<char>(b1);
       len  ++;
     }
     
     if ('=' != B2(ulTmp) && '=' != B3(ulTmp)) {
        int b2 = (getb64index((char)B2(ulTmp)) << 6 | 
            getb64index((char)B3(ulTmp)) << 2 >> 2) & 0xFF;
-      *pbuf++ = b2;
+      *pbuf++ = static_cast<char>(b2);
       len++;
     }
   }

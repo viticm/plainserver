@@ -10,9 +10,7 @@
 #pragma comment(lib, "shlwapi.lib")
 #endif
 
-extern const char* g_dump_exename;
-
-namespace pap_common_sys {
+namespace ps_common_sys {
 
 namespace minidump {
 
@@ -28,7 +26,7 @@ LONG WINAPI unhandled_exceptionfilter(
 	snprintf(crashfile, 
            sizeof(crashfile) - 1, 
            "%s_crash_%s_%02d%02d%02d%02d.dmp", 
-		       g_dump_exename, 
+		       "filename", 
            hostname, 
            nowtime.wMonth, 
            nowtime.wDay, 
@@ -69,4 +67,4 @@ LONG WINAPI unhandled_exceptionfilter(
 
 } //namespace minidump
 
-} //namespace pap_common_sys
+} //namespace ps_common_sys

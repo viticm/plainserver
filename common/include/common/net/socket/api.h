@@ -20,7 +20,6 @@
 #include <sys/socket.h>
 #elif __WINDOWS__
 #include <winsock.h>
-#include <ws2tcpip.h>
 #endif
 #include <errno.h>
 

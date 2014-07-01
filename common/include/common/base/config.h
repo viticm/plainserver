@@ -11,12 +11,7 @@
 #ifndef PS_COMMON_BASE_CONFIG_H_
 #define PS_COMMON_BASE_CONFIG_H_
 
-#undef __WINDOWS__
-#undef __LINUX__
-
 /* base type { */
-#define __WINDOWS__ (defined(_MSC_VER) || defined(__ICL))
-#define __LINUX__ !(__WINDOWS__)
 #include "common/base/type.h"
 /* } base type */
 

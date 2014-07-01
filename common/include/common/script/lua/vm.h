@@ -111,6 +111,7 @@ class VM {
  public:
    void set_rootpath(const char* path);
    void set_workpath(const char* path);
+   const char *get_rootpath();
 
  private:
    bool executecode();
