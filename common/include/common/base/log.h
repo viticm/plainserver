@@ -64,7 +64,7 @@ class Log : public Singleton<Log> {
    static void get_log_timestr(char* time_str, int32_t length);
 
  public:
-   //模板函数 type 0 普通日志 1 警告日志 2 错误日志
+   //模板函数 type 0 普通日志 1 警告日志 2 错误日志 3 调试日志
    template <uint8_t type>
    void fast_savelog(logid_t logid, const char* format, ...) {
      __ENTER_FUNCTION
@@ -95,6 +95,9 @@ class Log : public Singleton<Log> {
         case 2:
           ERRORPRINTF(buffer);
           break;
+        case 3:
+          DEBUGPRINTF(buffer);
+          break;
         default:
           printf("%s"LF"", buffer);
           break;
@@ -123,14 +126,13 @@ class Log : public Singleton<Log> {
      __LEAVE_FUNCTION
    }
 
-   //模板函数 type 0 普通日志 1 警告日志 2 错误日志
+   //模板函数 type 0 普通日志 1 警告日志 2 错误日志 3 调试日志
    template <uint8_t type>
    static void slow_savelog(const char* filename_prefix, 
                             const char* format, ...) {
        __ENTER_FUNCTION
        g_log_lock.lock();
-       char buffer[2049];
-       memset(buffer, '\0', sizeof(buffer));
+       char buffer[2049] = {0};
        va_list argptr;
        try {
          va_start(argptr, format);
@@ -150,6 +152,9 @@ class Log : public Singleton<Log> {
             break;
           case 2:
             ERRORPRINTF(buffer);
+            break;
+          case 3:
+            DEBUGPRINTF(buffer);
             break;
           default:
             printf("%s"LF"", buffer);
@@ -175,7 +180,6 @@ class Log : public Singleton<Log> {
        __LEAVE_FUNCTION
    }
 
-
  private:
    char* log_cache_[kLogFileCount];
    int32_t log_position_[kLogFileCount];
@@ -193,9 +197,11 @@ class Log : public Singleton<Log> {
 #define FAST_LOG LOGSYSTEM_POINTER->fast_savelog<0>
 #define FAST_WARNINGLOG LOGSYSTEM_POINTER->fast_savelog<1>
 #define FAST_ERRORLOG LOGSYSTEM_POINTER->fast_savelog<2>
+#define FAST_DEBUGLOG LOGSYSTEM_POINTER->fast_savelog<3>
 #define SLOW_LOG ps_common_base::Log::slow_savelog<0>
 #define SLOW_WARNINGLOG ps_common_base::Log::slow_savelog<1>
 #define SLOW_ERRORLOG ps_common_base::Log::slow_savelog<2>
+#define SLOW_DEBUGLOG ps_common_base::Log::slow_savelog<3> 
 
 #if __LINUX__
 #define SaveErrorLog() (SLOW_ERRORLOG( \
