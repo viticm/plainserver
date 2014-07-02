@@ -9,7 +9,7 @@ namespace pap_common_sys {
 
 namespace minidump {
 
-#if defined(__WINDOWS__)
+#if __WINDOWS__
 #include <windows.h>
 LONG WINAPI unhandled_exceptionfilter(
     struct _EXCEPTION_POINTERS* exceptioninfo);

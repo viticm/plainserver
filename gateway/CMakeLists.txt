@@ -1,0 +1,2 @@
+INCLUDE_DIRECTORIES(../common/include/)
+ADD_SUBDIRECTORY(src)
