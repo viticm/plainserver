@@ -1470,12 +1470,15 @@ void Interface::mark_scriptname(lua_State *L, const char *name) {
     lua_pushstring(L, name);
     lua_setglobal(L, kLuaScriptStepFileName);
   __LEAVE_FUNCTION
+#else
+  USE_PARAM(L);
+  USE_PARAM(name);
 #endif
 }
 
 void Interface::check_scriptvalid(void *file, 
-                               int32_t scriptid, 
-                               const char *functionname) {
+                                  int32_t scriptid, 
+                                  const char *functionname) {
 #ifdef _DEBUG
   __ENTER_FUNCTION
     char buffer[256] = {0};
@@ -1486,6 +1489,10 @@ void Interface::check_scriptvalid(void *file,
              scriptid);
     AssertEx(file, buffer);
   __LEAVE_FUNCTION
+#else
+  USE_PARAM(file);
+  USE_PARAM(scriptid);
+  USE_PARAM(functionname);
 #endif
 }
 

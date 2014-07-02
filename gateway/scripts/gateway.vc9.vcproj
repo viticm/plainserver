@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../common/include;../../include;../../../lib/lua/src/;../../../lib/libiconv/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;__WINDOWS__;_CRT_SECURE_NO_DEPRECATE;_PS_GATEWAY;_PS_NET_GATEWAY;UTF8"
+				AdditionalIncludeDirectories="../../common/include;../include;../../lib/lua/src/;../../lib/libiconv/include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;__WINDOWS__;_CRT_SECURE_NO_DEPRECATE;_PS_GATEWAY;_PS_NET_GATEWAY"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib ../../../lib/lua/lib/ReleaseLib/luascript.lib ../../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
+				AdditionalDependencies="ws2_32.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
 				OutputFile="..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -128,8 +128,8 @@
 				InlineFunctionExpansion="1"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../common/include;../../include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__WINDOWS__;_CRT_SECURE_NO_DEPRECATE;_PAP_BILLING;_PAP_NET_BILLING;UTF8"
+				AdditionalIncludeDirectories="../../common/include;../include;../../lib/lua/src/;../../lib/libiconv/include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__WINDOWS__;_CRT_SECURE_NO_DEPRECATE;_PS_GATEWAY;_PS_NET_GATEWAY"
 				StringPooling="true"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
@@ -152,7 +152,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="ws2_32.lib ../../../lib/lua/lib/ReleaseLib/luascript.lib ../../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
+				AdditionalDependencies="ws2_32.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
 				OutputFile="..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib;libcd.lib"
@@ -200,7 +200,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\gateway.cc"
+				RelativePath="..\src\gateway.cc"
 				>
 			</File>
 			<Filter
@@ -210,34 +210,34 @@
 					Name="base"
 					>
 					<File
-						RelativePath="..\..\..\common\src\common\base\io.cc"
+						RelativePath="..\..\common\src\common\base\io.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\base\log.cc"
+						RelativePath="..\..\common\src\common\base\log.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\base\md5.cc"
+						RelativePath="..\..\common\src\common\base\md5.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\base\string.cc"
+						RelativePath="..\..\common\src\common\base\string.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\base\time_manager.cc"
+						RelativePath="..\..\common\src\common\base\time_manager.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\base\util.cc"
+						RelativePath="..\..\common\src\common\base\util.cc"
 						>
 					</File>
 					<Filter
 						Name="hashmap"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\base\hashmap\integer.cc"
+							RelativePath="..\..\common\src\common\base\hashmap\integer.cc"
 							>
 						</File>
 					</Filter>
@@ -246,34 +246,34 @@
 					Name="sys"
 					>
 					<File
-						RelativePath="..\..\..\common\src\common\sys\assert.cc"
+						RelativePath="..\..\common\src\common\sys\assert.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\sys\minidump.cc"
+						RelativePath="..\..\common\src\common\sys\minidump.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\sys\thread.cc"
+						RelativePath="..\..\common\src\common\sys\thread.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\sys\util.cc"
+						RelativePath="..\..\common\src\common\sys\util.cc"
 						>
 					</File>
 					<Filter
 						Name="memory"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\sys\memory\dynamic_allocator.cc"
+							RelativePath="..\..\common\src\common\sys\memory\dynamic_allocator.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\sys\memory\share.cc"
+							RelativePath="..\..\common\src\common\sys\memory\share.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\sys\memory\static_allocator.cc"
+							RelativePath="..\..\common\src\common\sys\memory\static_allocator.cc"
 							>
 						</File>
 					</Filter>
@@ -282,15 +282,15 @@
 					Name="file"
 					>
 					<File
-						RelativePath="..\..\..\common\src\common\file\api.cc"
+						RelativePath="..\..\common\src\common\file\api.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\file\database.cc"
+						RelativePath="..\..\common\src\common\file\database.cc"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\src\common\file\ini.cc"
+						RelativePath="..\..\common\src\common\file\ini.cc"
 						>
 					</File>
 				</Filter>
@@ -298,18 +298,18 @@
 					Name="net"
 					>
 					<File
-						RelativePath="..\..\..\common\src\common\net\manager.cc"
+						RelativePath="..\..\common\src\common\net\manager.cc"
 						>
 					</File>
 					<Filter
 						Name="packet"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\net\packet\base.cc"
+							RelativePath="..\..\common\src\common\net\packet\base.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\packet\factorymanager.cc"
+							RelativePath="..\..\common\src\common\net\packet\factorymanager.cc"
 							>
 						</File>
 					</Filter>
@@ -317,31 +317,31 @@
 						Name="socket"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\api.cc"
+							RelativePath="..\..\common\src\common\net\socket\api.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\base.cc"
+							RelativePath="..\..\common\src\common\net\socket\base.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\encode.cc"
+							RelativePath="..\..\common\src\common\net\socket\encode.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\inputstream.cc"
+							RelativePath="..\..\common\src\common\net\socket\inputstream.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\outputstream.cc"
+							RelativePath="..\..\common\src\common\net\socket\outputstream.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\server.cc"
+							RelativePath="..\..\common\src\common\net\socket\server.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\socket\stream.cc"
+							RelativePath="..\..\common\src\common\net\socket\stream.cc"
 							>
 						</File>
 					</Filter>
@@ -349,19 +349,19 @@
 						Name="connection"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\net\connection\base.cc"
+							RelativePath="..\..\common\src\common\net\connection\base.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\connection\manager.cc"
+							RelativePath="..\..\common\src\common\net\connection\manager.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\connection\pool.cc"
+							RelativePath="..\..\common\src\common\net\connection\pool.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\net\connection\server.cc"
+							RelativePath="..\..\common\src\common\net\connection\server.cc"
 							>
 						</File>
 					</Filter>
@@ -372,7 +372,7 @@
 							Name="serverver"
 							>
 							<File
-								RelativePath="..\..\..\common\src\common\net\packets\serverserver\connect.cc"
+								RelativePath="..\..\common\src\common\net\packets\serverserver\connect.cc"
 								>
 							</File>
 						</Filter>
@@ -382,7 +382,7 @@
 					Name="engine"
 					>
 					<File
-						RelativePath="..\..\..\common\src\common\engine\kernel.cc"
+						RelativePath="..\..\common\src\common\engine\kernel.cc"
 						>
 					</File>
 				</Filter>
@@ -390,18 +390,18 @@
 					Name="db"
 					>
 					<File
-						RelativePath="..\..\..\common\src\common\db\manager.cc"
+						RelativePath="..\..\common\src\common\db\manager.cc"
 						>
 					</File>
 					<Filter
 						Name="odbc"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\db\odbc\interface.cc"
+							RelativePath="..\..\common\src\common\db\odbc\interface.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\db\odbc\system.cc"
+							RelativePath="..\..\common\src\common\db\odbc\system.cc"
 							>
 						</File>
 					</Filter>
@@ -413,11 +413,11 @@
 						Name="cache"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\script\cache\base.cc"
+							RelativePath="..\..\common\src\common\script\cache\base.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\script\cache\manager.cc"
+							RelativePath="..\..\common\src\common\script\cache\manager.cc"
 							>
 						</File>
 					</Filter>
@@ -425,27 +425,27 @@
 						Name="lua"
 						>
 						<File
-							RelativePath="..\..\..\common\src\common\script\lua\filebridge.cc"
+							RelativePath="..\..\common\src\common\script\lua\filebridge.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\script\lua\interface.cc"
+							RelativePath="..\..\common\src\common\script\lua\interface.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\script\lua\lunar.cc"
+							RelativePath="..\..\common\src\common\script\lua\lunar.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\script\lua\stack.cc"
+							RelativePath="..\..\common\src\common\script\lua\stack.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\script\lua\system.cc"
+							RelativePath="..\..\common\src\common\script\lua\system.cc"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\src\common\script\lua\vm.cc"
+							RelativePath="..\..\common\src\common\script\lua\vm.cc"
 							>
 						</File>
 					</Filter>
@@ -461,7 +461,7 @@
 						Name="serverserver"
 						>
 						<File
-							RelativePath="..\..\src\message\handler\serverserver\connect.cc"
+							RelativePath="..\src\message\handler\serverserver\connect.cc"
 							>
 						</File>
 					</Filter>
@@ -473,6 +473,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\include\gateway.h"
+				>
+			</File>
 			<Filter
 				Name="common"
 				>
