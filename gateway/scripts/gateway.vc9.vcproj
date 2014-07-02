@@ -484,62 +484,62 @@
 					Name="base"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\base\base64.hpp"
+						RelativePath="..\..\common\include\common\base\base64.hpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\config.h"
+						RelativePath="..\..\common\include\common\base\config.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\io.h"
+						RelativePath="..\..\common\include\common\base\io.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\log.h"
+						RelativePath="..\..\common\include\common\base\log.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\log_define.h"
+						RelativePath="..\..\common\include\common\base\log_define.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\md5.h"
+						RelativePath="..\..\common\include\common\base\md5.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\singleton.h"
+						RelativePath="..\..\common\include\common\base\singleton.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\string.h"
+						RelativePath="..\..\common\include\common\base\string.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\time_manager.h"
+						RelativePath="..\..\common\include\common\base\time_manager.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\type.h"
+						RelativePath="..\..\common\include\common\base\type.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\base\util.h"
+						RelativePath="..\..\common\include\common\base\util.h"
 						>
 					</File>
 					<Filter
 						Name="hashmap"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\base\hashmap\config.h"
+							RelativePath="..\..\common\include\common\base\hashmap\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\base\hashmap\integer.h"
+							RelativePath="..\..\common\include\common\base\hashmap\integer.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\base\hashmap\template.h"
+							RelativePath="..\..\common\include\common\base\hashmap\template.h"
 							>
 						</File>
 					</Filter>
@@ -548,26 +548,26 @@
 					Name="db"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\db\config.h"
+						RelativePath="..\..\common\include\common\db\config.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\db\manager.h"
+						RelativePath="..\..\common\include\common\db\manager.h"
 						>
 					</File>
 					<Filter
 						Name="odbc"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\db\odbc\config.h"
+							RelativePath="..\..\common\include\common\db\odbc\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\db\odbc\interface.h"
+							RelativePath="..\..\common\include\common\db\odbc\interface.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\db\odbc\system.h"
+							RelativePath="..\..\common\include\common\db\odbc\system.h"
 							>
 						</File>
 					</Filter>
@@ -576,19 +576,19 @@
 					Name="file"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\file\api.h"
+						RelativePath="..\..\common\include\common\file\api.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\file\config.h"
+						RelativePath="..\..\common\include\common\file\config.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\file\database.h"
+						RelativePath="..\..\common\include\common\file\database.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\file\ini.h"
+						RelativePath="..\..\common\include\common\file\ini.h"
 						>
 					</File>
 				</Filter>
@@ -596,11 +596,11 @@
 					Name="net"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\net\config.h"
+						RelativePath="..\..\common\include\common\net\config.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\net\manager.h"
+						RelativePath="..\..\common\include\common\net\manager.h"
 						>
 					</File>
 					<Filter
@@ -611,19 +611,19 @@
 						Name="packet"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\net\packet\base.h"
+							RelativePath="..\..\common\include\common\net\packet\base.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\packet\config.h"
+							RelativePath="..\..\common\include\common\net\packet\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\packet\factory.h"
+							RelativePath="..\..\common\include\common\net\packet\factory.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\packet\factorymanager.h"
+							RelativePath="..\..\common\include\common\net\packet\factorymanager.h"
 							>
 						</File>
 					</Filter>
@@ -631,23 +631,23 @@
 						Name="connection"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\net\connection\base.h"
+							RelativePath="..\..\common\include\common\net\connection\base.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\connection\config.h"
+							RelativePath="..\..\common\include\common\net\connection\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\connection\manager.h"
+							RelativePath="..\..\common\include\common\net\connection\manager.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\connection\pool.h"
+							RelativePath="..\..\common\include\common\net\connection\pool.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\net\connection\server.h"
+							RelativePath="..\..\common\include\common\net\connection\server.h"
 							>
 						</File>
 					</Filter>
@@ -655,42 +655,42 @@
 						Name="packets"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\net\packets\config.h"
+							RelativePath="..\..\common\include\common\net\packets\config.h"
 							>
 						</File>
 						<Filter
 							Name="id"
 							>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\all.h"
+								RelativePath="..\..\common\include\common\net\packets\id\all.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\clientlogin.h"
+								RelativePath="..\..\common\include\common\net\packets\id\clientlogin.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\clientserver.h"
+								RelativePath="..\..\common\include\common\net\packets\id\clientserver.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\config.h"
+								RelativePath="..\..\common\include\common\net\packets\id\config.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\gatewaylogin.h"
+								RelativePath="..\..\common\include\common\net\packets\id\gatewaylogin.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\logincenter.h"
+								RelativePath="..\..\common\include\common\net\packets\id\logincenter.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\servercenter.h"
+								RelativePath="..\..\common\include\common\net\packets\id\servercenter.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\id\serverserver.h"
+								RelativePath="..\..\common\include\common\net\packets\id\serverserver.h"
 								>
 							</File>
 						</Filter>
@@ -698,11 +698,11 @@
 							Name="serverserver"
 							>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\serverserver\config.h"
+								RelativePath="..\..\common\include\common\net\packets\serverserver\config.h"
 								>
 							</File>
 							<File
-								RelativePath="..\..\..\common\include\common\net\packets\serverserver\connect.h"
+								RelativePath="..\..\common\include\common\net\packets\serverserver\connect.h"
 								>
 							</File>
 						</Filter>
@@ -712,22 +712,22 @@
 					Name="script"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\script\config.h"
+						RelativePath="..\..\common\include\common\script\config.h"
 						>
 					</File>
 					<Filter
 						Name="cache"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\script\cache\base.h"
+							RelativePath="..\..\common\include\common\script\cache\base.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\cache\config.h"
+							RelativePath="..\..\common\include\common\script\cache\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\cache\manager.h"
+							RelativePath="..\..\common\include\common\script\cache\manager.h"
 							>
 						</File>
 					</Filter>
@@ -735,31 +735,31 @@
 						Name="lua"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\config.h"
+							RelativePath="..\..\common\include\common\script\lua\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\filebridge.h"
+							RelativePath="..\..\common\include\common\script\lua\filebridge.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\interface.h"
+							RelativePath="..\..\common\include\common\script\lua\interface.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\lunar.h"
+							RelativePath="..\..\common\include\common\script\lua\lunar.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\stack.h"
+							RelativePath="..\..\common\include\common\script\lua\stack.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\system.h"
+							RelativePath="..\..\common\include\common\script\lua\system.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\script\lua\vm.h"
+							RelativePath="..\..\common\include\common\script\lua\vm.h"
 							>
 						</File>
 					</Filter>
@@ -768,11 +768,11 @@
 					Name="engine"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\engine\config.h"
+						RelativePath="..\..\common\include\common\engine\config.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\engine\kernel.h"
+						RelativePath="..\..\common\include\common\engine\kernel.h"
 						>
 					</File>
 				</Filter>
@@ -780,46 +780,46 @@
 					Name="sys"
 					>
 					<File
-						RelativePath="..\..\..\common\include\common\sys\assert.h"
+						RelativePath="..\..\common\include\common\sys\assert.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\sys\config.h"
+						RelativePath="..\..\common\include\common\sys\config.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\sys\info.h"
+						RelativePath="..\..\common\include\common\sys\info.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\sys\minidump.h"
+						RelativePath="..\..\common\include\common\sys\minidump.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\sys\thread.h"
+						RelativePath="..\..\common\include\common\sys\thread.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\common\include\common\sys\util.h"
+						RelativePath="..\..\common\include\common\sys\util.h"
 						>
 					</File>
 					<Filter
 						Name="memory"
 						>
 						<File
-							RelativePath="..\..\..\common\include\common\sys\memory\config.h"
+							RelativePath="..\..\common\include\common\sys\memory\config.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\sys\memory\dynamic_allocator.h"
+							RelativePath="..\..\common\include\common\sys\memory\dynamic_allocator.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\sys\memory\share.h"
+							RelativePath="..\..\common\include\common\sys\memory\share.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\common\include\common\sys\memory\static_allocator.h"
+							RelativePath="..\..\common\include\common\sys\memory\static_allocator.h"
 							>
 						</File>
 					</Filter>

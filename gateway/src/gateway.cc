@@ -1,5 +1,6 @@
 #include "gateway.h"
 #include "common/engine/kernel.h"
+#include "common/base/log.h"
 
 int32_t main(int32_t argc, char * argv[]) {
 #if __WINDOWS__
@@ -19,6 +20,7 @@ int32_t main(int32_t argc, char * argv[]) {
     engine_kernel.stop();
     return 1;
   }
+  FAST_LOG(kGatewayLogFile, "fast log");
   engine_kernel.run();
   engine_kernel.stop();
   return 0;
