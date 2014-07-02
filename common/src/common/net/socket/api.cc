@@ -13,7 +13,7 @@ namespace socket {
 namespace api {
 
 #if __LINUX__
-extern int32_t errno;
+//extern int32_t errno;
 #elif __WINDOWS__
 int32_t error;
 #endif

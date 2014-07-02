@@ -386,7 +386,7 @@ void Kernel::stop_db() {
 
 void Kernel::stop_net() {
   __ENTER_FUNCTION
-    net_manager_->setactive(false);
+    if (net_manager_) net_manager_->setactive(false);
     ps_common_base::util::sleep(5000);
     SAFE_DELETE(net_manager_);
   __LEAVE_FUNCTION

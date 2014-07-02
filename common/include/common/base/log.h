@@ -69,60 +69,60 @@ class Log : public Singleton<Log> {
    void fast_savelog(logid_t logid, const char* format, ...) {
      __ENTER_FUNCTION
        if (logid < 0 || logid >= kLogFileCount) return;
-     char buffer[2049] = {0};
-     va_list argptr;
-     try {
-       va_start(argptr, format);
-       vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
-       va_end(argptr);
-       if (g_time_manager) {
-         char time_str[256] = {0};
-         memset(time_str, '\0', sizeof(time_str));
-         get_log_timestr(time_str, sizeof(time_str) - 1);
-         strncat(buffer, time_str, strlen(time_str));
+       char buffer[2049] = {0};
+       va_list argptr;
+       try {
+         va_start(argptr, format);
+         vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+         va_end(argptr);
+         if (g_time_manager) {
+           char time_str[256] = {0};
+           memset(time_str, '\0', sizeof(time_str));
+           get_log_timestr(time_str, sizeof(time_str) - 1);
+           strncat(buffer, time_str, strlen(time_str));
+         }
        }
-     }
-     catch(...) {
-       Assert(false);
-       return;
-     }
+       catch(...) {
+         Assert(false);
+         return;
+       }
 
-     if (g_command_logprint) {
-       switch (type) {
-        case 1:
-          WARNINGPRINTF(buffer);
-          break;
-        case 2:
-          ERRORPRINTF(buffer);
-          break;
-        case 3:
-          DEBUGPRINTF(buffer);
-          break;
-        default:
-          printf("%s"LF"", buffer);
-          break;
+       if (g_command_logprint) {
+         switch (type) {
+          case 1:
+            WARNINGPRINTF(buffer);
+            break;
+          case 2:
+            ERRORPRINTF(buffer);
+            break;
+          case 3:
+            DEBUGPRINTF(buffer);
+            break;
+          default:
+            printf("%s"LF"", buffer);
+            break;
+         }
        }
-     }
-     strncat(buffer, LF, sizeof(LF)); //add wrap
-     if (!g_command_logactive) return; //save log condition
-     int32_t length = static_cast<int32_t>(strlen(buffer));
-     if (length <= 0) return;
-     if (g_log_in_one_file) {
-       //do nothing(one log file is not active in pap)
-     }
-     log_lock_[logid].lock();
-     try {
-       memcpy(log_cache_[logid] + log_position_[logid], buffer, length);
-     }
-     catch(...) {
-       //do nogthing
-     }
-     log_position_[logid] += length;
-     log_lock_[logid].unlock();
-     if (log_position_[logid] > 
-       static_cast<int32_t>((kDefaultLogCacheSize * 2) / 3)) {
-         flush_log(logid);
-     }
+       strncat(buffer, LF, sizeof(LF)); //add wrap
+       if (!g_command_logactive) return; //save log condition
+       int32_t length = static_cast<int32_t>(strlen(buffer));
+       if (length <= 0) return;
+       if (g_log_in_one_file) {
+         //do nothing(one log file is not active in pap)
+       }
+       log_lock_[logid].lock();
+       try {
+         memcpy(log_cache_[logid] + log_position_[logid], buffer, length);
+       }
+       catch(...) {
+         //do nogthing
+       }
+       log_position_[logid] += length;
+       log_lock_[logid].unlock();
+       if (log_position_[logid] > 
+         static_cast<int32_t>((kDefaultLogCacheSize * 2) / 3)) {
+           flush_log(logid);
+       }
      __LEAVE_FUNCTION
    }
 

@@ -1,7 +1,5 @@
 #include "gateway.h"
 #include "common/engine/kernel.h"
-#include "common/sys/minidump.h"
-#include "common/base/log.h"
 
 int32_t main(int32_t argc, char * argv[]) {
 #if __WINDOWS__

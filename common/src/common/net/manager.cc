@@ -326,9 +326,9 @@ bool Manager::accept_newconnection() {
     catch(...) {
       step += 100000;
     }
-    FAST_ERRORLOG(kNetLogFile,
-                  "[net] (Manager::accept_newconnection) socketid: %d ",
-                  newconnection->getsocket()->getid());
+    FAST_LOG(kNetLogFile,
+             "[net] (Manager::accept_newconnection) socketid: %d ",
+             newconnection->getsocket()->getid());
     return true;
 EXCEPTION:
     newconnection->cleanup();
