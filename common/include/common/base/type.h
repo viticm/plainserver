@@ -175,6 +175,7 @@ typedef int16_t connectionid_t;
 #define SAFE_RELEASE(x)	if ((x) != NULL) { (x)->release(); (x) = NULL; }
 #endif
 
+/* io { */
 #ifndef ERRORPRINTF
 #define ERRORPRINTF baseio_perror
 #endif
@@ -182,6 +183,11 @@ typedef int16_t connectionid_t;
 #ifndef WARNINGPRINTF
 #define WARNINGPRINTF baseio_pwarn
 #endif
+
+#ifndef DEBUGPRINTF
+#define DEBUGPRINTF baseio_pdebug
+#endif
+/* } io */
 
 #if __WINDOWS__ //normal functions
 #if defined(NDEBUG)

@@ -11,10 +11,10 @@ Kernel::Kernel() {
     config_int32_.init(100);
     config_string_.init(100);
     config_bool_.init(100);
-    registerconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+    registerconfig(ENGINE_CONFIG_DB_ISACTIVE, false);
     registerconfig(ENGINE_CONFIG_NET_ISACTIVE, true);
-    registerconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
-    registerconfig(ENGINE_CONFIG_PERFORMANCE_ISACTIVE, true);
+    registerconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, false);
+    registerconfig(ENGINE_CONFIG_PERFORMANCE_ISACTIVE, false);
     registerconfig(ENGINE_CONFIG_DB_CONNECTOR_TYPE, kDBConnectorTypeODBC);
     registerconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "");
     registerconfig(ENGINE_CONFIG_DB_USERNAME, "");
@@ -41,6 +41,7 @@ Kernel::~Kernel() {
 
 bool Kernel::init() {
   __ENTER_FUNCTION
+    //base
     SLOW_LOG("engine", "[engine] (Kernel::init) start base module");
     if (!init_base()) {
       SLOW_ERRORLOG("engine", 
@@ -48,31 +49,43 @@ bool Kernel::init() {
       return false;
     }
     SLOW_LOG("engine", "[engine] (Kernel::init) base module success");
-    SLOW_LOG("engine", "[engine] (Kernel::init) start db module");
-    if (!init_db()) { 
-      SLOW_ERRORLOG("engine", "[engine] (Kernel::init) db module failed");
-      return false;
+    //db
+    if (getconfig_boolvalue(ENGINE_CONFIG_DB_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::init) start db module");
+      if (!init_db()) { 
+        SLOW_ERRORLOG("engine", "[engine] (Kernel::init) db module failed");
+        return false;
+      }
+      SLOW_LOG("engine", "[engine] (Kernel::init) db module success");
     }
-    SLOW_LOG("engine", "[engine] (Kernel::init) db module success");
-    SLOW_LOG("engine", "[engine] (Kernel::init) start net module");
-    if (!init_net()) {
-      SLOW_ERRORLOG("engine", "[engine] (Kernel::init) net module failed");
-      return false;
+    //net
+    if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::init) start net module");
+      if (!init_net()) {
+        SLOW_ERRORLOG("engine", "[engine] (Kernel::init) net module failed");
+        return false;
+      }
+      SLOW_LOG("engine", "[engine] (Kernel::init) net module success");
     }
-    SLOW_LOG("engine", "[engine] (Kernel::init) net module success");
-    SLOW_LOG("engine", "[engine] (Kernel::init) start script module"); 
-    if (!init_script()) {
-      SLOW_ERRORLOG("engine", "[engine] (Kernel::init) script module failed");
-      return false;
+    //script
+    if (getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_ISACTIVE)) { 
+      SLOW_LOG("engine", "[engine] (Kernel::init) start script module"); 
+      if (!init_script()) {
+        SLOW_ERRORLOG("engine", "[engine] (Kernel::init) script module failed");
+        return false;
+      }
+      SLOW_LOG("engine", "[engine] (Kernel::init) script module success");
     }
-    SLOW_LOG("engine", "[engine] (Kernel::init) script module success");
-    SLOW_LOG("engine", "[engine] (Kernel::init) start performance module");
-    if (!init_performance()) {
-      SLOW_ERRORLOG("engine",
-                    "[engine] (Kernel::init) performance module failed");
-      return false;
+    //performance
+    if (getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::init) start performance module");
+      if (!init_performance()) {
+        SLOW_ERRORLOG("engine",
+                      "[engine] (Kernel::init) performance module failed");
+        return false;
+      }
+      SLOW_LOG("engine", "[engine] (Kernel::init) performance module success"); 
     }
-    SLOW_LOG("engine", "[engine] (Kernel::init) performance module success"); 
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -80,29 +93,55 @@ bool Kernel::init() {
 
 void Kernel::run() {
   __ENTER_FUNCTION
+    //base
     SLOW_LOG("engine", "[engine] (Kernel::run) base module");
     run_base();
-    SLOW_LOG("engine", "[engine] (Kernel::run) db module");
-    run_db();
-    SLOW_LOG("engine", "[engine] (Kernel::run) script module");
-    run_script();
-    SLOW_LOG("engine", "[engine] (Kernel::run) performance module");
-    run_performance();
-    SLOW_LOG("engine", "[engine] (Kernel::run) net module");
-    run_net();
+    //db
+    if (getconfig_boolvalue(ENGINE_CONFIG_DB_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::run) db module");
+      run_db();
+    }
+    //script
+    if (getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::run) script module");
+      run_script();
+    }
+    //performance
+    if (getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::run) performance module");
+      run_performance();
+    }
+    //net
+    if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::run) net module");
+      run_net();
+    }
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop() {
   __ENTER_FUNCTION
-    SLOW_LOG("engine", "[engine] (Kernel::stop) performance module");
-    stop_performance();
-    SLOW_LOG("engine", "[engine] (Kernel::stop) script module");
-    stop_script();
-    SLOW_LOG("engine", "[engine] (Kernel::stop) net module");
-    stop_net();
-    SLOW_LOG("engine", "[engine] (Kernel::stop) db module");
-    stop_db();
+    //performance
+    if (getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::stop) performance module");
+      stop_performance();
+    }
+    //script
+    if (getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::stop) script module");
+      stop_script();
+    }
+    //net
+    if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::stop) net module");
+      stop_net();
+    }
+    //db
+    if (getconfig_boolvalue(ENGINE_CONFIG_DB_ISACTIVE)) {
+      SLOW_LOG("engine", "[engine] (Kernel::stop) db module");
+      stop_db();
+    }
+    //base
     SLOW_LOG("engine", "[engine] (Kernel::stop) base module");
     stop_base();
   __LEAVE_FUNCTION

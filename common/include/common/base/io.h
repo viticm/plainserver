@@ -9,5 +9,6 @@
  * @uses your description
  */
 
-void baseio_perror(const char* format, ...);
-void baseio_pwarn(const char* format, ...);
+void baseio_perror(const char *format, ...);
+void baseio_pwarn(const char *format, ...);
+void baseio_pdebug(const char *format, ...);
