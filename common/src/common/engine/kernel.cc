@@ -249,6 +249,7 @@ bool Kernel::init_base() {
     using namespace ps_common_base;
     g_time_manager = new TimeManager();
     if (!TIME_MANAGER_POINTER) return false;
+    TIME_MANAGER_POINTER->init();
     g_log = new Log();
     if (!LOGSYSTEM_POINTER) return false;
     return true;

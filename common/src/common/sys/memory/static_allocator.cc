@@ -73,6 +73,7 @@ void* StaticAllocator::realloc(void* data, size_t newsize) {
 
 void StaticAllocator::free(void* data) {
   __ENTER_FUNCTION
+    USE_PARAM(data);
     Assert(data >= buffer_ && data < buffer_ + size_);
   __LEAVE_FUNCTION
 }

@@ -1,6 +1,7 @@
 #include "gateway.h"
 #include "common/engine/kernel.h"
 #include "common/sys/minidump.h"
+#include "common/base/log.h"
 
 int32_t main(int32_t argc, char * argv[]) {
 #if __WINDOWS__
@@ -14,7 +15,8 @@ int32_t main(int32_t argc, char * argv[]) {
   system("mode con cols=120"); //cmd size
 #endif
   ps_common_engine::Kernel engine_kernel;
-  engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+  //engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+  engine_kernel.setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
   if (!engine_kernel.init()) {
     engine_kernel.stop();
     return 1;
