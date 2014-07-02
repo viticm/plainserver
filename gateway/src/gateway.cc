@@ -14,7 +14,11 @@ int32_t main(int32_t argc, char * argv[]) {
   system("mode con cols=120"); //cmd size
 #endif
   ps_common_engine::Kernel engine_kernel;
-  engine_kernel.init();
+  engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+  if (!engine_kernel.init()) {
+    engine_kernel.stop();
+    return 1;
+  }
   engine_kernel.run();
   engine_kernel.stop();
   return 0;

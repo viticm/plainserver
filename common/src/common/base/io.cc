@@ -17,7 +17,7 @@ uint16_t set_consolecolor(uint16_t forecolor = 0,
                                forecolor | background_color)) {
     return 0;
   }
-  return consolescreen_bufferinfowAttributes;
+  return consolescreen_bufferinfo.wAttributes;
 }
 void reset_consolecolor(uint16_t color) {
   SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);

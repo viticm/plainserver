@@ -252,3 +252,8 @@ utf8/lib/client/Ogre/Dependencies/lib/*
 #######################
 */lib/client/cegui/bin/
 */lib/client/cegui/link/
+
+#############
+## cache dir
+#############
+*.dir
