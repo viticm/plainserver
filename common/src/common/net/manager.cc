@@ -127,6 +127,7 @@ bool Manager::processinput() {
     if (SOCKET_INVALID == minfd_ && SOCKET_INVALID == maxfd_)
       return true; //no connection
     uint16_t i;
+    //接受新连接的时候至少尝试两次，所以连接池里会多创建一个
     if (FD_ISSET(socketid_, &readfds_[kSelectUse])) {
       for (i = 0; i < onestep_accept_; ++i) {
         if (!accept_newconnection()) break;
@@ -455,12 +456,7 @@ bool Manager::deleteconnection(connection::Base* connection) {
           minfd_ = maxfd_ = SOCKET_INVALID;
         }
         else {
-          if (socketid_max > socketid_) {
-            minfd_ = socketid_;
-          }
-          else {
-            minfd_ = socketid_max;
-          }
+          minfd_ = socketid_max > socketid_ ? minfd_ : socketid_max;
         }
       }
     }
@@ -479,12 +475,7 @@ bool Manager::deleteconnection(connection::Base* connection) {
           minfd_ = maxfd_ = SOCKET_INVALID;
         }
         else {
-          if (socketid_min < socketid_) {
-            maxfd_ = socketid_;
-          }
-          else {
-            maxfd_ = socketid_min;
-          }
+          maxfd_ = socketid_min < socketid_ ? maxfd_ : socketid_min;
         }
       }
     }
@@ -496,7 +487,7 @@ bool Manager::deleteconnection(connection::Base* connection) {
     FD_CLR(static_cast<uint32_t>(socketid), &exceptfds_[kSelectUse]);
     --fdsize_;
     Assert(fdsize_ >= 0);
-    connection::Manager::remove(serverconnection->getid());
+    removeconnection(serverconnection->getid());
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -511,12 +502,41 @@ bool Manager::removeconnection(connection::Base* connection) {
     Assert(serverconnection != NULL);
     //second clean in connection pool, free to new connection
     serverconnection->freeown();
-    FAST_ERRORLOG(kNetLogFile, 
-                  "[net] (Manager::removeconnection) id: %d", 
-                  connection->getid());
+    //服务器的连接，都不主动关闭
+    //serverconnection->disconnect(); 
+    FAST_LOG(kNetLogFile, 
+             "[net] (Manager::removeconnection) id: %d", 
+             connection->getid());
     return true;
   __LEAVE_FUNCTION
     return false;
+}
+
+void Manager::removeconnection(int16_t id) {
+  __ENTER_FUNCTION
+    Assert(count_ > 0);
+    connection::Base* connection = NULL;
+    connection = connectionpool_.get(id);
+    if (NULL == connection) {
+      Assert(false);
+      return;
+    }
+    int16_t managerid = connection->get_managerid();
+    if (managerid >= static_cast<int16_t>(sizeof(connection_idset_))) {
+      Assert(false);
+      return;
+    }
+    connection = connectionpool_.get(connection_idset_[count_ - 1]);
+    if (NULL == connection) {
+      Assert(false);
+      return;
+    }
+    connection_idset_[managerid] = connection_idset_[count_ - 1];
+    connection_idset_[count_ - 1] = ID_INVALID;
+    connection->set_managerid(managerid);
+    --count_;
+    Assert(count_ >= 0);
+  __LEAVE_FUNCTION
 }
 
 void Manager::remove_allconnection() {

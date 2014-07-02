@@ -53,6 +53,7 @@ class Manager : public connection::Manager {
    bool deleteconnection(connection::Base* connection);
    //出现异常后将connection信息清除，并将系统中的信息也清除 断开玩家(服务器)的连接
    bool removeconnection(connection::Base* connection);
+   void removeconnection(int16_t id);
    void remove_allconnection();
    //获得服务器连接指针
    connection::Server* get_serverconnection(uint16_t id);

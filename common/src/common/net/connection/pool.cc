@@ -51,7 +51,7 @@ Server* Pool::create() {
     Server* connection = NULL;
     lock();
     uint16_t result = 0, i;
-    for (i = 0; i < maxcount_; ++i) {
+    for (i = 0; i < maxcount_; i++) {
       if (connections_[position_].isempty()) { //找出空闲位置
         result = static_cast<uint16_t>(position_);
         connections_[position_].setempty(false);
