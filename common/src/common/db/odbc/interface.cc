@@ -58,11 +58,12 @@ bool Interface::connect(const char* connection_name,
       memset(log_buffer, '\0', sizeof(log_buffer));
       snprintf(log_buffer, 
                sizeof(log_buffer) - 1,
-               "connection name: %s, connect user: %s", 
+               "connection name: %s, connect username: %s, password: %s", 
                connection_name_,
-               user_);
+               user_,
+               password);
       SLOW_ERRORLOG("odbc_interface", 
-                    "[db][odbc] (Interface::connect) failed, %s", 
+                    "[db][odbc] (Interface::connect) failed. %s", 
                     log_buffer);
       diag_state();
       return false;

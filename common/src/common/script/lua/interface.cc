@@ -17,6 +17,7 @@ const int32_t Interface::kLuaScriptCountMax = 4096;
 Interface::Interface() {
   __ENTER_FUNCTION
     using namespace ps_common_base;
+    memset(global_filename_, 0, sizeof(global_filename_));
     string::safecopy(global_filename_, 
                      SCRIPT_LUA_GLOBAL_VAR_FILE_DEFAULT, 
                      sizeof(global_filename_));

@@ -15,6 +15,7 @@ FileBridge::FileBridge(const char* rootpath, const char* workpath) {
     length_ = 0;
     position_ = 0;
     memset(rootpath_, 0, sizeof(rootpath_));
+    memset(workpath_, 0, sizeof(workpath_));
     if (NULL == rootpath) {
       string::safecopy(rootpath_, 
                        SCRIPT_ROOT_PATH_DEFAULT, 
@@ -54,7 +55,7 @@ bool FileBridge::open(const char* filename) {
     fp_ = fp_ ? fp_ : fopen(filepath, "rb");
     if (NULL == fp_) {
       SLOW_ERRORLOG("error", 
-                    "[script][lua] FileBridge::open file error: %s", 
+                    "[script][lua] (FileBridge::open) file error: %s", 
                     filepath);  
       return false;
     }

@@ -1203,53 +1203,51 @@ int32_t selectex(int32_t maxfdp,
 }
 
 int32_t getsockname_ex(int32_t socketid, 
-                       struct sockaddr* name, 
-                       int32_t* namelength) {
+                       struct sockaddr *name, 
+                       int32_t *namelength) {
   int32_t result = 0;
-  if(SOCKET_ERROR == result) {
 #if __LINUX__
-    result = 
-      getsockname(socketid, name, reinterpret_cast<socklen_t*>(namelength));
+  result = 
+    getsockname(socketid, name, reinterpret_cast<socklen_t*>(namelength));
 #elif __WINDOWS__
-    result = 
-      getsockname(socketid, name, namelength);
-    error = WSAGetLastError();
-    switch (error) {
-      case WSANOTINITIALISED : {
-        strncpy(errormessage, "WSANOTINITIALISED", sizeof(errormessage) - 1);
-        break;
-      }
-      case WSAEFAULT: {
-        strncpy(errormessage, "WSAEFAULT", sizeof(errormessage) - 1);
-        break;
-      }
-      case WSAENETDOWN: {
-        strncpy(errormessage, "WSAENETDOWN", sizeof(errormessage) - 1);
-        break;
-      }
-      case WSAEINVAL: {
-        strncpy(errormessage, "WSAEINVAL", sizeof(errormessage) - 1);
-        break;
-      }
-      case WSAEINTR: {
-        strncpy(errormessage, "WSAEINTR", sizeof(errormessage) - 1);
-        break;
-      }
-      case WSAEINPROGRESS: {
-        strncpy(errormessage, "WSAEINPROGRESS", sizeof(errormessage) - 1);
-        break;
-      }
-      case WSAENOTSOCK: {
-        strncpy(errormessage, "WSAENOTSOCK", sizeof(errormessage) - 1);
-        break;
-      }
-      default : {
-        strncpy(errormessage, "UNKNOWN", sizeof(errormessage) - 1);
-        break;
-      }
+  result = 
+    getsockname(socketid, name, namelength);
+  error = WSAGetLastError();
+  switch (error) {
+    case WSANOTINITIALISED : {
+      strncpy(errormessage, "WSANOTINITIALISED", sizeof(errormessage) - 1);
+      break;
     }
-#endif
+    case WSAEFAULT: {
+      strncpy(errormessage, "WSAEFAULT", sizeof(errormessage) - 1);
+      break;
+    }
+    case WSAENETDOWN: {
+      strncpy(errormessage, "WSAENETDOWN", sizeof(errormessage) - 1);
+      break;
+    }
+    case WSAEINVAL: {
+      strncpy(errormessage, "WSAEINVAL", sizeof(errormessage) - 1);
+      break;
+    }
+    case WSAEINTR: {
+      strncpy(errormessage, "WSAEINTR", sizeof(errormessage) - 1);
+      break;
+    }
+    case WSAEINPROGRESS: {
+      strncpy(errormessage, "WSAEINPROGRESS", sizeof(errormessage) - 1);
+      break;
+    }
+    case WSAENOTSOCK: {
+      strncpy(errormessage, "WSAENOTSOCK", sizeof(errormessage) - 1);
+      break;
+    }
+    default : {
+      strncpy(errormessage, "UNKNOWN", sizeof(errormessage) - 1);
+      break;
+    }
   }
+#endif
   return result;
 }
 
@@ -1261,7 +1259,7 @@ int32_t getlast_errorcode() {
 #endif
 }
 
-void getlast_errormessage(char* buffer, uint16_t length) {
+void getlast_errormessage(char *buffer, uint16_t length) {
   snprintf(buffer, length, "%s", errormessage);
 }
 

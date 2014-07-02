@@ -111,11 +111,11 @@ int32_t selectex(int32_t maxfdp,
                  struct timeval* timeout);
 
 int32_t getsockname_ex(int32_t socketid, 
-                       struct sockaddr* name, 
-                       int32_t* namelength);
+                       struct sockaddr *name, 
+                       int32_t *namelength);
 
 int32_t getlast_errorcode();
-void getlast_errormessage(char* buffer, uint16_t length);
+void getlast_errormessage(char *buffer, uint16_t length);
 
 }; //namespace api
 

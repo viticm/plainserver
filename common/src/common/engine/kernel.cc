@@ -42,7 +42,7 @@ Kernel::~Kernel() {
 bool Kernel::init() {
   __ENTER_FUNCTION
     //base
-    SLOW_LOG("engine", "[engine] (Kernel::init) start base module");
+    DEBUGPRINTF("[engine] (Kernel::init) start base module");
     if (!init_base()) {
       SLOW_ERRORLOG("engine", 
                     "[engine] (Kernel::init) base module failed");

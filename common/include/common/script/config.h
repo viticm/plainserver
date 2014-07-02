@@ -14,10 +14,10 @@
 #include "common/base/config.h"
 
 #if __WINDOWS__
-#define SCRIPT_ROOT_PATH_DEFAULT "..\\..\\public\\data\\script"
+#define SCRIPT_ROOT_PATH_DEFAULT "public\\data\\script"
 #define SCRIPT_WORK_PATH_DEFAULT "\\"
 #elif __LINUX__
-#define SCRIPT_ROOT_PATH_DEFAULT "../../public/data/script"
+#define SCRIPT_ROOT_PATH_DEFAULT "public/data/script"
 #define SCRIPT_WORK_PATH_DEFAULT "/"
 #endif
 

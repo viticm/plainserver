@@ -14,13 +14,14 @@ int32_t main(int32_t argc, char * argv[]) {
   system("mode con cols=120"); //cmd size
 #endif
   ps_common_engine::Kernel engine_kernel;
-  //engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
-  engine_kernel.setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
+  engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+  engine_kernel.setconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
+  engine_kernel.setconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "sword_user");
+  //engine_kernel.setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
   if (!engine_kernel.init()) {
     engine_kernel.stop();
     return 1;
   }
-  FAST_LOG(kGatewayLogFile, "fast log");
   engine_kernel.run();
   engine_kernel.stop();
   return 0;

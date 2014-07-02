@@ -9,8 +9,8 @@ namespace lua {
 VM::VM(const char *rootpath, const char *workpath) {
   __ENTER_FUNCTION
     lua_state_ = NULL;
-    filebridge_.set_rootpath(rootpath);
-    filebridge_.set_workpath(workpath);
+    if (rootpath != NULL) filebridge_.set_rootpath(rootpath);
+    if (workpath != NULL) filebridge_.set_workpath(workpath);
   __LEAVE_FUNCTION
 }
 
@@ -480,7 +480,7 @@ bool VM::init(int32_t stacksize) {
         on_scripterror(kErrorCodeCreate);
         return false;
       }
-      if (lua_checkstack(lua_state_, stacksize) != 0) {
+      if (lua_checkstack(lua_state_, stacksize) != 1) {
         on_scripterror(kErrorCodeResize);
         return false;
       }
