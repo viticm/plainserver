@@ -15,6 +15,10 @@
 #include "common/base/hashmap/template.h"
 #include "common/db/manager.h"
 #include "common/net/manager.h"
+#include "common/engine/thread/db.h"
+#include "common/engine/thread/net.h"
+#include "common/engine/thread/performance.h"
+#include "common/engine/thread/script.h"
 
 namespace ps_common_engine {
 
@@ -48,6 +52,10 @@ class Kernel {
    ps_common_base::hashmap::Template<int32_t, bool> config_bool_;
    ps_common_db::Manager *db_manager_;
    ps_common_net::Manager *net_manager_;
+   thread::DB *db_thread_;
+   thread::Net *net_thread_;
+   thread::Performance *performance_thread_;
+   thread::Script *script_thread_;
 
  protected:
    bool init_base();

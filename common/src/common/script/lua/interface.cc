@@ -57,13 +57,15 @@ const char *Interface::get_rootpath() {
     return NULL;
 }
 
-void Interface::init() {
+bool Interface::init() {
   __ENTER_FUNCTION
     bool result = VM_.init(4 * 1024);
     Assert(result && "VM_.init(4 * 1024) failed");
     result = loadscript(global_filename_);
     script_loaded_.init(kLuaScriptCountMax);
+    return result;
   __LEAVE_FUNCTION
+    return false;
 }
 
 void Interface::release() {
@@ -142,8 +144,8 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
-                    "have some error, file: %s, functionname: %s",
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
+                    " have some error, file: %s, functionname: %s",
                     filename,
                     functionname);
     }
@@ -177,7 +179,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d)",
                     filename,
@@ -205,7 +207,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d)",
                     filename,
@@ -235,7 +237,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %d)",
                     filename,
@@ -272,7 +274,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %d, %d)",
                     filename,
@@ -312,7 +314,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %d, %d, %d)",
                     filename,
@@ -355,7 +357,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %d, %d, %d)",
                     filename,
@@ -401,7 +403,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %d, %d, %d, %d, %d)",
                     filename,
@@ -450,7 +452,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
                     filename,
@@ -492,7 +494,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %f, %f)",
                     filename,
@@ -530,7 +532,7 @@ int64_t Interface::run_filefunction(const char *filename,
     VM_.callfunction_leave(topindex);
     if (!result) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::run_filefunction) lua stack leave"
+                    "[script.lua] (Interface::run_filefunction) lua stack leave"
                     " have some error, file: %s, functionname: %s"
                     " params: (%d, %d, %s, %s)",
                     filename,
@@ -588,7 +590,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: ()",
                  scriptid,
@@ -646,7 +648,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d)",
                  scriptid,
@@ -709,7 +711,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d)",
                  scriptid,
@@ -775,7 +777,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %d)",
                  scriptid,
@@ -844,7 +846,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %d, %d)",
                  scriptid,
@@ -916,7 +918,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %d, %d, %d)",
                  scriptid,
@@ -991,7 +993,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %d, %d, %d, %d)",
                  scriptid,
@@ -1069,7 +1071,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %d, %d, %d, %d, %d)",
                  scriptid,
@@ -1150,7 +1152,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %d, %d, %d, %d, %d, %d)",
                  scriptid,
@@ -1229,7 +1231,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %f, %f)",
                  scriptid,
@@ -1300,7 +1302,7 @@ int64_t Interface::run_scriptfunction(int32_t scriptid,
       }
       if (!lua_reloadscript_always_) {
         FAST_LOG(kDebugLogFile,
-                 "[script][lua] (Interface::run_scriptfunction)"
+                 "[script.lua] (Interface::run_scriptfunction)"
                  " scriptid: %d, functionname: %s"
                  " params: (%d, %d, %s, %s)",
                  scriptid,
@@ -1331,7 +1333,7 @@ void Interface::enter_runstep(int32_t scriptid, const char *functionname) {
     int32_t topindex = lua_gettop(VM_.lua_state_);
     int32_t stackspace = lua_getstack(VM_.lua_state_, 2, &debug);
     FAST_LOG(kFunctionLogFile,
-             "[script][lua] (Interface::enter_runstep)"
+             "[script.lua] (Interface::enter_runstep)"
              " topindex: %d, stackspace: %d, scriptid: %d, functionname: %s",
              topindex,
              stackspace,
@@ -1347,7 +1349,7 @@ void Interface::leave_runstep(int32_t scriptid, const char *functionname) {
     int32_t topindex = lua_gettop(VM_.lua_state_);
     int32_t stackspace = lua_getstack(VM_.lua_state_, 2, &debug);
     FAST_LOG(kFunctionLogFile,
-             "[script][lua] (Interface::enter_runstep)"
+             "[script.lua] (Interface::enter_runstep)"
              " topindex: %d, stackspace: %d, scriptid: %d, functionname: %s",
              topindex,
              stackspace,
@@ -1372,7 +1374,7 @@ bool Interface::reloadscript(int32_t scriptid) {
         bool result = loadscript(filename);
         if (!result && !lua_reloadscript_always_) {
           FAST_LOG(kDebugLogFile,
-                   "[script][lua] (Interface::reloadscript)"
+                   "[script.lua] (Interface::reloadscript)"
                    " filename: %s, scriptid: %d",
                    filename,
                    scriptid);
@@ -1426,12 +1428,12 @@ bool Interface::is_paramnumber(lua_State *L,
   __ENTER_FUNCTION
     if (!L) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::is_paramnumber)"
+                    "[script.lua] (Interface::is_paramnumber)"
                     " lua state is nil");
     }
     if (!lua_isnumber(L, index)) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::is_paramnumber)"
+                    "[script.lua] (Interface::is_paramnumber)"
                     " function: %s, param %d is illegal!",
                     functionname,
                     index);
@@ -1448,12 +1450,12 @@ bool Interface::is_paramstring(lua_State *L,
   __ENTER_FUNCTION
     if (!L) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::is_paramnumber)"
+                    "[script.lua] (Interface::is_paramnumber)"
                     " lua state is nil");
     }
     if (!lua_isstring(L, index)) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::is_paramnumber)"
+                    "[script.lua] (Interface::is_paramnumber)"
                     " function: %s, param %d is illegal!",
                     functionname,
                     index);

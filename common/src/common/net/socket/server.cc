@@ -9,7 +9,7 @@ Server::Server(uint16_t port, uint32_t backlog) {
     bool result = false;
     socket_ = new ps_common_net::socket::Base();
     if (NULL == socket_) { //memory not enough
-      ERRORPRINTF("ps_common_net::Server::Server"
+      ERRORPRINTF("[net.socket] (Server::Server)"
                   " new pap_common_net::socket::Base() failed,"
                   " errorcode: %d",
                   socket_->getlast_errorcode());
@@ -17,21 +17,21 @@ Server::Server(uint16_t port, uint32_t backlog) {
     }
     result = socket_->create();
     if (false == result) {
-      ERRORPRINTF("ps_common_net::Server::Server"
+      ERRORPRINTF("[net.socket] (Server::Server)"
                   " socket_->create() failed, errorcode: %d",
                   socket_->getlast_errorcode()); 
       throw 1;
     }
     result = socket_->set_reuseaddr();
     if (false == result) {
-      ERRORPRINTF("ps_common_net::Server::Server"
+      ERRORPRINTF("[net.socket] (Server::Server)"
                   " socket_->set_reuseaddr() failed, errorcode: %d",
                   socket_->getlast_errorcode());
       throw 1;
     }
     result = socket_->bind(port);
     if (false == result) {
-      ERRORPRINTF("ps_common_net::Server::Server"
+      ERRORPRINTF("[net.socket] (Server::Server)"
                   " socket_->bind(%d) failed, errorcode: %d", 
                   port,
                   socket_->getlast_errorcode());
@@ -39,7 +39,7 @@ Server::Server(uint16_t port, uint32_t backlog) {
     }
     result = socket_->listen(backlog);
     if (false == result) {
-      ERRORPRINTF("ps_common_net::Server::Server"
+      ERRORPRINTF("[net.socket] (Server::Server)"
                   " socket_->listen(%d) failed, errorcode: %d",
                   backlog,
                   socket_->getlast_errorcode());

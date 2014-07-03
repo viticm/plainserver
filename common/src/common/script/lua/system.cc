@@ -68,7 +68,7 @@ int32_t System::call_noclosure(lua_State *L) {
         bool result = SCRIPT_LUASYSTEM_POINTER->loadscript(filename);
         if (!result) {
           FAST_ERRORLOG(kErrorLogFile, 
-                        "[script][lua] (Interface::call_noclosure)"
+                        "[script.lua] (Interface::call_noclosure)"
                         " load script: %s failed", 
                         filename);
           lua_pushnumber(L, -1);
@@ -77,7 +77,7 @@ int32_t System::call_noclosure(lua_State *L) {
         }
         if (false == lua_reloadscript_always_) {
           FAST_LOG(kDebugLogFile,
-                   "[script][lua] (Interface::call_noclosure)"
+                   "[script.lua] (Interface::call_noclosure)"
                    " script(%d), function(%s)",
                    scriptid,
                    functionname);
@@ -95,7 +95,7 @@ int32_t System::call_noclosure(lua_State *L) {
         if (!SCRIPT_LUASYSTEM_POINTER->verify_function(
               L, (const char **)&functionname_x_pointer)) {
           FAST_ERRORLOG(kErrorLogFile,
-                        "[script][lua] (Interface::call_noclosure)"
+                        "[script.lua] (Interface::call_noclosure)"
                         " SCRIPT_LUASYSTEM_POINTER->verify_function(%s) error",
                         functionname_x);
           lua_pushnumber(L, -1);
@@ -170,7 +170,7 @@ int32_t System::call_noclosure(lua_State *L) {
           } //for
           if (call_result != 0) {
             FAST_ERRORLOG(kErrorLogFile,
-                          "[script][lua] (Interface::call_noclosure) error"
+                          "[script.lua] (Interface::call_noclosure) error"
                           " call_result: %d, file: %s, functionname: %s",
                           call_result,
                           filename,
@@ -180,7 +180,7 @@ int32_t System::call_noclosure(lua_State *L) {
           }
         } catch(...) {
           FAST_ERRORLOG(kErrorLogFile,
-                        "[script][lua] (Interface::call_noclosure) error"
+                        "[script.lua] (Interface::call_noclosure) error"
                         "lua_call get a exception, file: %s, functionname: %s",
                         filename,
                         functionname);
@@ -188,7 +188,7 @@ int32_t System::call_noclosure(lua_State *L) {
       }
     } catch (...) {
       FAST_ERRORLOG(kErrorLogFile,
-                    "[script][lua] (Interface::call_noclosure) error"
+                    "[script.lua] (Interface::call_noclosure) error"
                     "lua_call get a exception, scriptid: %d, functionname: %s",
                     scriptid,
                     functionname);

@@ -31,7 +31,7 @@ bool System::init(const char *connectionname,
     connected = odbc_interface_->connect(connectionname, username, password);
     if (!connected) {
       SLOW_ERRORLOG("database",
-                    "[db][odbc] (System::init) failed."
+                    "[db.odbc] (System::init) failed."
                     " connectionname: %s, username: %s, password: %s,"
                     " errormessage: %s",
                     connectionname,
@@ -92,6 +92,7 @@ bool System::check_db_connect() {
       }
       return false;
     }
+    return true;
   __LEAVE_FUNCTION
     return false;
 }

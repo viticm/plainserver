@@ -160,7 +160,7 @@ bool Base::bind() {
           api::getsockname_ex(socketid_, 
             reinterpret_cast<struct sockaddr*>(&connect_sockaddr_in), 
             &inlength)) {
-        ERRORPRINTF("[net] (socket::Base::bind) error, can't get port");
+        ERRORPRINTF("[net.socket] (socket::Base::bind) error, can't get port");
         return false;
       }
       port_ = ntohs(connect_sockaddr_in.sin_port);

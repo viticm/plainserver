@@ -25,13 +25,25 @@ Kernel::Kernel() {
     registerconfig(ENGINE_CONFIG_SCRIPT_WORKPATH, SCRIPT_WORK_PATH_DEFAULT);
     registerconfig(ENGINE_CONFIG_SCRIPT_GLOBALFILE, 
                    SCRIPT_LUA_GLOBAL_VAR_FILE_DEFAULT);
+    registerconfig(ENGINE_CONFIG_DB_RUN_ASTHREAD, false);
+    registerconfig(ENGINE_CONFIG_NET_RUN_ASTHREAD, false);
+    registerconfig(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD, false);
+    registerconfig(ENGINE_CONFIG_SCRIPT_RUN_ASTHREAD, false);
     db_manager_ = NULL;
     net_manager_ = NULL;
+    db_thread_ = NULL;
+    net_manager_ = NULL;
+    performance_thread_ = NULL;
+    script_thread_ = NULL;
   __LEAVE_FUNCTION
 }
 
 Kernel::~Kernel() {
   __ENTER_FUNCTION
+    SAFE_DELETE(performance_thread_);
+    SAFE_DELETE(script_thread_);
+    SAFE_DELETE(net_manager_);
+    SAFE_DELETE(db_thread_);
     SAFE_DELETE(net_manager_);
     SAFE_DELETE(db_manager_);
     SAFE_DELETE(g_log);
@@ -261,11 +273,11 @@ bool Kernel::init_base() {
 bool Kernel::init_db() {
   __ENTER_FUNCTION
     using namespace ps_common_db;
-    if (getconfig_boolvalue(ENGINE_CONFIG_DB_ISACTIVE)) {
-      db_manager_ = 
-        new Manager(static_cast<dbconnector_type_t>(
-              getconfig_int32value(ENGINE_CONFIG_DB_CONNECTOR_TYPE)));
-      if (NULL == db_manager_) return false;
+    bool isactive = getconfig_boolvalue(ENGINE_CONFIG_DB_ISACTIVE);
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_DB_RUN_ASTHREAD); 
+    if (isactive) {
+      dbconnector_type_t connector_type = static_cast<dbconnector_type_t>(
+          getconfig_int32value(ENGINE_CONFIG_DB_CONNECTOR_TYPE));
       const char *connection_or_dbname = 
         getconfig_stringvalue(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME);
       if (NULL == connection_or_dbname) {
@@ -276,11 +288,19 @@ bool Kernel::init_db() {
       }
       const char *username = getconfig_stringvalue(ENGINE_CONFIG_DB_USERNAME);
       const char *password = getconfig_stringvalue(ENGINE_CONFIG_DB_PASSWORD);
-      bool result = db_manager_->init(
-          NULL == connection_or_dbname ? "" : connection_or_dbname,
-          NULL == username ? "" : username,
-          NULL == password ? "" : password);
-      return result;
+      if (is_usethread) {
+        db_thread_ = new thread::DB(connector_type);
+        if (NULL == db_thread_) return false;
+        bool result = 
+          db_thread_->init(connection_or_dbname, username, password);
+        return result;
+      } else {
+        db_manager_ = new Manager(connector_type);
+        if (NULL == db_manager_) return false;
+        bool result = 
+          db_manager_->init(connection_or_dbname, username, password);
+        return result;
+      }
     }
     return true;
   __LEAVE_FUNCTION
@@ -290,25 +310,40 @@ bool Kernel::init_db() {
 bool Kernel::init_net() {
   __ENTER_FUNCTION
     using namespace ps_common_net;
-    if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
-      int32_t listenport = getconfig_int32value(ENGINE_CONFIG_NET_LISTEN_PORT);
-      net_manager_ = new Manager(static_cast<uint16_t>(listenport));
-      if (NULL == net_manager_) return false;
-      int32_t connectionmax = 
+    bool isactive = getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE);
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
+
+    if (isactive) {
+      uint16_t listenport = static_cast<uint16_t>(
+          getconfig_int32value(ENGINE_CONFIG_NET_LISTEN_PORT));
+      int32_t _connectionmax = 
         getconfig_int32value(ENGINE_CONFIG_NET_CONNECTION_MAX);
-      if (connectionmax <= 0) {
+      if (_connectionmax <= 0) {
         SLOW_ERRORLOG("engine",
                       "[engine] (Kernel::init_net)"
                       " the connection maxcount <= 0");
         return false;
       }
-      bool result = net_manager_->init(static_cast<uint16_t>(connectionmax));
+      uint16_t connectionmax = static_cast<uint16_t>(listenport);
+      bool result = true;
+      if (is_usethread) {
+        net_thread_ = new thread::Net(listenport);
+        if (NULL == net_thread_) return false;
+        result = net_thread_->init(connectionmax);
+      } else {
+        net_manager_ = new Manager(listenport);
+        if (NULL == net_manager_) return false;
+        result = net_manager_->init(connectionmax);
+      }
       if (result) {
+        listenport = is_usethread ? 
+                     net_thread_->get_listenport() : 
+                     net_manager_->get_listenport();
         SLOW_LOG("engine",
                  "[engine] (Kernel::init_net) success!"
                  " connection maxcount: %d, listenport: %d",
                  connectionmax,
-                 net_manager_->get_listenport());
+                 listenport);
       }
       return result;
     }
@@ -320,7 +355,8 @@ bool Kernel::init_net() {
 bool Kernel::init_script() {
   __ENTER_FUNCTION
     using namespace ps_common_script;
-    if (getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_ISACTIVE)) {
+    bool isactive = getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_ISACTIVE);
+    if (isactive) {
       if (!SCRIPT_LUASYSTEM_POINTER)
         g_script_luasystem = new lua::System();
       if (NULL == g_script_luasystem) return false;
@@ -330,7 +366,7 @@ bool Kernel::init_script() {
           getconfig_stringvalue(ENGINE_CONFIG_SCRIPT_ROOTPATH));
       SCRIPT_LUASYSTEM_POINTER->set_workpath(
           getconfig_stringvalue(ENGINE_CONFIG_SCRIPT_WORKPATH));
-      SCRIPT_LUASYSTEM_POINTER->init();    
+      if (!SCRIPT_LUASYSTEM_POINTER->init()) return false;
       SCRIPT_LUASYSTEM_POINTER->registerfunctions();
     }
     return true;
@@ -340,8 +376,14 @@ bool Kernel::init_script() {
 
 bool Kernel::init_performance() {
   __ENTER_FUNCTION
-    if (getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE)) {
-
+    bool isactive = getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE);
+    bool is_usethread = 
+      getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD);
+    if (isactive) {
+      if (is_usethread) {
+        performance_thread_ = new thread::Performance();
+        if (NULL == performance_thread_) return false;
+      }
     }
     return true;
   __LEAVE_FUNCTION
@@ -354,48 +396,69 @@ void Kernel::run_base() {
 
 void Kernel::run_db() {
   __ENTER_FUNCTION
-    db_manager_->check_db_connect();
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_DB_RUN_ASTHREAD);
+    if (is_usethread) {
+      db_thread_->run();
+    } else {
+      db_manager_->check_db_connect();
+    }
   __LEAVE_FUNCTION
 }
 
 void Kernel::run_net() {
   __ENTER_FUNCTION
-    net_manager_->loop();
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
+    if (is_usethread) {
+      net_thread_->run();
+    } else {
+      net_manager_->loop();
+    }
   __LEAVE_FUNCTION
 }
 
 void Kernel::run_script() {
-  //do nothing
+  __ENTER_FUNCTION
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_RUN_ASTHREAD);
+    if (is_usethread) {
+      script_thread_->run();
+    }
+  __LEAVE_FUNCTION
 }
 
 void Kernel::run_performance() {
-  //do nothing
+  __ENTER_FUNCTION
+    bool is_usethread = 
+      getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD);
+    if (is_usethread) {
+      performance_thread_->run();
+    }
+  __LEAVE_FUNCTION
 }
 
 void Kernel::stop_base() {
   __ENTER_FUNCTION
-    SAFE_DELETE(g_log);
-    SAFE_DELETE(g_time_manager);
+    //SAFE_DELETE(g_log);
+    //SAFE_DELETE(g_time_manager);
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop_db() {
   __ENTER_FUNCTION
-    SAFE_DELETE(db_manager_);    
+    //SAFE_DELETE(db_manager_);    
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop_net() {
   __ENTER_FUNCTION
     if (net_manager_) net_manager_->setactive(false);
-    ps_common_base::util::sleep(5000);
-    SAFE_DELETE(net_manager_);
+    //ps_common_base::util::sleep(5000);
+    //SAFE_DELETE(net_manager_);
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop_script() {
   __ENTER_FUNCTION
-    SAFE_DELETE(g_script_luasystem);
+    //SAFE_DELETE(g_script_luasystem);
   __LEAVE_FUNCTION
 }
 

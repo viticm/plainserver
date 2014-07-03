@@ -42,7 +42,7 @@ bool VM::load(const char *filename) {
     uint64_t size;
     if (!filebridge_.open(filename)) {
       SLOW_ERRORLOG("luaerror",
-                    "[script][lua] (VM::load) open file %s failed",
+                    "[script.lua] (VM::load) open file %s failed",
                     filename);
       return false;
     }
@@ -50,14 +50,14 @@ bool VM::load(const char *filename) {
     memory::DynamicAllocator memory;
     if (!memory.malloc(size + 4)) {
       SLOW_ERRORLOG("luaerror",
-                    "[script][lua] (VM::load) memory for file %s failed",
+                    "[script.lua] (VM::load) memory for file %s failed",
                     filename);
       filebridge_.close();
       return false;
     }
     if (filebridge_.read(memory.getpointer(), size) != size) {
       SLOW_ERRORLOG("luaerror",
-                    "[script][lua] (VM::load) read file %s failed",
+                    "[script.lua] (VM::load) read file %s failed",
                     filename);
       filebridge_.close();
       return false;
@@ -70,7 +70,7 @@ bool VM::load(const char *filename) {
         reinterpret_cast<unsigned char *>(memory.getpointer());
       if (!loadbuffer(temp_pointer, size)) {
         SLOW_ERRORLOG("luaerror",
-                      "[script][lua] (VM::load) load file %s"
+                      "[script.lua] (VM::load) load file %s"
                       " buffer cache failed",
                       filename);
         return false;
@@ -78,14 +78,14 @@ bool VM::load(const char *filename) {
     }
     catch (...) {
       SLOW_ERRORLOG("luaerror",
-                    "[script][lua] (VM::load) load file %s"
+                    "[script.lua] (VM::load) load file %s"
                     " buffer cache have a exception",
                     filename);
       return false;
     }
     if (!executecode()) {
       SLOW_ERRORLOG("luaerror",
-                    "[script][lua] (VM::load) execute code"
+                    "[script.lua] (VM::load) execute code"
                     " failed from file %s",
                     filename);
       return false;
@@ -531,7 +531,7 @@ void VM::set_workpath(const char *path) {
 void VM::on_scripterror(int32_t error) {
   __ENTER_FUNCTION
     SLOW_ERRORLOG("luaerror",
-                  "[script][lua] (VM::on_scripterror) code: %d",
+                  "[script.lua] (VM::on_scripterror) code: %d",
                   error);
   __LEAVE_FUNCTION
 }
@@ -539,7 +539,7 @@ void VM::on_scripterror(int32_t error) {
 void VM::on_scripterror(int32_t error, int32_t error1) {
   __ENTER_FUNCTION
     SLOW_ERRORLOG("luaerror",
-                  "[script][lua] (VM::on_scripterror) code: %d:[%d]",
+                  "[script.lua] (VM::on_scripterror) code: %d:[%d]",
                   error,
                   error1);
   __LEAVE_FUNCTION

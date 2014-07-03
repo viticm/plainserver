@@ -29,7 +29,8 @@ void* StaticAllocator::malloc(size_t size) {
     using namespace ps_common_base;
     if (offset_ + size > size_) {
       SLOW_ERRORLOG("error",
-                    "StaticAllocator::malloc: out of memory allocating %d bytes",
+                    "[sys.memory] (StaticAllocator::malloc)"
+                    " out of memory allocating %d bytes",
                     size);
       Assert(false);
       return NULL;
@@ -58,7 +59,8 @@ void* StaticAllocator::realloc(void* data, size_t newsize) {
     size_t size = newsize - size_ofdata;
     if (offset_ + size > size_) {
       SLOW_ERRORLOG("error",
-                    "StaticAllocator::malloc: out of memory allocating %d bytes",
+                    "[sys.memory] (StaticAllocator::malloc)"
+                    " out of memory allocating %d bytes",
                     size);
       Assert(false);
       return NULL;

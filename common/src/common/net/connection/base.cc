@@ -78,7 +78,7 @@ bool Base::processinput() {
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
         SLOW_ERRORLOG(g_kModelName,
-                      "[net] (connection::Base::processinput)"
+                      "[net.connection] (connection::Base::processinput)"
                       " socket_inputstream_->fill() result: %d %s",
                       fillresult,
                       errormessage);
@@ -111,7 +111,7 @@ bool Base::processoutput() {
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
         SLOW_ERRORLOG(g_kModelName,
-                      "[net] (Base::processoutput)"
+                      "[net.connection] (Base::processoutput)"
                       " socket_outputstream_->flush() result: %d %s",
                       flushresult,
                       errormessage);
@@ -254,7 +254,7 @@ bool Base::sendpacket(packet::Base* packet) {
       uint32_t after_writesize = socket_outputstream_->reallength();
       if (packet->getsize() != after_writesize - before_writesize - 6) {
         FAST_ERRORLOG(g_kModelSaveLogId,
-                      "[net] (Base::sendpacket) size error"
+                      "[net.connection] (Base::sendpacket) size error"
                       "id = %d(write: %d, should: %d)",
                       pakcet->getid(),
                       after_writesize - before_writesize - 6,

@@ -1,5 +1,6 @@
 #include "common/base/log.h"
 #include "common/base/util.h"
+#include "common/base/string.h"
 #include "common/db/odbc/interface.h"
 
 namespace ps_common_db {
@@ -36,10 +37,15 @@ bool Interface::connect(const char* connection_name,
                         const char* user,
                         const char* password) {
   __ENTER_FUNCTION
+    using namespace ps_common_base;
     close(); //first disconnect
-    strncpy(connection_name_, connection_name, sizeof(connection_name_) - 1);
-    strncpy(user_, user, sizeof(user_) - 1);
-    strncpy(password_, password, sizeof(password_) - 1);
+    if (connection_name != NULL)
+      string::safecopy(connection_name_, 
+                       connection_name, 
+                       sizeof(connection_name_));
+    if (user != NULL) string::safecopy(user_, user, sizeof(user_));
+    if (password != NULL)
+      string::safecopy(password_, password, sizeof(password_));
     SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_henv_);
     SQLSetEnvAttr(sql_henv_, 
                   SQL_ATTR_ODBC_VERSION, 
@@ -63,7 +69,7 @@ bool Interface::connect(const char* connection_name,
                user_,
                password);
       SLOW_ERRORLOG("odbc_interface", 
-                    "[db][odbc] (Interface::connect) failed. %s", 
+                    "[db.odbc] (Interface::connect) failed. %s", 
                     log_buffer);
       diag_state();
       return false;
@@ -106,7 +112,7 @@ bool Interface::connect() {
                connection_name_,
                user_); 
       SLOW_ERRORLOG("odbc_interface", 
-                    "[db][odbc] (Interface::connect) failed, %s", 
+                    "[db.odbc] (Interface::connect) failed, %s", 
                     log_buffer);
       diag_state();
       return false;

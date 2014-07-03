@@ -82,7 +82,7 @@ bool Manager::init(const char *filename, bool force_arraymode) {
       FILE *fp = fopen(_filename, "r");
       if (!fp) {
         SLOW_ERRORLOG("scripterror",
-                      "[script][cache] (Manager::init) script file [%d:%s]"
+                      "[script.cache] (Manager::init) script file [%d:%s]"
                       " not exist!",
                       id,
                       _filename);
@@ -103,13 +103,13 @@ bool Manager::read_tablesize_check(int32_t tablecount) {
   __ENTER_FUNCTION
     if (tablecount <= 0) {
       Assert(false && 
-          "[script][cache] (Manager::read_tablesize_check)"
+          "[script.cache] (Manager::read_tablesize_check)"
           " error, tablecount <= 0");
       return false;
     }
     if (tablecount > SCRIPT_CACHE_TABLE_DATA_MAX) {
       Assert(false && 
-          "[script][cache] (Manager::read_tablesize_check)"
+          "[script.cache] (Manager::read_tablesize_check)"
           " error, tablecount > SCRIPT_CACHE_TABLE_DATA_MAX");
       return false;
     }

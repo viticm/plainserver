@@ -46,7 +46,7 @@ HANDLE create(uint64_t key, uint32_t size) {
     handle = shmget(key, size, IPC_CREAT | IPC_EXCL | 0666);
     SLOW_ERRORLOG(
         "sharememory",
-        "[sys][sharememory] (api::create) handle = %d," 
+        "[sys.sharememory] (api::create) handle = %d," 
         " key = %"PRIu64" ,error: %d",
         handle, 
         key, 
@@ -79,7 +79,7 @@ HANDLE open(uint64_t key, uint32_t size) {
     handle = shmget(key, size, 0);
     SLOW_ERRORLOG(
         "sharememory", 
-        "[sys][sharememory] (api::open) handle = %d,"
+        "[sys.sharememory] (api::open) handle = %d,"
         " key = %"PRIu64" ,error: %d", 
         handle, 
         key, 
@@ -162,7 +162,7 @@ bool Base::create(uint64_t key, uint32_t size) {
     if (HANDLE_INVALID == handle_) {
       SLOW_ERRORLOG(
           "sharememory", 
-          "[sys][sharememory] (Base::create)"
+          "[sys.sharememory] (Base::create)"
           " failed! handle = %d,key = %"PRIu64"",
           handle_, 
           key);
@@ -176,7 +176,7 @@ bool Base::create(uint64_t key, uint32_t size) {
       size_ = size;
       SLOW_LOG(
           "sharememory", 
-          "[sys][sharememory] (Base::create)"
+          "[sys.sharememory] (Base::create)"
           " success! handle = %d ,key = %"PRIu64"",
           handle_, 
           key);
@@ -185,7 +185,7 @@ bool Base::create(uint64_t key, uint32_t size) {
     else {
       SLOW_ERRORLOG(
           "sharememory", 
-          "[sys][sharememory] (Base::create)"
+          "[sys.sharememory] (Base::create)"
           "map failed! handle = %d ,key = %"PRIu64"", 
           handle_, 
           key);
@@ -216,14 +216,14 @@ bool Base::attach(uint64_t key, uint32_t size) {
       destory();
       SLOW_LOG(
           "sharememory",
-          "[sys][sharememory] (Base::attach) close memory, key = %"PRIu64"", 
+          "[sys.sharememory] (Base::attach) close memory, key = %"PRIu64"", 
           key);
       return false;
     }
     if (HANDLE_INVALID == handle_) {
       SLOW_ERRORLOG(
           "sharememory", 
-          "[sys][sharememory] (Base::attach) failed, key = %"PRIu64"", 
+          "[sys.sharememory] (Base::attach) failed, key = %"PRIu64"", 
           key); 
       return false;
     }
@@ -235,14 +235,14 @@ bool Base::attach(uint64_t key, uint32_t size) {
       size_ = size;
       SLOW_LOG(
           "sharememory", 
-          "[sys][sharememory] (Base::attach) success, key = %"PRIu64"", 
+          "[sys.sharememory] (Base::attach) success, key = %"PRIu64"", 
           key); 
       return true;
     }
     else {
       SLOW_ERRORLOG(
           "sharememory", 
-          "[sys][sharememory] (Base::attach) map failed, key = %"PRIu64"", 
+          "[sys.sharememory] (Base::attach) map failed, key = %"PRIu64"", 
           key); 
       return false;
     }
@@ -329,7 +329,7 @@ void lock(char &flag, char type) {
         ps_common_base::util::sleep(1);
 #if __LINUX__
         ++lock_times;
-        printf("[sys][sharememory] (lock) fail %s, %d, %s", 
+        printf("[sys.sharememory] (lock) fail %s, %d, %s", 
                __FILE__, 
                __LINE__, 
                __PRETTY_FUNCTION__);
@@ -383,7 +383,7 @@ void unlock(char &flag, char type) {
       if (kUseFree != flag) {
         ps_common_base::util::sleep(1);
 #if __LINUX__
-        printf("[sys][sharememory] (unlock) failed %s, %d, %s", 
+        printf("[sys.sharememory] (unlock) failed %s, %d, %s", 
                __FILE__, 
                __LINE__, 
                __PRETTY_FUNCTION__);

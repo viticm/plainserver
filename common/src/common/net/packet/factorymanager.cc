@@ -12,7 +12,8 @@ ps_common_net::packet::FactoryManager* g_packetfactory_manager = NULL;
 
 template<> 
 ps_common_net::packet::FactoryManager 
-  *ps_common_base::Singleton<ps_common_net::packet::FactoryManager>::singleton_ = NULL;
+  *ps_common_base::Singleton<
+  ps_common_net::packet::FactoryManager>::singleton_ = NULL;
 
 namespace ps_common_net {
 

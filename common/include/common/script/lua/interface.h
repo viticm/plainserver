@@ -36,7 +36,7 @@ class Interface {
    static const int32_t kLuaScriptCountMax;
 
  public:
-   void init();
+   bool init();
    void release();
    bool find_function(lua_State *L, const char *name);
    bool verify_function(lua_State *L, const char **names);
