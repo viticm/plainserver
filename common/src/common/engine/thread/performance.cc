@@ -3,7 +3,7 @@
 using namespace ps_common_engine::thread;
 
 Performance::Performance() {
-  //do nothing
+  isactive_ = false;
 }
 
 Performance::~Performance() {
@@ -22,6 +22,6 @@ void Performance::stop() {
   isactive_ = false;
 }
 
-bool isactive() {
+bool Performance::isactive() {
   return isactive_;
 }

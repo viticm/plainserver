@@ -8,6 +8,8 @@
  * @date 2014/06/30 19:51
  * @uses the db manager class
  */
+#ifndef PS_COMMON_DB_MANAGER_H_
+#define PS_COMMON_DB_MANAGER_H_
 #include "common/db/config.h"
 #include "common/db/odbc/system.h"
 
@@ -38,3 +40,5 @@ class Manager {
 };
 
 }; //namespace ps_common_db
+
+#endif //PS_COMMON_DB_MANAGER_H_

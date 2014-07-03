@@ -63,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
-				OutputFile="..\bin\$(ConfigurationName)\$(ProjectName).exe"
+				OutputFile="..\..\bin\$(ProjectName)d.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -153,7 +153,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="ws2_32.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
-				OutputFile="..\bin\$(ConfigurationName)\$(ProjectName).exe"
+				OutputFile="..\..\bin\$(ProjectName).exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="libc.lib;libcd.lib"
 				GenerateDebugInformation="true"
@@ -385,6 +385,26 @@
 						RelativePath="..\..\common\src\common\engine\kernel.cc"
 						>
 					</File>
+					<Filter
+						Name="thread"
+						>
+						<File
+							RelativePath="..\..\common\src\common\engine\thread\db.cc"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\src\common\engine\thread\net.cc"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\src\common\engine\thread\performance.cc"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\src\common\engine\thread\script.cc"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="db"
@@ -775,6 +795,30 @@
 						RelativePath="..\..\common\include\common\engine\kernel.h"
 						>
 					</File>
+					<Filter
+						Name="thread"
+						>
+						<File
+							RelativePath="..\..\common\include\common\engine\thread\config.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\engine\thread\db.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\engine\thread\net.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\engine\thread\performance.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\engine\thread\script.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="sys"

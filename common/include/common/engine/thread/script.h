@@ -36,7 +36,7 @@ class Script : public ps_common_sys::Thread {
  private:
    bool isactive_;
 
-}
+};
 
 }; //namespace thread
 
