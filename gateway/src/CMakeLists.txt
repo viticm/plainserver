@@ -18,13 +18,14 @@ LINK_DIRECTORIES(
 
 SET(EXECUTABLE_OUTPUT_PATH ${TF_CURRENT_BINARY_PATH_BIN})
 
-##update_begin
 
 INCLUDE_DIRECTORIES("../../common/include",
                     "../include",
                     "../../lib/lua/src/",
                     "../../lib/libiconv/include",
                     "/usr/local/unixODBC/include")
+
+##update_begin
 
 
 SET (SOURCEFILES_COMMON_BASE_HASHMAP_LIST
@@ -90,6 +91,13 @@ SET (SOURCEFILES_COMMON_NET_PACKETS_LIST
 
 SET (SOURCEFILES_COMMON_NET_LIST
 	../../common/src/common/net/manager.cc
+)
+
+SET (SOURCEFILES_COMMON_ENGINE_THREAD_LIST
+	../../common/src/common/engine/thread/db.cc
+	../../common/src/common/engine/thread/net.cc
+	../../common/src/common/engine/thread/performance.cc
+	../../common/src/common/engine/thread/script.cc
 )
 
 SET (SOURCEFILES_COMMON_ENGINE_LIST
@@ -240,6 +248,14 @@ SET (HEADERFILES_COMMON_SCRIPT_LIST
 	../../common/include/common/script/config.h
 )
 
+SET (HEADERFILES_COMMON_ENGINE_THREAD_LIST
+	../../common/include/common/engine/thread/config.h
+	../../common/include/common/engine/thread/db.h
+	../../common/include/common/engine/thread/net.h
+	../../common/include/common/engine/thread/performance.h
+	../../common/include/common/engine/thread/script.h
+)
+
 SET (HEADERFILES_COMMON_ENGINE_LIST
 	../../common/include/common/engine/config.h
 	../../common/include/common/engine/kernel.h
@@ -285,6 +301,7 @@ if (WIN32)
 	source_group(SourceFiles\\common\\net\\packets\\serverver FILES ${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST})
 	source_group(SourceFiles\\common\\net\\packets FILES ${SOURCEFILES_COMMON_NET_PACKETS_LIST})
 	source_group(SourceFiles\\common\\net FILES ${SOURCEFILES_COMMON_NET_LIST})
+	source_group(SourceFiles\\common\\engine\\thread FILES ${SOURCEFILES_COMMON_ENGINE_THREAD_LIST})
 	source_group(SourceFiles\\common\\engine FILES ${SOURCEFILES_COMMON_ENGINE_LIST})
 	source_group(SourceFiles\\common\\db\\odbc FILES ${SOURCEFILES_COMMON_DB_ODBC_LIST})
 	source_group(SourceFiles\\common\\db FILES ${SOURCEFILES_COMMON_DB_LIST})
@@ -311,6 +328,7 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\script\\cache FILES ${HEADERFILES_COMMON_SCRIPT_CACHE_LIST})
 	source_group(HeaderFiles\\common\\script\\lua FILES ${HEADERFILES_COMMON_SCRIPT_LUA_LIST})
 	source_group(HeaderFiles\\common\\script FILES ${HEADERFILES_COMMON_SCRIPT_LIST})
+	source_group(HeaderFiles\\common\\engine\\thread FILES ${HEADERFILES_COMMON_ENGINE_THREAD_LIST})
 	source_group(HeaderFiles\\common\\engine FILES ${HEADERFILES_COMMON_ENGINE_LIST})
 	source_group(HeaderFiles\\common\\sys\\memory FILES ${HEADERFILES_COMMON_SYS_MEMORY_LIST})
 	source_group(HeaderFiles\\common\\sys FILES ${HEADERFILES_COMMON_SYS_LIST})
@@ -332,6 +350,7 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST}
 	${SOURCEFILES_COMMON_NET_PACKETS_LIST}
 	${SOURCEFILES_COMMON_NET_LIST}
+	${SOURCEFILES_COMMON_ENGINE_THREAD_LIST}
 	${SOURCEFILES_COMMON_ENGINE_LIST}
 	${SOURCEFILES_COMMON_DB_ODBC_LIST}
 	${SOURCEFILES_COMMON_DB_LIST}
@@ -358,6 +377,7 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_SCRIPT_CACHE_LIST}
 	${HEADERFILES_COMMON_SCRIPT_LUA_LIST}
 	${HEADERFILES_COMMON_SCRIPT_LIST}
+	${HEADERFILES_COMMON_ENGINE_THREAD_LIST}
 	${HEADERFILES_COMMON_ENGINE_LIST}
 	${HEADERFILES_COMMON_SYS_MEMORY_LIST}
 	${HEADERFILES_COMMON_SYS_LIST}
