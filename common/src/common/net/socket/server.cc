@@ -4,7 +4,7 @@ namespace ps_common_net {
 
 namespace socket {
 
-Server::Server(uint16_t port, uint32_t backlog) {
+Server::Server(uint16_t port, const char *ip, uint32_t backlog) {
   __ENTER_FUNCTION
     bool result = false;
     socket_ = new ps_common_net::socket::Base();
@@ -29,11 +29,12 @@ Server::Server(uint16_t port, uint32_t backlog) {
                   socket_->getlast_errorcode());
       throw 1;
     }
-    result = socket_->bind(port);
+    result = socket_->bind(port, ip);
     if (false == result) {
       ERRORPRINTF("[net.socket] (Server::Server)"
-                  " socket_->bind(%d) failed, errorcode: %d", 
+                  " socket_->bind(%d, %s) failed, errorcode: %d", 
                   port,
+                  ip,
                   socket_->getlast_errorcode());
       throw 1;
     }

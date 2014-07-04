@@ -20,6 +20,7 @@ Kernel::Kernel() {
     registerconfig(ENGINE_CONFIG_DB_USERNAME, "");
     registerconfig(ENGINE_CONFIG_DB_PASSWORD, "");
     registerconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 0);
+    registerconfig(ENGINE_CONFIG_NET_LISTEN_IP, "");
     registerconfig(ENGINE_CONFIG_NET_CONNECTION_MAX, NET_CONNECTION_MAX);
     registerconfig(ENGINE_CONFIG_SCRIPT_ROOTPATH, SCRIPT_ROOT_PATH_DEFAULT);
     registerconfig(ENGINE_CONFIG_SCRIPT_WORKPATH, SCRIPT_WORK_PATH_DEFAULT);
@@ -318,22 +319,23 @@ bool Kernel::init_net() {
           getconfig_int32value(ENGINE_CONFIG_NET_LISTEN_PORT));
       int32_t _connectionmax = 
         getconfig_int32value(ENGINE_CONFIG_NET_CONNECTION_MAX);
+      const char *listenip = getconfig_stringvalue(ENGINE_CONFIG_NET_LISTEN_IP);
       if (_connectionmax <= 0) {
         SLOW_ERRORLOG("engine",
                       "[engine] (Kernel::init_net)"
                       " the connection maxcount <= 0");
         return false;
       }
-      uint16_t connectionmax = static_cast<uint16_t>(listenport);
+      uint16_t connectionmax = static_cast<uint16_t>(_connectionmax);
       bool result = true;
       if (is_usethread) {
-        net_thread_ = new thread::Net(listenport);
+        net_thread_ = new thread::Net();
         if (NULL == net_thread_) return false;
-        result = net_thread_->init(connectionmax);
+        result = net_thread_->init(connectionmax, listenport, listenip);
       } else {
-        net_manager_ = new Manager(listenport);
+        net_manager_ = new Manager();
         if (NULL == net_manager_) return false;
-        result = net_manager_->init(connectionmax);
+        result = net_manager_->init(connectionmax, listenport, listenip);
       }
       if (result) {
         listenport = is_usethread ? 
@@ -341,9 +343,10 @@ bool Kernel::init_net() {
                      net_manager_->get_listenport();
         SLOW_LOG("engine",
                  "[engine] (Kernel::init_net) success!"
-                 " connection maxcount: %d, listenport: %d",
+                 " connection maxcount: %d, listenport: %d, listenip: %s",
                  connectionmax,
-                 listenport);
+                 listenport,
+                 NULL == listenip ? "any" : listenip);
       }
       return result;
     }

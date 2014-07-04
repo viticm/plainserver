@@ -23,6 +23,7 @@ int32_t main(int32_t argc, char * argv[]) {
     return 1;
   }
   engine_kernel.run();
+  DEBUGPRINTF("module is runing");
   engine_kernel.stop();
   return 0;
 }

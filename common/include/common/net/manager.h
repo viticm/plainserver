@@ -24,7 +24,7 @@ namespace ps_common_net {
 class Manager : public connection::Manager {
 
  public:
-   Manager(uint16_t port = 0);
+   Manager();
    ~Manager();
 
 /**
@@ -34,7 +34,9 @@ class Manager : public connection::Manager {
 **/
 
  public:
-   bool init(uint16_t connectionmax = NET_CONNECTION_MAX); //初始化
+   bool init(uint16_t connectionmax = NET_CONNECTION_MAX,
+             uint16_t listenport = 0,
+             const char *listenip = NULL);
    bool select(); //网络侦测
    bool processinput(); //数据接收接口
    bool processoutput(); //数据发送接口

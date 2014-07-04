@@ -2,7 +2,7 @@
 
 using namespace ps_common_engine::thread;
 
-Net::Net(uint16_t port) : ps_common_net::Manager(port) {
+Net::Net() {
   //do nothing    
 }
 
@@ -10,10 +10,12 @@ Net::~Net() {
   //do nothing
 }
 
-bool Net::init(uint16_t connectionmax) {
+bool Net::init(uint16_t connectionmax, 
+               uint16_t listenport, 
+               const char *listenip) {
   __ENTER_FUNCTION
     using namespace ps_common_net;
-    isactive_ = Manager::init(connectionmax);
+    isactive_ = Manager::init(connectionmax, listenport, listenip);
     return isactive_;
   __LEAVE_FUNCTION
     return false;

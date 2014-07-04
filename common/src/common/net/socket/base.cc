@@ -1,3 +1,4 @@
+#include "common/base/string.h"
 #include "common/net/socket/base.h"
 
 namespace ps_common_net {
@@ -14,8 +15,9 @@ Base::Base() {
 
 Base::Base(const char* host, uint16_t port) {
   __ENTER_FUNCTION
+    using namespace ps_common_base;
     memset(host_, '\0', sizeof(host_));
-    snprintf(host_, sizeof(host_) - 1, "%s", host);
+    if (host != NULL) string::safecopy(host_, host, sizeof(host_));      
     port_ = port;
     create();
   __LEAVE_FUNCTION
@@ -65,8 +67,10 @@ bool Base::connect() {
 
 bool Base::connect(const char* host, uint16_t port) {
   __ENTER_FUNCTION
+    using namespace ps_common_base;
     bool result = true;
-    snprintf(host_, sizeof(host_) - 1, "%s", host);
+    if (host != NULL)
+      string::safecopy(host_, host, sizeof(host_));
     port_ = port;
     result = connect();
     return result;
@@ -76,9 +80,11 @@ bool Base::connect(const char* host, uint16_t port) {
 
 bool Base::reconnect(const char* host, uint16_t port) {
   __ENTER_FUNCTION
+    using namespace ps_common_base;
     bool result = true;
     close();
-    snprintf(host_, sizeof(host_) - 1, "%s", host);
+    if (host != NULL)
+      string::safecopy(host_, host, sizeof(host_));
     port_ = port;
     create();
     result = connect();
@@ -114,13 +120,17 @@ uint32_t Base::available() const {
     return 0;
 }
 
-int32_t Base::accept(uint16_t port) {
+int32_t Base::accept(uint16_t port, const char *ip) {
   __ENTER_FUNCTION
     int32_t result = SOCKET_ERROR;
     uint32_t addrlength = 0;
     struct sockaddr_in accept_sockaddr_in;
     accept_sockaddr_in.sin_family = AF_INET;
-    accept_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (NULL == ip || 0 == strlen(ip) || 0 == strcmp("127.0.0.1", ip)) {
+      accept_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+    } else {
+      accept_sockaddr_in.sin_addr.s_addr = inet_addr(ip);
+    }
     accept_sockaddr_in.sin_port = htons(port);
     addrlength = sizeof(struct sockaddr_in);
     result = api::acceptex(
@@ -143,12 +153,16 @@ int32_t Base::fastaccept() {
     return SOCKET_ERROR;
 }
 
-bool Base::bind() {
+bool Base::bind(const char *ip) {
   __ENTER_FUNCTION
     bool result = true;
     struct sockaddr_in connect_sockaddr_in;
     connect_sockaddr_in.sin_family = AF_INET;
-    connect_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (NULL == ip || 0 == strlen(ip) || 0 == strcmp("127.0.0.1", ip)) {
+      connect_sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+    } else {
+      connect_sockaddr_in.sin_addr.s_addr = inet_addr(ip);
+    }
     connect_sockaddr_in.sin_port = htons(port_);
     result = api::bindex(
         socketid_, 
@@ -170,11 +184,11 @@ bool Base::bind() {
     return false;
 }
 
-bool Base::bind(uint16_t port) {
+bool Base::bind(uint16_t port, const char *ip) {
   __ENTER_FUNCTION
     bool result = true;
     port_ = port;
-    result = bind();
+    result = bind(ip);
     return result;
   __LEAVE_FUNCTION
     return false;

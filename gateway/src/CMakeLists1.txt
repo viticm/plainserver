@@ -28,8 +28,6 @@ INCLUDE_DIRECTORIES("../../common/include",
 ##update_begin
 
 
-
-
 SET (SOURCEFILES_COMMON_BASE_HASHMAP_LIST
 	../../common/src/common/base/hashmap/integer.cc
 )

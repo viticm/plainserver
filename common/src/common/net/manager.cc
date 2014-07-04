@@ -26,7 +26,7 @@ Manager& Manager::getsingleton() {
 }
 **/
 
-Manager::Manager(uint16_t port) {
+Manager::Manager() {
   __ENTER_FUNCTION
     FD_ZERO(&readfds_[kSelectFull]);
     FD_ZERO(&writefds_[kSelectFull]);
@@ -37,7 +37,7 @@ Manager::Manager(uint16_t port) {
     onestep_accept_ = NET_ONESTEP_ACCEPT_DEFAULT;
     send_bytes_ = 0;
     receive_bytes_ = 0;
-    listenport_ = port;
+    listenport_ = 0;
     billing_serverconnection_.setid(0);
   __LEAVE_FUNCTION
 }
@@ -48,16 +48,19 @@ Manager::~Manager() {
   __LEAVE_FUNCTION
 }
 
-bool Manager::init(uint16_t connectionmax) {
+bool Manager::init(uint16_t connectionmax,
+                   uint16_t listenport,
+                   const char *listenip) {
   __ENTER_FUNCTION
     /* init packet factory manager { */
     if (!NET_PACKET_FACTORYMANAGER_POINTER)
       g_packetfactory_manager = new packet::FactoryManager();
     Assert(NET_PACKET_FACTORYMANAGER_POINTER);  
     /* } init packet factory manager */
-
+    if (!NET_PACKET_FACTORYMANAGER_POINTER->init()) return false;
     /* server main socket { */
-    serversocket_ = new socket::Server(listenport_);
+    listenport_ = listenport;
+    serversocket_ = new socket::Server(listenport_, listenip);
     Assert(serversocket_);
     listenport_ = 0 == listenport_ ? serversocket_->getport() : listenport_;
     serversocket_->set_nonblocking();

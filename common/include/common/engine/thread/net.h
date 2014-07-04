@@ -22,11 +22,13 @@ namespace thread {
 class Net : public ps_common_net::Manager, public ps_common_sys::Thread {
 
  public:
-   Net(uint16_t port = 0);
+   Net();
    ~Net();
 
  public:
-   bool init(uint16_t connectionmax = NET_CONNECTION_MAX);
+   bool init(uint16_t connectionmax = NET_CONNECTION_MAX,
+             uint16_t listenport = 0,
+             const char *listenip = NULL);
    virtual void run();
    virtual void stop();
    void quit();

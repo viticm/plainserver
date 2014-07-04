@@ -20,7 +20,7 @@ namespace socket {
 class Server {
 
  public:
-   Server(uint16_t port, uint32_t backlog = 5);
+   Server(uint16_t port, const char *ip = NULL, uint32_t backlog = 5);
    ~Server();
 
  public:
