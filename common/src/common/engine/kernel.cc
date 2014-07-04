@@ -401,7 +401,7 @@ void Kernel::run_db() {
   __ENTER_FUNCTION
     bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_DB_RUN_ASTHREAD);
     if (is_usethread) {
-      db_thread_->run();
+      db_thread_->start();
     } else {
       db_manager_->check_db_connect();
     }
@@ -412,7 +412,7 @@ void Kernel::run_net() {
   __ENTER_FUNCTION
     bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
     if (is_usethread) {
-      net_thread_->run();
+      net_thread_->start();
     } else {
       net_manager_->loop();
     }
@@ -423,7 +423,7 @@ void Kernel::run_script() {
   __ENTER_FUNCTION
     bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_RUN_ASTHREAD);
     if (is_usethread) {
-      script_thread_->run();
+      script_thread_->start();
     }
   __LEAVE_FUNCTION
 }
@@ -433,7 +433,7 @@ void Kernel::run_performance() {
     bool is_usethread = 
       getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD);
     if (is_usethread) {
-      performance_thread_->run();
+      performance_thread_->start();
     }
   __LEAVE_FUNCTION
 }

@@ -53,9 +53,9 @@ class Thread {
 };
 
 #if __LINUX__
-void* pap_thread_process(void* derived_thread);
+void* ps_thread_process(void* derived_thread);
 #elif __WINDOWS__
-DWORD WINAPI pap_thread_process(void* derived_thread);
+DWORD WINAPI ps_thread_process(void* derived_thread);
 #endif
 
 class ThreadLock {

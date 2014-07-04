@@ -25,10 +25,21 @@ void Thread::start() {
   __ENTER_FUNCTION
     if (status_ != kReady) return;
 #if __LINUX__
-    pthread_create(&id_, NULL, pap_thread_process, this);
+    int32_t result = pthread_create(&id_, NULL, ps_thread_process, this);
+    if (result != 0) {
+      char msg[32] = {0};
+      snprintf(msg, 
+               sizeof(msg) - 1, 
+               "pthread_create failed, result: %d", 
+               result);
+      AssertEx(false, msg);
+    }
 #elif __WINDOWS__
     thread_handle_ = 
-      ::CreateThread(NULL, 0, pap_thread_process, this, 0, &id_);
+      ::CreateThread(NULL, 0, ps_thread_process, this, CREATE_SUSPENDED, &id_);
+    Assert(thread_handle_ != NULL);
+    id_ *= 1000; //???
+    ResumeThread(thread_handle_)
 #endif
   __LEAVE_FUNCTION
 }
@@ -53,9 +64,9 @@ void Thread::run() {
 }
 
 #if __LINUX__
-void* pap_thread_process(void* derived_thread) {
+void* ps_thread_process(void* derived_thread) {
 #elif __WINDOWS__
-DWORD WINAPI pap_thread_process(void* derived_thread) {
+DWORD WINAPI ps_thread_process(void* derived_thread) {
 #endif
   __ENTER_FUNCTION
     Thread* thread = static_cast<Thread*>(derived_thread);
