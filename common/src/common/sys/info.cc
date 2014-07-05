@@ -157,7 +157,7 @@ bool get_cpu_info(cpu_info_t& cpu_info)
       name[0] = '\0';    
     }
     if (fp) fclose(fp);
-    cpu_info.cpu_name = {0}; //init
+    memset(cpu_info.cpu_name, 0, sizeof(cpu_info.cpu_name)); //init
     fp = fopen("/proc/cpuinfo", "r");
     if (fp) {
       while (fgets(line, sizeof(line) - 1, fp)) {
