@@ -1,39 +1,41 @@
 /**
- * PAP Engine ( https://github.com/viticm/pap )
+ * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id info.h
- * @link https://github.com/viticm/pap for the canonical source repository
+ * @link https://github.com/viticm/plianserver for the canonical source repository
  * @copyright Copyright (c) 2013-2013 viticm( viticm@126.com )
  * @license
  * @user viticm<viticm@126.com>
- * @date 2013-11-23 10:27:23
+ * @date 2014/07/05 11:38
  * @uses system info namespace, can get system some info just like cpu or memory(use some JianYi code)
  *       use the code url: http://code.google.com/p/mooon/source/browse/trunk/common_library/include/sys
  *       (thanks eyjian@gmail.com) -- but this functions also need use in windows
  */
-#ifndef PAP_COMMON_SYS_INFO_H_
-#define PAP_COMMON_SYS_INFO_H_
+#ifndef PS_COMMON_SYS_INFO_H_
+#define PS_COMMON_SYS_INFO_H_
 
-#include <sys/config.h>
-#include "common/base/type.h"
 #include "common/sys/config.h"
 
-namespace pap_common_sys {
+namespace ps_common_sys {
 
 namespace info {
 
 //这是一个快速释放文件指针的类，暂时放置此处，以后有需要移到base的util下
-template <>
-class CloseHelper<FILE*> {
+class CloseHelper {
  public:
-   CloseHelper<FILE*>(FILE*& fp) : fp_(fp); //Initialization can be placed here, 
-                                            //but the method to achieve must be placed inside, 
-                                            //otherwise use inline functions
+   CloseHelper(FILE*& fp) : fp_(fp) {}; //Initialization can be placed here, 
+                                               //but the method to achieve must be placed inside, 
+                                               //otherwise use inline functions
    //析构函数
-   ~CloseHelper<FILE*>();
+   ~CloseHelper() {
+     if (fp_ != NULL) {
+       fclose(fp_);
+       fp_ = NULL;
+     }
+   }
 
  private:
    FILE*& fp_;
-}
+};
 
 //current system info
 typedef struct {
@@ -94,6 +96,15 @@ typedef struct {
   
 } process_info_t;
 
+typedef struct {
+  int64_t size;
+  int64_t resident;
+  int64_t share;
+  int64_t text;
+  int64_t lib;
+  int64_t data;
+} process_page_info_t;
+
 //current net info
 typedef struct {
   char interface_name[INTERFACE_NAME_MAX]; //网卡名，如eth0
@@ -119,7 +130,7 @@ typedef struct {
 } net_info_t;
 
 bool get_sys_info(sys_info_t& sys_info);
-bool get_mem_info(mem_info_t& mem_info);
+bool get_mem_info(memory_info_t& mem_info);
 bool get_cpu_info(cpu_info_t& cpu_info);
 int get_cpu_info_array(std::vector<cpu_info_t>& cpu_info_array);
 bool get_kernel_version(kernel_version_t& kernel_version);
@@ -128,11 +139,12 @@ bool get_process_page_info(process_page_info_t& process_page_info);
 bool get_process_times(process_time_t& process_time);
 bool get_net_info(const char* interface_name, net_info_t& net_info);
 bool get_net_info_array(std::vector<net_info_t>& net_info_array);
-bool do_get_net_info_array(const char* interface_name, std::vector<net_info_t>& net_info_array);
+bool do_get_net_info_array(const char* interface_name, 
+                           std::vector<net_info_t>& net_info_array);
 bool get_ip(char* &ip, const char* interface_name = NULL);
 
 } //namespace info
 
-} //namespace pap_common_sys
+} //namespace ps_common_sys
 
-#endif //PAP_COMMON_SYS_INFO_H_
+#endif //PS_COMMON_SYS_INFO_H_

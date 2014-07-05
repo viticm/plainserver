@@ -23,4 +23,3 @@
 #define CPU_NAME_MAX 256
 
 #endif //PS_COMMON_SYS_CONFIG_H_
-

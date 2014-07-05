@@ -13,20 +13,6 @@
 
 #include "common/base/hashmap/config.h"
 
-#undef max
-#undef min
-
-#if __LINUX__
-#include <ext/hash_map>
-#elif __WINDOWS__
-#include <hash_map>
-#endif
-
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#endif
-
 namespace ps_common_base {
 
 namespace hashmap {
@@ -34,13 +20,7 @@ namespace hashmap {
 template <class T_key, class T_value>
 class Template {
  public:
-#ifdef __SGI_STL_PORT
-   typedef std::hash_map<T_key, T_value> hashmap_t;
-#elif __WINDOWS__
-   typedef stdext::hash_map<T_key, T_value> hashmap_t;
-#elif __LINUX__
-   typedef __gnu_cxx::hash_map<T_key, T_value> hashmap_t;
-#endif
+   typedef hash_map<T_key, T_value> hashmap_t;
    typedef typename hashmap_t::iterator iterator_t;
 
  public:
