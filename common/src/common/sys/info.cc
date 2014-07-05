@@ -156,11 +156,11 @@ bool get_cpu_info(cpu_info_t& cpu_info)
       }
       name[0] = '\0';    
     }
-    if (fp) fclose(fp);
     memset(cpu_info.cpu_name, 0, sizeof(cpu_info.cpu_name)); //init
-    fp = fopen("/proc/cpuinfo", "r");
-    if (fp) {
-      while (fgets(line, sizeof(line) - 1, fp)) {
+    FILE *fp1 = fopen("/proc/cpuinfo", "r");
+    if (fp1) {
+      CloseHelper ch1(fp1);
+      while (fgets(line, sizeof(line) - 1, fp1)) {
         const char* kCpuModelName = "model name      : %s";
         int ret = sscanf(line, kCpuModelName, &cpu_info.cpu_name);
         if (ret > 0) {
