@@ -1,5 +1,6 @@
-#include "common/sys/util.h"
+#include "common/base/string.h"
 #include "common/sys/thread.h"
+#include "common/sys/util.h"
 
 namespace ps_common_sys {
 
@@ -70,6 +71,27 @@ void dumpstack(const char* log_fileprefix, const char* type) {
     }
 #endif
   __LEAVE_FUNCTION
+}
+
+
+int32_t exec(const char *command, char *result, size_t size) {
+  __ENTER_FUNCTION
+#if __LINUX__
+    using namespace ps_common_base;
+    char buffer[1024] = {0};
+    char temp[1024] = {0};
+    string::safecopy(temp, command, sizeof(temp));
+    FILE *fp = popen(temp, "r");
+    if (!fp) return -1;
+    if (fgets(buffer, 1024, fp) != 0) {
+      string::safecopy(result, buffer, size);
+    }
+    if (fp) pclose(fp);
+    fp = NULL;
+#endif
+    return 0;
+  __LEAVE_FUNCTION
+    return -1;
 }
 
 } //namespace util

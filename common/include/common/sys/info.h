@@ -129,6 +129,12 @@ typedef struct {
   uint64_t transmit_compressed;
 } net_info_t;
 
+typedef struct {
+  float oneminutes;
+  float fiveminutes;
+  float fifteenminutes;
+} loadaverage_t;
+
 bool get_sys_info(sys_info_t& sys_info);
 bool get_mem_info(memory_info_t& mem_info);
 bool get_cpu_info(cpu_info_t& cpu_info);
@@ -142,6 +148,7 @@ bool get_net_info_array(std::vector<net_info_t>& net_info_array);
 bool do_get_net_info_array(const char* interface_name, 
                            std::vector<net_info_t>& net_info_array);
 bool get_ip(char* &ip, const char* interface_name = NULL);
+bool get_loadaverage(loadaverage_t& loadaverage);
 
 } //namespace info
 

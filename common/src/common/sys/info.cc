@@ -716,6 +716,30 @@ bool get_ip(char* &ip, const char* interface_name) {
     return false;
 }
 
+bool get_loadaverage(loadaverage_t& loadaverage) {
+  __ENTER_FUNCTION
+#if __LINUX__
+    char line[LINE_MAX] = {0};
+    const char *kFileName = "/proc/loadavg";
+    FILE *fp = fopen(kFileName, "r");
+    if (!fp) return false;
+    char *linep = fgets(line, sizeof(line) - 1, fp);
+    if (NULL == linep) return false;
+    if (sscanf("%f%f%f", 
+               line, 
+               &loadaverage.oneminutes, 
+               &loadaverage.fiveminutes, 
+               &loadaverage.fifteenminutes) != 3) {
+      return false;
+    }
+#elif __WINDOWS__
+
+#endif
+    return true;
+  __LEAVE_FUNCTION
+    return false;
+}
+
 } //namespace info
 
 } //namespace ps_common_sys

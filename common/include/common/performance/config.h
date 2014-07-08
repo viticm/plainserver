@@ -13,4 +13,7 @@
 
 #include "common/base/config.h"
 
+//默认输出性能信息的时间间隔(s) 
+#define PERFORMANCE_EYES_PRINT_INTERVAL_DEFAULT 30
+
 #endif //PS_COMMON_PERFORMANCE_CONFIG_H_

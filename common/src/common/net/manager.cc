@@ -3,6 +3,7 @@
 #include "common/base/util.h"
 #include "common/net/packet/factorymanager.h"
 #include "common/net/packets/serverserver/connect.h"
+#include "common/performance/eyes.h"
 #include "common/net/manager.h"
 
 #if __WINDOWS__
@@ -382,6 +383,15 @@ void Manager::loop() {
         result = processoutput();
         Assert(result); 
         //ERRORPRINTF("processoutput");
+        if (PERFORMANCE_EYES_POINTER) { //网络性能监视
+          uint16_t connectioncount = connection::Manager::getcount();
+          PERFORMANCE_EYES_POINTER->set_onlinecount(connectioncount);
+          PERFORMANCE_EYES_POINTER->set_connectioncount(connectioncount);
+          uint64_t sendbytes = get_send_bytes();
+          uint64_t receivebytes = get_receive_bytes();
+          PERFORMANCE_EYES_POINTER->set_sendbytes(sendbytes);
+          PERFORMANCE_EYES_POINTER->set_receivebytes(receivebytes);
+        }
       }
       catch(...) {
         

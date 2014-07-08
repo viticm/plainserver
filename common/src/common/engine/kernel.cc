@@ -2,6 +2,7 @@
 #include "common/base/log.h"
 #include "common/base/util.h"
 #include "common/script/lua/system.h"
+#include "common/performance/eyes.h"
 #include "common/engine/kernel.h"
 
 namespace ps_common_engine {
@@ -28,7 +29,7 @@ Kernel::Kernel() {
                    SCRIPT_LUA_GLOBAL_VAR_FILE_DEFAULT);
     registerconfig(ENGINE_CONFIG_DB_RUN_ASTHREAD, false);
     registerconfig(ENGINE_CONFIG_NET_RUN_ASTHREAD, false);
-    registerconfig(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD, false);
+    registerconfig(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD, true);
     registerconfig(ENGINE_CONFIG_SCRIPT_RUN_ASTHREAD, false);
     db_manager_ = NULL;
     net_manager_ = NULL;
@@ -379,6 +380,7 @@ bool Kernel::init_script() {
 
 bool Kernel::init_performance() {
   __ENTER_FUNCTION
+    using namespace ps_common_performance;
     bool isactive = getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE);
     bool is_usethread = 
       getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD);
@@ -387,6 +389,11 @@ bool Kernel::init_performance() {
         performance_thread_ = new thread::Performance();
         if (NULL == performance_thread_) return false;
       }
+    }
+    else {
+      if (!PERFORMANCE_EYES_POINTER)
+        g_performance_eyes = new Eyes();
+      if (!PERFORMANCE_EYES_POINTER) return false;
     }
     return true;
   __LEAVE_FUNCTION
@@ -434,6 +441,8 @@ void Kernel::run_performance() {
       getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD);
     if (is_usethread) {
       performance_thread_->start();
+    } else {
+      PERFORMANCE_EYES_POINTER->activate();
     }
   __LEAVE_FUNCTION
 }
@@ -447,26 +456,45 @@ void Kernel::stop_base() {
 
 void Kernel::stop_db() {
   __ENTER_FUNCTION
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_DB_RUN_ASTHREAD);
+    if (is_usethread) {
+      db_thread_->stop();
+    }
     //SAFE_DELETE(db_manager_);    
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop_net() {
   __ENTER_FUNCTION
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
     if (net_manager_) net_manager_->setactive(false);
+    if (is_usethread) {
+      net_thread_->stop();
+    }
     //ps_common_base::util::sleep(5000);
     //SAFE_DELETE(net_manager_);
+    
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop_script() {
   __ENTER_FUNCTION
     //SAFE_DELETE(g_script_luasystem);
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_RUN_ASTHREAD);
+    if (is_usethread) {
+      script_thread_->stop();
+    }
   __LEAVE_FUNCTION
 }
 
 void Kernel::stop_performance() {
-  //do nothing
+  __ENTER_FUNCTION
+    bool is_usethread = 
+      getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD);
+    if (is_usethread) {
+      performance_thread_->stop();
+    }
+  __LEAVE_FUNCTION
 }
 
 } //namespace ps_common_engine

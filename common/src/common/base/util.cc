@@ -399,6 +399,21 @@ void path_tounix(char* buffer, uint16_t length) {
   __LEAVE_FUNCTION
 }
 
+void get_module_filename(char *buffer, size_t size) {
+  __ENTER_FUNCTION
+    bool result = false;
+    int32_t resultcode = 0;
+#if __WINDOWS__
+    resultcode = (int32_t)GetModuleFileName(NULL, buffer, (DWORD)size);
+    Assert(resultcode);
+#elif __LINUX__
+    resultcode = readlink("/proc/self/exe", buffer, size);
+    Assert(resultcode > 0 && resultcode < static_cast<int32_t>(size));
+    buffer[resultcode] = '\0';
+#endif
+  __LEAVE_FUNCTION
+}
+
 } //namespace util
 
 } //namespace ps_common_base
