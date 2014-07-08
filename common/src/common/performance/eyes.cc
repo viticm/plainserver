@@ -44,7 +44,7 @@ void Eyes::printinfo() {
     process::info_t processinfo;
     memset(&processinfo, 0, sizeof(processinfo));
     process::getinfo(current_processid, processinfo);
-    DEBUGPRINTF("-----------------------performance-----------------------");
+    DEBUGPRINTF("-----------------------------performance-----------------------------");
     DEBUGPRINTF("- FPS: %.1f", FPS_);
     DEBUGPRINTF("- load average: %.2f, %.2f, %.2f", 
                 loadaverage.oneminutes, 
@@ -65,18 +65,27 @@ void Eyes::printinfo() {
     char modulename[FILENAME_MAX] = {0};
     util::get_module_filename(modulename, sizeof(modulename));
     DEBUGPRINTF("- IMG: %s", modulename);
-    DEBUGPRINTF("-----------------------performance-----------------------");
+    DEBUGPRINTF("-----------------------------performance-----------------------------");
   __LEAVE_FUNCTION
 }
 
 void Eyes::activate() {
   __ENTER_FUNCTION
+    using namespace ps_common_sys;
+    using namespace ps_common_base;
     uint32_t currenttime = TIME_MANAGER_POINTER->get_current_time();
-    if (currenttime - last_printtime_ >= printinfo_interval_) {
-      printinfo();
+    if (currenttime - last_printtime_ >= printinfo_interval_ * 1000) {
+      float cpu_usage = 0.0f;
+      if (currenttime - last_printtime_ == currenttime) {
+        int32_t current_processid = process::getid();
+        cpu_usage = process::get_cpu_usage(current_processid);
+      }
+
+      if (cpu_usage != -1.0f) printinfo();
       last_printtime_ = currenttime;
     }
     tick_forFPS();
+    util::sleep(1); //为了计算帧率
   __LEAVE_FUNCTION
 }
 
@@ -84,20 +93,20 @@ void Eyes::tick_forFPS() {
   __ENTER_FUNCTION
     static uint32_t last_ticktime = 0;
     uint32_t currenttime = TIME_MANAGER_POINTER->get_current_time();
-    uint32_t difftime = 
-      TIME_MANAGER_POINTER->diff_time(last_ticktime, currenttime);
-    static uint32_t loopcount = 0; //帧计算累计数
-    static uint32_t looptime = 0; //时间累计数
-    ++loopcount;
-    //计算帧率
-    const uint32_t kCalculateFPS = 1000; //每一秒计算一次
-    ++loopcount;
-    looptime += difftime;
-    if (looptime > kCalculateFPS) {
-      FPS_ = static_cast<float>((loopcount * 1000) / looptime);
-      loopcount = looptime = 0;
+    for (uint8_t i = 0; i < 100; ++i) {
+      uint32_t difftime = currenttime - last_ticktime;
+      static uint32_t looptime = 0; //时间累计数
+      //计算帧率
+      const uint32_t kCalculateFPS = 1000; //每一秒计算一次
+
+      looptime += difftime;
+      if (looptime > kCalculateFPS) {
+        FPS_ = static_cast<float>((i * 1000) / looptime);
+        looptime = 0;
+        last_ticktime = currenttime;
+        break;
+      }
     }
-    last_ticktime = currenttime;
   __LEAVE_FUNCTION
 }
 
@@ -120,6 +129,7 @@ uint64_t Eyes::get_uptraffic() const {
 uint64_t Eyes::get_downtraffic() const {
   __ENTER_FUNCTION
     uint64_t result = receivebytes_[1] - receivebytes_[0];
+    return result;
   __LEAVE_FUNCTION
     return 0;
 }

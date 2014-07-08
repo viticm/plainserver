@@ -34,7 +34,7 @@ class CloseHelper {
    }
 
  private:
-   FILE*& fp_;
+   FILE* fp_;
 };
 
 //current system info

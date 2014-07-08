@@ -3,7 +3,7 @@
 #include <sys/times.h>
 #include <sys/sysinfo.h>
 #elif __WINDOWS__
-#include <winsock2.h>
+#include <winsock.h>
 #include <io.h>
 #endif
 #include "common/sys/info.h"
@@ -11,6 +11,16 @@
 namespace ps_common_sys {
 
 namespace info {
+
+#if __WINDOWS__
+static uint64_t file_time_2_utc(const FILETIME* ftime) {
+  LARGE_INTEGER li;
+  Assert(ftime);
+  li.LowPart = ftime->dwLowDateTime;
+  li.HighPart = ftime->dwHighDateTime;
+  return li.QuadPart;
+}
+#endif
 
 bool get_sys_info(sys_info_t& sys_info) {
   __ENTER_FUNCTION
@@ -39,11 +49,11 @@ bool get_sys_info(sys_info_t& sys_info) {
     sys_info.average_load[2] = 0;
     sys_info.ram_total = mem_info.dwTotalPhys;
     sys_info.ram_free = mem_info.dwAvailPhys;
-    sys_info.ram_shared = mem_info.sharedram;
-    sys_info.ram_buffer = mem_info.bufferram;
+    sys_info.ram_shared = mem_info.dwTotalVirtual;
+    sys_info.ram_buffer = mem_info.dwAvailPageFile;
     sys_info.swap_total = mem_info.dwTotalVirtual;
     sys_info.swap_free = mem_info.dwAvailVirtual;
-    sys_info.process_number = info.dwNumberOfProcessors;
+    sys_info.process_number = static_cast<uint16_t>(info.dwNumberOfProcessors);
 #endif
     return true;
   __LEAVE_FUNCTION
@@ -101,18 +111,14 @@ bool get_mem_info(memory_info_t& mem_info) {
 
     return (i == member_number);
 #elif __WINDOWS__
-    MEMORYSTATUS mem_info;
-    GlobalMemoryStatus(&mem_info); //memory
-    mem_info.uptime_second = 0;
-    mem_info.average_load[0] = 0;
-    mem_info.average_load[1] = 0;
-    mem_info.average_load[2] = 0;
-    mem_info.ram_total = mem_info.dwTotalPhys;
-    mem_info.ram_free = mem_info.dwAvailPhys;
-    mem_info.ram_shared = mem_info.sharedram;
-    mem_info.ram_buffer = mem_info.bufferram;
-    mem_info.swap_total = mem_info.dwTotalVirtual;
-    mem_info.swap_free = mem_info.dwAvailVirtual;
+    MEMORYSTATUS memory_status;
+    GlobalMemoryStatus(&memory_status); //memory
+    mem_info.mem_total = memory_status.dwTotalPhys;
+    mem_info.mem_free = memory_status.dwAvailPhys;
+    mem_info.buffers = memory_status.dwTotalPageFile;
+    mem_info.cached = memory_status.dwAvailPageFile;
+    mem_info.swap_total = memory_status.dwTotalVirtual;
+    mem_info.swap_free = memory_status.dwAvailVirtual;
 #endif
   __LEAVE_FUNCTION
     return false;
@@ -175,13 +181,20 @@ bool get_cpu_info(cpu_info_t& cpu_info)
     }
     return (name[0] != '\0');
 #elif __WINDOWS__
-    GetSystemTimes(&cpu_info.idle, &cpu_info.system, &cpu_info.user);
+    FILETIME idle_time;
+    FILETIME system_time;
+    FILETIME user_time;
+    GetSystemTimes(&idle_time, &system_time, &user_time);
+    cpu_info.idle = static_cast<uint32_t>(file_time_2_utc(&idle_time));
+    cpu_info.system = static_cast<uint32_t>(file_time_2_utc(&system_time));
+    cpu_info.user = static_cast<uint32_t>(file_time_2_utc(&user_time));
     cpu_info.nice = 0;
     cpu_info.iowait = 0;
     cpu_info.irq = 0;
     cpu_info.softirq = 0;
     cpu_info.total = cpu_info.idle + cpu_info.system + cpu_info.user;
 
+    /**
     char cpu_name[CPU_NAME_MAX];
     int result;
     HKEY  h_key = NULL;
@@ -199,6 +212,7 @@ bool get_cpu_info(cpu_info_t& cpu_info)
                              static_cast<LPBYTE>(cpu_name), 
                              &size);
     Assert(S_OK == result);
+    **/
 
     return true;
 #endif
@@ -290,8 +304,8 @@ int get_cpu_info_array(std::vector<cpu_info_t>& cpu_info_array) {
 
 bool get_kernel_version(kernel_version_t& kernel_version) {
   __ENTER_FUNCTION
-#if __LINUX__
     using namespace ps_common_base;
+#if __LINUX__
     FILE* fp = fopen("/proc/version", "r");
     if (NULL == fp) return false;
     CloseHelper ch(fp);
@@ -328,8 +342,8 @@ bool get_kernel_version(kernel_version_t& kernel_version) {
 #elif __WINDOWS__
     int result = false;
     OSVERSIONINFOEX os_vision;
-    bool os_version_info_ex = false;
-    CString verion_str;
+    BOOL os_version_info_ex = false;
+    std::string version_str;
 
     ZeroMemory(&os_vision, sizeof(OSVERSIONINFOEX));
     os_vision.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
@@ -343,113 +357,121 @@ bool get_kernel_version(kernel_version_t& kernel_version) {
     switch (os_vision.dwPlatformId) {
       case VER_PLATFORM_WIN32_NT: {
         if (os_vision.dwMajorVersion <= 4)
-          version_str = L"Microsoft Windows NT ";
+          version_str = "Microsoft Windows NT ";
         if (5 == os_vision.dwMajorVersion && 0 ==  os_vision.dwMinorVersion)
-          version_str = L"Microsoft Windows 2000 ";
+          version_str = "Microsoft Windows 2000 ";
         if (5 == os_vision.dwMajorVersion && 1 == os_vision.dwMinorVersion)
-          version_str = L"Microsoft Windows XP ";
+          version_str = "Microsoft Windows XP ";
         if (5 == os_vision.dwMajorVersion && 2 == os_vision.dwMinorVersion)
-          if (GetSystemMetrics(SM_SERVERR2) != 0)
-            version_str = L"Microsoft Windows 2003 RC2 ";
+          if (::GetSystemMetrics(SM_SERVERR2) != 0)
+            version_str = "Microsoft Windows 2003 RC2 ";
           else
-            version_str = L"Microsoft Windows 2003 ";
+            version_str = "Microsoft Windows 2003 ";
         if (6 == os_vision.dwMajorVersion) {
           if(0 == os_vision.dwMinorVersion) {
             if (os_vision.wProductType == VER_NT_WORKSTATION)
-              version_str = _T("Microsoft Windows Vista");
+              version_str = "Microsoft Windows Vista";
             else if (os_vision.wProductType != VER_NT_WORKSTATION)
-              version_str = _T("Microsoft Windows 2008");
+              version_str = "Microsoft Windows 2008";
           }
           else if (1 == os_vision.dwMinorVersion) {
-              version_str = _T("Windows 7");
+              version_str = "Windows 7";
           }
         }
         if (os_version_info_ex) {
           if (VER_NT_SERVER == os_vision.wProductType) {
             if( os_vision.wSuiteMask & VER_SUITE_DATACENTER )
-              version_str += L"DataCenter Server ";
+              version_str += "DataCenter Server ";
             else if( os_vision.wSuiteMask & VER_SUITE_ENTERPRISE )
-              version_str += L"Advanced Server ";
+              version_str += "Advanced Server ";
             else
-              version_str += L"Server ";
+              version_str += "Server ";
           }
         }
         else {
           HKEY key = NULL;
           char product_type[80];
           DWORD buf_len = 0;
-          RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                       L"SYSTEM\\CurrentControlSet\\Control\\ProductOptions",
-                       0, KEY_QUERY_VALUE, &key);
-          RegQueryValueEx(key, 
-                          L"ProductType", 
-                          NULL, 
-                          NULL,
-                          static_cast<LPBYTE>(product_type), 
-                          &buf_len);
+          ::RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+                         "SYSTEM\\CurrentControlSet\\Control\\ProductOptions",
+                         0, 
+                         KEY_QUERY_VALUE, 
+                         &key);
+          ::RegQueryValueEx(key, 
+                            "ProductType", 
+                            NULL, 
+                            NULL,
+                            (LPBYTE)product_type, 
+                            &buf_len);
 
           RegCloseKey(key);
           key = NULL;
-          if (0 == lstrcmpi( L"WINNT", static_cast<LPCWSTR>(product_type)))
-            version_str += L"Professional ";
-          if (0 == lstrcmpi( L"LANMANNT", static_cast<LPCWSTR>(product_type)))
-            version_str += L"Server ";
-          if (0 == lstrcmpi( L"SERVERNT", static_cast<LPCWSTR>(product_type)))
-            version_str += L"Advanced Server ";
+          if (0 == lstrcmpi( "WINNT", product_type))
+            version_str += "Professional ";
+          if (0 == lstrcmpi( "LANMANNT", product_type))
+            version_str += "Server ";
+          if (0 == lstrcmpi( "SERVERNT", product_type))
+            version_str += "Advanced Server ";
         }
         if (os_vision.dwMajorVersion <= 4) {
-          CString str;
-          str.Format(L"%s version %d.%d %s (Build %u)\n",
-                    version_str, 
-                    os_vision.dwMajorVersion,
-                    os_vision.dwMinorVersion,
-                    os_vision.szCSDVersion,
-                    os_vision.dwBuildNumber & 0xFFFF);
-          version_str = str;
+          char temp[FILENAME_MAX] = {0};
+          snprintf(temp,
+                   sizeof(temp) - 1,
+                   "%s version %d.%d %s (Build %u)\n",
+                   version_str.c_str(), 
+                   os_vision.dwMajorVersion,
+                   os_vision.dwMinorVersion,
+                   os_vision.szCSDVersion,
+                   os_vision.dwBuildNumber & 0xFFFF);
+          version_str = temp;
         }
         else { 
-          CString str;
-          str.Format(L"%s %s (Build %u)\n",
-                     version_str, 
-                     os_vision.szCSDVersion,
-                     os_vision.dwBuildNumber & 0xFFFF);
-          version_str = str;
+          char temp[FILENAME_MAX] = {0};
+          snprintf(temp,
+                   sizeof(temp) - 1,
+                   "%s %s (Build %u)\n",
+                   version_str.c_str(), 
+                   os_vision.szCSDVersion,
+                   os_vision.dwBuildNumber & 0xFFFF);
+          version_str = temp;
         }
         break;
       }
       case VER_PLATFORM_WIN32_WINDOWS: {
 
         if (4 == os_vision.dwMajorVersion && 0 == os_vision.dwMinorVersion) {
-          version_str = L"Microsoft Windows 95 ";
+          version_str = "Microsoft Windows 95 ";
           if (os_vision.szCSDVersion[1] == 'C' || 
               os_vision.szCSDVersion[1] == 'B')
-            version_str += L"OSR2 ";
+            version_str += "OSR2 ";
         } 
 
         if (4 == os_vision.dwMajorVersion && 10 == os_vision.dwMinorVersion) {
-          version_str = L"Microsoft Windows 98 ";
+          version_str = "Microsoft Windows 98 ";
           if ( os_vision.szCSDVersion[1] == 'A' )
-            version_str += L"SE ";
+            version_str += "SE ";
         } 
 
         if (4 == os_vision.dwMajorVersion && 90 == os_vision.dwMinorVersion) {
-          version_str = L"Microsoft Windows Me ";
+          version_str = "Microsoft Windows Me ";
         } 
         break;
       }
       case VER_PLATFORM_WIN32s: {
-        version_str = L"Microsoft Win32s ";
+        version_str = "Microsoft Win32s ";
         break;
       }
       default: {
-        version_str = L"UnKnow OS";
+        version_str = "UnKnow OS";
         break;
       }
     }
-    kernel_version.minor = os_vision.dwMinorVersion;
-    kernel_version.major = os_vision.dwMajorVersion;
+    kernel_version.minor = static_cast<int16_t>(os_vision.dwMinorVersion);
+    kernel_version.major = static_cast<int16_t>(os_vision.dwMajorVersion);
     kernel_version.revision = 0;
-    kernel_version.system_name = static_cast<char*>(version_str);
+    string::safecopy(kernel_version.system_name, 
+                     version_str.c_str(), 
+                     sizeof(kernel_version.system_name));
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -457,6 +479,7 @@ bool get_kernel_version(kernel_version_t& kernel_version) {
 }
 
 bool get_process_info(process_info_t& process_info) {
+  USE_PARAM(process_info);
   /**
   __ENTER_FUNCTION
     char filename[FILENAME_MAX];
@@ -549,6 +572,7 @@ bool get_process_page_info(process_page_info_t& process_page_info) {
                    &process_page_info.lib,
                    &process_page_info.data) == filed_number);
 #elif __WINDOWS__
+    USE_PARAM(process_page_info);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -570,6 +594,7 @@ bool get_process_times(process_time_t& process_time) {
     
     return true;
 #elif __WINDOWS__
+    USE_PARAM(process_time);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -637,6 +662,8 @@ bool do_get_net_info_array(const char* interface_name,
     }
     return false;
 #elif __WINDOWS__
+    USE_PARAM(interface_name);
+    USE_PARAM(net_info_array);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -653,6 +680,8 @@ bool get_net_info(const char* interface_name, net_info_t& net_info) {
     }
     return false;
 #elif (__WINDOWS__)
+    USE_PARAM(interface_name);
+    USE_PARAM(net_info);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -664,6 +693,7 @@ bool get_net_info_array(std::vector<net_info_t>& net_info_array) {
 #if __LINUX__
     return do_get_net_info_array(NULL, net_info_array);
 #elif __WINDOWS__
+    USE_PARAM(net_info_array);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -674,8 +704,8 @@ bool get_ip(char* &ip, const char* interface_name) {
   __ENTER_FUNCTION
     using namespace ps_common_base;
     bool result = false;
-    char line[LINE_MAX] = {0};
 #if __LINUX__
+    char line[LINE_MAX] = {0};
     const char* kNetworkScriptFileNameStr 
       = "/etc/sysconfig/network-scripts/ifcfg-%s";
     char network_script_file_name[FILENAME_MAX] = {0};
@@ -698,6 +728,7 @@ bool get_ip(char* &ip, const char* interface_name) {
       }
     }
 #elif __WINDOWS__
+    USE_PARAM(interface_name);
     WSADATA wsa_data;
     char name[FILENAME_MAX];
     PHOSTENT hostinfo = 0; 
@@ -733,7 +764,7 @@ bool get_loadaverage(loadaverage_t& loadaverage) {
       return false;
     }
 #elif __WINDOWS__
-
+    USE_PARAM(loadaverage);
 #endif
     return true;
   __LEAVE_FUNCTION

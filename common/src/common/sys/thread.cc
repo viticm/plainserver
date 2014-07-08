@@ -39,7 +39,7 @@ void Thread::start() {
       ::CreateThread(NULL, 0, ps_thread_process, this, CREATE_SUSPENDED, &id_);
     Assert(thread_handle_ != NULL);
     id_ *= 1000; //???
-    ResumeThread(thread_handle_)
+    ResumeThread(thread_handle_);
 #endif
   __LEAVE_FUNCTION
 }

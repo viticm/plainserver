@@ -62,9 +62,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
+				AdditionalDependencies="ws2_32.lib psapi.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
 				OutputFile="..\..\bin\$(ProjectName)d.exe"
 				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="libc.lib;libcd.lib;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				HeapReserveSize="0"
@@ -152,10 +153,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="ws2_32.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
+				AdditionalDependencies="ws2_32.lib psapi.lib ../../lib/lua/lib/ReleaseLib/luascript.lib ../../lib/libiconv/lib/ReleaseLib/libiconv.lib"
 				OutputFile="..\..\bin\$(ProjectName).exe"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="libc.lib;libcd.lib"
+				IgnoreDefaultLibraryNames="libc.lib;libcd.lib;LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				HeapReserveSize="0"
@@ -250,7 +251,15 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\common\src\common\sys\info.cc"
+						>
+					</File>
+					<File
 						RelativePath="..\..\common\src\common\sys\minidump.cc"
+						>
+					</File>
+					<File
+						RelativePath="..\..\common\src\common\sys\process.cc"
 						>
 					</File>
 					<File
@@ -470,6 +479,14 @@
 						</File>
 					</Filter>
 				</Filter>
+				<Filter
+					Name="performance"
+					>
+					<File
+						RelativePath="..\..\common\src\common\performance\eyes.cc"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="message"
@@ -626,6 +643,42 @@
 					<Filter
 						Name="socket"
 						>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\api.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\base.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\config.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\encode.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\extend.inl"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\inputstream.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\outputstream.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\server.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\net\socket\stream.h"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="packet"
@@ -840,6 +893,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\common\include\common\sys\process.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\common\include\common\sys\thread.h"
 						>
 					</File>
@@ -867,6 +924,18 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="performance"
+					>
+					<File
+						RelativePath="..\..\common\include\common\performance\config.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\common\include\common\performance\eyes.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>

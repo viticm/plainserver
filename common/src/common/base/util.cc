@@ -401,7 +401,6 @@ void path_tounix(char* buffer, uint16_t length) {
 
 void get_module_filename(char *buffer, size_t size) {
   __ENTER_FUNCTION
-    bool result = false;
     int32_t resultcode = 0;
 #if __WINDOWS__
     resultcode = (int32_t)GetModuleFileName(NULL, buffer, (DWORD)size);

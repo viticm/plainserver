@@ -90,7 +90,8 @@ float get_cpu_usage(int32_t id) {
   system_time_delta = system_time - last_system_time;
   time_delta = time - last_time;
   if (time_delta == 0) return -1.0f;
-  cpu = ((system_time_delta * 100 + time_delta / 2) / time_delta);
+  cpu = static_cast<float>(
+    (system_time_delta * 100 + time_delta / 2) / time_delta);
   last_system_time = system_time;
   last_time = time;
 #elif __LINUX__ /* } { */
@@ -114,7 +115,7 @@ uint64_t get_virtualmemory_usage(int32_t id) {
 #if __WINDOWS__ /* { */
     PROCESS_MEMORY_COUNTERS pmc;
     HANDLE hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, id);
-    if (::GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+    if (::GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
       result = pmc.PagefileUsage;
     }
 #elif __LINUX__ /* }{ */
@@ -139,7 +140,7 @@ uint64_t get_physicalmemory_usage(int32_t id) {
 #if __WINDOWS__ /* { */
     PROCESS_MEMORY_COUNTERS pmc;
     HANDLE hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, id);
-    if (::GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+    if (::GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
       result = pmc.WorkingSetSize;
     }
 #elif __LINUX__ /* }{ */

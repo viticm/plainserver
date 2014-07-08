@@ -88,6 +88,10 @@ int32_t exec(const char *command, char *result, size_t size) {
     }
     if (fp) pclose(fp);
     fp = NULL;
+#elif __WINDOWS__
+    USE_PARAM(command);
+    USE_PARAM(result);
+    USE_PARAM(size);
 #endif
     return 0;
   __LEAVE_FUNCTION

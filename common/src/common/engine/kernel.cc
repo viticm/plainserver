@@ -388,6 +388,7 @@ bool Kernel::init_performance() {
       if (is_usethread) {
         performance_thread_ = new thread::Performance();
         if (NULL == performance_thread_) return false;
+        if (!performance_thread_->init()) return false;
       }
     }
     else {

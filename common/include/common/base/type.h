@@ -164,7 +164,7 @@ typedef int16_t connectionid_t;
 #endif
 
 #ifndef USE_PARAM
-#define USE_PARAM(x) if (!x) {}
+#define USE_PARAM(x) if (!(&x)) {}
 #endif
 //根据指针调用free接口
 #ifndef SAFE_FREE
