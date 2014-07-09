@@ -78,7 +78,7 @@ int32_t OutputStream::flush() {
   __ENTER_FUNCTION
     if (!socket_->isvalid()) return 0;
     uint32_t flushcount = 0;
-    uint32_t sendcount = 0;
+    int32_t sendcount = 0;
     uint32_t leftcount = 0;
     uint32_t flag = 0;
     uint32_t bufferlength = streamdata_.bufferlength;

@@ -29,9 +29,19 @@ void getinfo(int32_t id, info_t &info);
 float get_cpu_usage(int32_t id);
 uint64_t get_virtualmemory_usage(int32_t id);
 uint64_t get_physicalmemory_usage(int32_t id);
+bool daemon();
 
 }; //namespace process
 
 }; //namespace ps_common_sys
+
+#define SYS_PROCESS_CURRENT_INFO_PRINT() \
+  DEBUGPRINTF("cpu: %.1f%% VSZ: %dk RSS: %dk",\
+              ps_common_sys::process::get_cpu_usage(\
+                ps_common_sys::process::getid()),\
+              ps_common_sys::process::get_virtualmemory_usage(\
+                ps_common_sys::process::getid()),\
+              ps_common_sys::process::get_physicalmemory_usage(\
+                ps_common_sys::process::getid()));
 
 #endif //PS_COMMON_SYS_PROCESS_H_

@@ -109,7 +109,7 @@ int32_t InputStream::fill() {
   __ENTER_FUNCTION
     if (!socket_->isvalid()) return 0;
     uint32_t fillcount = 0;
-    uint32_t receivecount = 0;
+    int32_t receivecount = 0;
     uint32_t freecount = 0;
     uint32_t bufferlength = streamdata_.bufferlength;
     uint32_t bufferlength_max = streamdata_.bufferlength_max;
@@ -135,7 +135,7 @@ int32_t InputStream::fill() {
       streamdata_.taillength += receivecount;
       fillcount += receivecount;
     }
-    if (receivecount == freecount) {
+    if (static_cast<uint32_t>(receivecount) == freecount) {
       uint32_t available = socket_->available();
       if ((bufferlength + available + 1) > bufferlength_max) {
         init();

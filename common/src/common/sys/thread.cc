@@ -50,10 +50,10 @@ void Thread::stop() {
 
 void Thread::exit(void* retval) {
   __ENTER_FUNCTION
-    USE_PARAM(retval);
 #if __LINUX__
     pthread_exit(retval);
 #elif __WINDOWS__
+    USE_PARAM(retval);
     ::CloseHandle(thread_handle_);
 #endif
   __LEAVE_FUNCTION
@@ -74,7 +74,9 @@ DWORD WINAPI ps_thread_process(void* derived_thread) {
     thread->set_status(Thread::kRunning);
     thread->run();
     thread->set_status(Thread::kExit);
+#if __WINDOWS__
     thread->exit(NULL);
+#endif
     g_thread_lock.lock();
     ++g_thread_quit_count;
     g_thread_lock.unlock();

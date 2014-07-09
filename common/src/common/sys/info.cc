@@ -479,7 +479,7 @@ bool get_kernel_version(kernel_version_t& kernel_version) {
 }
 
 bool get_process_info(process_info_t& process_info) {
-  USE_PARAM(process_info);
+  USE_PARAMEX(process_info);
   /**
   __ENTER_FUNCTION
     char filename[FILENAME_MAX];
@@ -572,7 +572,7 @@ bool get_process_page_info(process_page_info_t& process_page_info) {
                    &process_page_info.lib,
                    &process_page_info.data) == filed_number);
 #elif __WINDOWS__
-    USE_PARAM(process_page_info);
+    USE_PARAMEX(process_page_info);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -594,7 +594,7 @@ bool get_process_times(process_time_t& process_time) {
     
     return true;
 #elif __WINDOWS__
-    USE_PARAM(process_time);
+    USE_PARAMEX(process_time);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -663,7 +663,7 @@ bool do_get_net_info_array(const char* interface_name,
     return false;
 #elif __WINDOWS__
     USE_PARAM(interface_name);
-    USE_PARAM(net_info_array);
+    USE_PARAMEX(net_info_array);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -681,7 +681,7 @@ bool get_net_info(const char* interface_name, net_info_t& net_info) {
     return false;
 #elif (__WINDOWS__)
     USE_PARAM(interface_name);
-    USE_PARAM(net_info);
+    USE_PARAMEX(net_info);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -693,7 +693,7 @@ bool get_net_info_array(std::vector<net_info_t>& net_info_array) {
 #if __LINUX__
     return do_get_net_info_array(NULL, net_info_array);
 #elif __WINDOWS__
-    USE_PARAM(net_info_array);
+    USE_PARAMEX(net_info_array);
     return true;
 #endif
   __LEAVE_FUNCTION
@@ -756,15 +756,18 @@ bool get_loadaverage(loadaverage_t& loadaverage) {
     if (!fp) return false;
     char *linep = fgets(line, sizeof(line) - 1, fp);
     if (NULL == linep) return false;
-    if (sscanf("%f%f%f", 
-               line, 
+    if (fp) fclose(fp);
+    fp = NULL;
+    if (sscanf(line,
+               "%f %f %f", 
                &loadaverage.oneminutes, 
                &loadaverage.fiveminutes, 
                &loadaverage.fifteenminutes) != 3) {
+      DEBUGPRINTF("sscanf error");
       return false;
     }
 #elif __WINDOWS__
-    USE_PARAM(loadaverage);
+    USE_PARAMEX(loadaverage);
 #endif
     return true;
   __LEAVE_FUNCTION

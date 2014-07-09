@@ -51,7 +51,9 @@ SET (SOURCEFILES_COMMON_SYS_MEMORY_LIST
 
 SET (SOURCEFILES_COMMON_SYS_LIST
 	../../common/src/common/sys/assert.cc
+	../../common/src/common/sys/info.cc
 	../../common/src/common/sys/minidump.cc
+	../../common/src/common/sys/process.cc
 	../../common/src/common/sys/thread.cc
 	../../common/src/common/sys/util.cc
 )
@@ -132,6 +134,10 @@ SET (SOURCEFILES_COMMON_SCRIPT_LUA_LIST
 SET (SOURCEFILES_COMMON_SCRIPT_LIST
 )
 
+SET (SOURCEFILES_COMMON_PERFORMANCE_LIST
+	../../common/src/common/performance/eyes.cc
+)
+
 SET (SOURCEFILES_COMMON_LIST
 )
 
@@ -188,6 +194,15 @@ SET (HEADERFILES_COMMON_FILE_LIST
 )
 
 SET (HEADERFILES_COMMON_NET_SOCKET_LIST
+	../../common/include/common/net/socket/api.h
+	../../common/include/common/net/socket/base.h
+	../../common/include/common/net/socket/config.h
+	../../common/include/common/net/socket/encode.h
+	../../common/include/common/net/socket/extend.inl
+	../../common/include/common/net/socket/inputstream.h
+	../../common/include/common/net/socket/outputstream.h
+	../../common/include/common/net/socket/server.h
+	../../common/include/common/net/socket/stream.h
 )
 
 SET (HEADERFILES_COMMON_NET_PACKET_LIST
@@ -275,8 +290,14 @@ SET (HEADERFILES_COMMON_SYS_LIST
 	../../common/include/common/sys/config.h
 	../../common/include/common/sys/info.h
 	../../common/include/common/sys/minidump.h
+	../../common/include/common/sys/process.h
 	../../common/include/common/sys/thread.h
 	../../common/include/common/sys/util.h
+)
+
+SET (HEADERFILES_COMMON_PERFORMANCE_LIST
+	../../common/include/common/performance/config.h
+	../../common/include/common/performance/eyes.h
 )
 
 SET (HEADERFILES_COMMON_LIST
@@ -310,6 +331,7 @@ if (WIN32)
 	source_group(SourceFiles\\common\\script\\cache FILES ${SOURCEFILES_COMMON_SCRIPT_CACHE_LIST})
 	source_group(SourceFiles\\common\\script\\lua FILES ${SOURCEFILES_COMMON_SCRIPT_LUA_LIST})
 	source_group(SourceFiles\\common\\script FILES ${SOURCEFILES_COMMON_SCRIPT_LIST})
+	source_group(SourceFiles\\common\\performance FILES ${SOURCEFILES_COMMON_PERFORMANCE_LIST})
 	source_group(SourceFiles\\common FILES ${SOURCEFILES_COMMON_LIST})
 	source_group(SourceFiles\\message\\handler\\serverserver FILES ${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST})
 	source_group(SourceFiles\\message\\handler FILES ${SOURCEFILES_MESSAGE_HANDLER_LIST})
@@ -334,6 +356,7 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\engine FILES ${HEADERFILES_COMMON_ENGINE_LIST})
 	source_group(HeaderFiles\\common\\sys\\memory FILES ${HEADERFILES_COMMON_SYS_MEMORY_LIST})
 	source_group(HeaderFiles\\common\\sys FILES ${HEADERFILES_COMMON_SYS_LIST})
+	source_group(HeaderFiles\\common\\performance FILES ${HEADERFILES_COMMON_PERFORMANCE_LIST})
 	source_group(HeaderFiles\\common FILES ${HEADERFILES_COMMON_LIST})
 	source_group(HeaderFiles FILES ${HEADERFILES_LIST})
 	source_group(ResourceFiles FILES ${RESOURCEFILES_LIST})
@@ -359,6 +382,7 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_SCRIPT_CACHE_LIST}
 	${SOURCEFILES_COMMON_SCRIPT_LUA_LIST}
 	${SOURCEFILES_COMMON_SCRIPT_LIST}
+	${SOURCEFILES_COMMON_PERFORMANCE_LIST}
 	${SOURCEFILES_COMMON_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_LIST}
@@ -383,6 +407,7 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_ENGINE_LIST}
 	${HEADERFILES_COMMON_SYS_MEMORY_LIST}
 	${HEADERFILES_COMMON_SYS_LIST}
+	${HEADERFILES_COMMON_PERFORMANCE_LIST}
 	${HEADERFILES_COMMON_LIST}
 	${HEADERFILES_LIST}
 	${RESOURCEFILES_LIST}

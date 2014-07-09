@@ -75,9 +75,18 @@ uint32_t TimeManager::get_current_date() {
 
 void TimeManager::reset_time() {
   __ENTER_FUNCTION
-    time(&set_time_);
-    tm* _tm = localtime(&set_time_);
-    tm_ = *_tm;
+    time_t newtime;
+    if (time(&newtime) != static_cast<time_t>(-1)) {
+      set_time_ = newtime;
+    }
+#if __WINDOWS__
+    tm *newtm = localtime(&set_time_);
+    tm_ = *newtm;
+#elif __LINUX__
+    tm newtm;
+    tm *_tm = localtime_r(&set_time_, &newtm);
+    if (_tm) tm_ = newtm;
+#endif
   __LEAVE_FUNCTION
 }
 
@@ -87,6 +96,15 @@ time_t TimeManager::get_ansi_time() {
     return set_time_;
   __LEAVE_FUNCTION
     return set_time_;
+}
+
+uint32_t TimeManager::get_ctime() {
+  __ENTER_FUNCTION
+    time_t currenttime = get_ansi_time();
+    uint32_t result = static_cast<uint32_t>(currenttime);
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
 }
 
 void TimeManager::get_full_format_time(char* format_time, uint32_t length) {
@@ -183,7 +201,9 @@ uint32_t TimeManager::diff_dword_time(uint32_t time1, uint32_t time2) {
     time_t _time1, _time2;
     _time1 = mktime(&_tm1);
     _time2 = mktime(&_tm2);
-    uint32_t result = static_cast<uint32_t>((abs(static_cast<int32_t>(difftime(_time2,_time1) / 60))));
+    uint32_t result = 
+      static_cast<uint32_t>(
+          (abs(static_cast<int32_t>(difftime(_time2,_time1) / 60))));
     return result;
   __LEAVE_FUNCTION
     return 0;
@@ -191,7 +211,8 @@ uint32_t TimeManager::diff_dword_time(uint32_t time1, uint32_t time2) {
 
 int32_t TimeManager::diff_day_count(time_t ansi_time1, time_t ansi_time2) {
   __ENTER_FUNCTION
-    int32_t result = static_cast<int32_t>(difftime(ansi_time1,ansi_time2) / (24 * 60 * 60));
+    int32_t result = 
+      static_cast<int32_t>(difftime(ansi_time1,ansi_time2) / (24 * 60 * 60));
     return result;
   __LEAVE_FUNCTION
     return 0;

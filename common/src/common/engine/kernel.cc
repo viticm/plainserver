@@ -3,6 +3,7 @@
 #include "common/base/util.h"
 #include "common/script/lua/system.h"
 #include "common/performance/eyes.h"
+#include "common/sys/process.h"
 #include "common/engine/kernel.h"
 
 namespace ps_common_engine {
@@ -63,6 +64,8 @@ bool Kernel::init() {
       return false;
     }
     SLOW_LOG("engine", "[engine] (Kernel::init) base module success");
+    //DEBUGPRINTF("base"); 
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     //db
     if (getconfig_boolvalue(ENGINE_CONFIG_DB_ISACTIVE)) {
       SLOW_LOG("engine", "[engine] (Kernel::init) start db module");
@@ -72,6 +75,8 @@ bool Kernel::init() {
       }
       SLOW_LOG("engine", "[engine] (Kernel::init) db module success");
     }
+    //DEBUGPRINTF("db");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     //net
     if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
       SLOW_LOG("engine", "[engine] (Kernel::init) start net module");
@@ -81,6 +86,8 @@ bool Kernel::init() {
       }
       SLOW_LOG("engine", "[engine] (Kernel::init) net module success");
     }
+    //DEBUGPRINTF("net");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     //script
     if (getconfig_boolvalue(ENGINE_CONFIG_SCRIPT_ISACTIVE)) { 
       SLOW_LOG("engine", "[engine] (Kernel::init) start script module"); 
@@ -90,6 +97,8 @@ bool Kernel::init() {
       }
       SLOW_LOG("engine", "[engine] (Kernel::init) script module success");
     }
+    //DEBUGPRINTF("script");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     //performance
     if (getconfig_boolvalue(ENGINE_CONFIG_PERFORMANCE_ISACTIVE)) {
       SLOW_LOG("engine", "[engine] (Kernel::init) start performance module");
@@ -100,6 +109,8 @@ bool Kernel::init() {
       }
       SLOW_LOG("engine", "[engine] (Kernel::init) performance module success"); 
     }
+    //DEBUGPRINTF("performance");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     return true;
   __LEAVE_FUNCTION
     return false;

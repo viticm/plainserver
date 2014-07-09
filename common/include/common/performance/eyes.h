@@ -45,6 +45,7 @@ class Eyes : public ps_common_base::Singleton<Eyes> {
    void set_printinfo_interval(uint32_t interval);
    void set_onlinecount(uint32_t count);
    void set_connectioncount(uint32_t count);
+   void set_fps(float value);
 
  protected:
    uint64_t sendbytes_[2];

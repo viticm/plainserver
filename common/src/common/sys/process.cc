@@ -1,10 +1,11 @@
-#include "common/sys/process.h"
 #include "common/sys/util.h"
+#include "common/sys/process.h"
 #if __WINDOWS__
 #include <process.h>
 #include <psapi.h>
 #elif __LINUX__
 #include <unistd.h>
+#include <sys/stat.h>
 #endif
 
 namespace ps_common_sys {
@@ -99,7 +100,8 @@ float get_cpu_usage(int32_t id) {
   char command[128] = {0};
   snprintf(command, 
            sizeof(command) - 1, 
-           "ps aux | awk '{if ($2 == %d) print $3}'");
+           "ps aux | awk '{if ($2 == %d) print $3}'",
+           id);
   if (0 == util::exec(command, temp, sizeof(temp))) {
     cpu = atof(temp);
   }
@@ -123,10 +125,12 @@ uint64_t get_virtualmemory_usage(int32_t id) {
   char command[128] = {0};
   snprintf(command, 
            sizeof(command) - 1, 
-           "ps aux | awk '{if ($2 == %d) print $5}'");
+           "ps aux | awk '{if ($2 == %d) print $5}'",
+           id);
   if (0 == util::exec(command, temp, sizeof(temp))) {
     char *endpointer = NULL;
     result = strtouint64(temp, &endpointer, 10);
+    result *= 1024;
   }
 #endif /* } */
     return result;
@@ -148,15 +152,34 @@ uint64_t get_physicalmemory_usage(int32_t id) {
   char command[128] = {0};
   snprintf(command, 
            sizeof(command) - 1, 
-           "ps aux | awk '{if ($2 == %d) print $6}'");
+           "ps aux | awk '{if ($2 == %d) print $6}'",
+           id);
   if (0 == util::exec(command, temp, sizeof(temp))) {
     char *endpointer = NULL;
     result = strtouint64(temp, &endpointer, 10);
+    result *= 1024;
   }
 #endif /* } */
     return result;
   __LEAVE_FUNCTION
     return 0;
+}
+
+
+bool daemon() {
+  __ENTER_FUNCTION
+#if __LINUX__
+    pid_t pid;
+    if ((pid = fork()) != 0) exit(0);
+    setsid();
+    signal(SIGHUP, SIG_IGN);
+    if ((pid = fork()) != 0) exit(0);
+    umask(0);
+    for (uint8_t i = 0; i < 3; i++) close(i);
+    return true;
+#endif
+  __LEAVE_FUNCTION
+    return false;
 }
 
 } //namespace process

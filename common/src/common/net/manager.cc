@@ -54,10 +54,14 @@ bool Manager::init(uint16_t connectionmax,
                    const char *listenip) {
   __ENTER_FUNCTION
     /* init packet factory manager { */
+    //DEBUGPRINTF("net 1");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     if (!NET_PACKET_FACTORYMANAGER_POINTER)
       g_packetfactory_manager = new packet::FactoryManager();
     Assert(NET_PACKET_FACTORYMANAGER_POINTER);  
     /* } init packet factory manager */
+    //DEBUGPRINTF("net 2");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     if (!NET_PACKET_FACTORYMANAGER_POINTER->init()) return false;
     /* server main socket { */
     listenport_ = listenport;
@@ -78,12 +82,16 @@ bool Manager::init(uint16_t connectionmax,
       serverhash_[i] = ID_INVALID;
     }
     /* } server main socket */
+    //DEBUGPRINTF("net 3");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
 
     /* connection init { */
     connectionmax_ = connectionmax;
     if (!connectionpool_.init(connectionmax_)) return false;
     connection::Manager::init(connectionmax_);
     /* } connection init */
+    //DEBUGPRINTF("net 4");
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
 
     return true;
   __LEAVE_FUNCTION
