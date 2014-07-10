@@ -1,6 +1,7 @@
 #include "common/engine/kernel.h"
 #include "common/base/time_manager.h"
 #include "common/base/log.h"
+#include "common/base/util.h"
 #include "common/sys/process.h"
 #include "gateway.h"
 
@@ -13,8 +14,14 @@ void signal_handler(int32_t signal);
 BOOL WINAPI signal_handler(DWORD event);
 #endif
 
-int32_t main(int32_t argc, char * argv[]) {
+int32_t main(int32_t argc, char *argv[]) {
+#if __WINDOWS__
+  _CrtSetDbgFlag(_CrtSetDbgFlag(0) | _CRTDBG_LEAK_CHECK_DF);
+  system("color 02"); //color green
+  system("mode con cols=120"); //cmd size
+#endif
   /* process about { */
+#if __LINUX__
   if (argc > 1 && 0 == strcmp(argv[1], "--daemon")) {
     ps_common_sys::process::daemon();
   } else if (argc > 1 && 0 == strcmp(argv[1], "--reloadscript")) {
@@ -36,6 +43,7 @@ int32_t main(int32_t argc, char * argv[]) {
     ERRORPRINTF("----------------------------------------"
                 "----------------------------------------");
   }
+#endif
   /* } process about */
 #if __WINDOWS__
   WORD versionrequested;
@@ -43,11 +51,8 @@ int32_t main(int32_t argc, char * argv[]) {
   int32_t error;
   versionrequested = MAKEWORD(2, 2);
   error = WSAStartup(versionrequested, &data);
-  _CrtSetDbgFlag(_CrtSetDbgFlag(0) | _CRTDBG_LEAK_CHECK_DF);
-  system("color 02"); //color green
-  system("mode con cols=120"); //cmd size
 #endif
-  engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+  //engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
   engine_kernel.setconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
   //engine_kernel.setconfig(ENGINE_CONFIG_PERFORMANCE_ISACTIVE, true);
   engine_kernel.setconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "sword_user");
@@ -65,7 +70,7 @@ int32_t main(int32_t argc, char * argv[]) {
   signal(SIGINT, signal_handler);
   signal(SIGUSR1, signal_handler);
 #elif __WINDOWS__
-  DisableConsoleWndClose(); //屏蔽关闭按钮
+  ps_common_base::util::disable_windowclose(); //屏蔽关闭按钮
   if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)signal_handler, TRUE) != TRUE) {
     ERRORPRINTF("[gateway] can't install signal handler");
     return 1;

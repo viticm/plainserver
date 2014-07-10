@@ -413,6 +413,18 @@ void get_module_filename(char *buffer, size_t size) {
   __LEAVE_FUNCTION
 }
 
+void disable_windowclose() {
+  __ENTER_FUNCTION
+#if __WINDOWS__
+    HWND hwnd = GetConsoleWindow();
+    if (hwnd) {
+      HMENU hMenu = GetSystemMenu( hwnd, FALSE );
+      EnableMenuItem(hMenu, SC_CLOSE, MF_DISABLED | MF_BYCOMMAND);
+    }
+#endif
+  __LEAVE_FUNCTION
+}
+
 } //namespace util
 
 } //namespace ps_common_base

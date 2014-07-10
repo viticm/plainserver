@@ -50,6 +50,8 @@ void path_tounix(char* buffer, uint16_t length);
 //获取当前执行文件名
 void get_module_filename(char *buffer, size_t size);
 
+void disable_windowclose();
+
 } //namespace util
 
 } //namespace ps_common_base
