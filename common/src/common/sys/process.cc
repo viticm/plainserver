@@ -1,3 +1,4 @@
+#include "common/base/util.h"
 #include "common/sys/util.h"
 #include "common/sys/process.h"
 #if __WINDOWS__
@@ -25,6 +26,62 @@ int32_t getid() {
     return ID_INVALID;
 }
 
+int32_t getid(const char *filename) {
+  __ENTER_FUNCTION
+    FILE *fp = fopen(filename, "r");
+    if (NULL == fp) return ID_INVALID;
+    int32_t id;
+    fscanf(fp, "%d", &id);
+    fclose(fp);
+    fp = NULL;
+    return id;
+  __LEAVE_FUNCTION
+    return ID_INVALID;
+}
+
+bool writeid(const char *filename) {
+  __ENTER_FUNCTION
+    int32_t id = getid();
+    FILE *fp = fopen(filename, "w");
+    if (NULL == fp) return false;
+    fprintf(fp, "%d", id);
+    fflush(fp);
+    fclose(fp);
+    fp = NULL;
+    return true;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool waitexit(const char *filename) {
+  __ENTER_FUNCTION
+    if (NULL == filename || strlen(filename) < 0) {
+      ERRORPRINTF("[sys] (process::waitexit) error, can't find pid file");
+      return false;
+    }
+    int32_t id = getid(filename);
+    if (ID_INVALID == id) {
+      ERRORPRINTF("[sys] (process::waitexit) error, can't get id from file: %s",
+                  filename);
+      return false;
+    }
+#if __LINUX__
+    kill(id, 10);
+    ps_common_base::util::sleep(2000);
+    kill(id, 10);
+    int32_t result = kill(id, 0);
+    while (result >= 0) {
+      ps_common_base::util::sleep(1000);
+      result = kill(id, 0);
+    }
+    DEBUGPRINTF("[sys] (process::waitexit) success, pid(%d), result(%d)",
+                id,
+                result);
+#endif
+    return true;
+  __LEAVE_FUNCTION
+    return false;
+}
 
 void getinfo(int32_t id, info_t &info) {
   __ENTER_FUNCTION
@@ -164,7 +221,6 @@ uint64_t get_physicalmemory_usage(int32_t id) {
   __LEAVE_FUNCTION
     return 0;
 }
-
 
 bool daemon() {
   __ENTER_FUNCTION

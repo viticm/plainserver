@@ -5,21 +5,26 @@
 #include "gateway.h"
 
 ps_common_engine::Kernel engine_kernel;
+#define PROCESS_ID_FILE "gateway.pid"
 
+#if __LINUX__
 void signal_handler(int32_t signal);
+#elif __WINDOWS__
+BOOL WINAPI signal_handler(DWORD event);
+#endif
 
 int32_t main(int32_t argc, char * argv[]) {
-#if __WINDOWS__
-  WORD versionrequested;
-  WSADATA data;
-  int32_t error;
-  versionrequested = MAKEWORD(2, 2);
-  error = WSAStartup(versionrequested, &data);
-  _CrtSetDbgFlag(_CrtSetDbgFlag(0) | _CRTDBG_LEAK_CHECK_DF);
-  system("color 02"); //color green
-  system("mode con cols=120"); //cmd size
-#endif
-  if (argc < 2 || strcmp(argv[1], "--daemon") != 0) {
+  /* process about { */
+  if (argc > 1 && 0 == strcmp(argv[1], "--daemon")) {
+    ps_common_sys::process::daemon();
+  } else if (argc > 1 && 0 == strcmp(argv[1], "--reloadscript")) {
+    int32_t pid = ps_common_sys::process::getid(PROCESS_ID_FILE);
+    DEBUGPRINTF("server(%d) will reload script", pid);
+    return 0;
+  } else if (argc > 1 && 0 == strcmp(argv[1], "--stop")) {
+    bool result = ps_common_sys::process::waitexit(PROCESS_ID_FILE);
+    return result ? 1 : 0;
+  } else {
     ERRORPRINTF("----------------------------------------"
                 "----------------------------------------");
     ERRORPRINTF("                                   [WARNING]");
@@ -30,9 +35,18 @@ int32_t main(int32_t argc, char * argv[]) {
     DEBUGPRINTF("     %s --daemon", argv[0]);
     ERRORPRINTF("----------------------------------------"
                 "----------------------------------------");
-  } else {
-    ps_common_sys::process::daemon();
   }
+  /* } process about */
+#if __WINDOWS__
+  WORD versionrequested;
+  WSADATA data;
+  int32_t error;
+  versionrequested = MAKEWORD(2, 2);
+  error = WSAStartup(versionrequested, &data);
+  _CrtSetDbgFlag(_CrtSetDbgFlag(0) | _CRTDBG_LEAK_CHECK_DF);
+  system("color 02"); //color green
+  system("mode con cols=120"); //cmd size
+#endif
   engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
   engine_kernel.setconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
   //engine_kernel.setconfig(ENGINE_CONFIG_PERFORMANCE_ISACTIVE, true);
@@ -42,17 +56,29 @@ int32_t main(int32_t argc, char * argv[]) {
   if (!engine_kernel.init()) {
     return 1;
   }
+  //初始化正确后再写入进程ID
+  if (!ps_common_sys::process::writeid(PROCESS_ID_FILE)) {
+    ERRORPRINTF("[gateway] process id file: %s write error", PROCESS_ID_FILE);
+    return 1;
+  }
 #if __LINUX__  
   signal(SIGINT, signal_handler);
   signal(SIGUSR1, signal_handler);
+#elif __WINDOWS__
+  DisableConsoleWndClose(); //屏蔽关闭按钮
+  if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)signal_handler, TRUE) != TRUE) {
+    ERRORPRINTF("[gateway] can't install signal handler");
+    return 1;
+  }
 #endif  
   engine_kernel.run(); //网络线程是来阻塞主线程的，所以不要轻易设置其独立线程模式
+  remove(PROCESS_ID_FILE);
   //engine_kernel.stop();
   return 0;
 }
 
+#if __LINUX__ /* { */
 void signal_handler(int32_t signal) {
-#if __LINUX__
   //处理前台模式信号
   static uint32_t last_signaltime = 0;
   uint32_t currenttime = TIME_MANAGER_POINTER->get_current_time();
@@ -60,8 +86,7 @@ void signal_handler(int32_t signal) {
     if (currenttime - last_signaltime > 10 * 1000) {
       DEBUGPRINTF("[gateway] signal got SIGINT[%d] will reload!", signal);
       //engine_kernel.stop();
-    }
-    else {
+    } else {
       WARNINGPRINTF("[gateway] signal got SIGINT[%d] will stop!", signal);
       engine_kernel.stop(); 
     }
@@ -72,5 +97,25 @@ void signal_handler(int32_t signal) {
     engine_kernel.stop();
   }
   last_signaltime = currenttime;
-#endif
 }
+#elif __WINDOWS__ /* }{ */
+BOOL WINAPI signal_handler(DWORD event) {
+  static uint32_t last_signaltime = 0;
+  uint32_t currenttime = TIME_MANAGER_POINTER->get_current_time();
+  switch (event) {
+    case CTRL_C_EVENT: {
+      if (currenttime - last_signaltime > 10 * 1000) {
+        DEBUGPRINTF("[gateway] CTRL+C received, will reload!");
+      } else {
+        WARNINGPRINTF("[gateway] CTRL+C received, will stop!");
+        engine_kernel.stop();
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  last_signaltime = currenttime;
+  return TRUE;
+}
+#endif /* } */

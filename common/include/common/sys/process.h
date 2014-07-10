@@ -25,6 +25,9 @@ typedef struct {
 } info_t;
 
 int32_t getid();
+int32_t getid(const char *filename);
+bool writeid(const char *filename);
+bool waitexit(const char *filename);
 void getinfo(int32_t id, info_t &info);
 float get_cpu_usage(int32_t id);
 uint64_t get_virtualmemory_usage(int32_t id);
