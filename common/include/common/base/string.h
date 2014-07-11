@@ -24,7 +24,6 @@ typedef std::map<std::string, std::string> map; //my map
 
 char get_base64char(int index);
 
-
 void replace_all(std::string& str, 
                  const std::string source, 
                  const std::string destination);
@@ -38,6 +37,8 @@ bool toint32(const char* source,
              int32_t& result, 
              uint8_t converted_length = 0, 
              bool ignored_zero = false);
+int64_t toint64(const char *str);
+uint64_t touint64(const char *str);
 
 void encrypt(const char* in, char* out, int32_t out_length);
 
@@ -51,6 +52,9 @@ int32_t charset_convert(const char* from,
                         int32_t save_length, 
                         const char* src, 
                         int32_t src_length) ;
+
+bool get_escapechar(char in, char& out);
+bool getescape(const char *in, size_t insize, char *out, size_t outsize);
 
 }; //namespace string
 

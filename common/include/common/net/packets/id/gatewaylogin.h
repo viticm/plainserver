@@ -44,6 +44,7 @@ typedef enum {
   kMax = LOGIN_TOGATEWAY_PACKETID_MAX,
   /*end }*/
 } packetid_enum;
+int a;
 
 }; //namespace login_togateway
 

@@ -51,20 +51,6 @@ uint32_t System::get_result_count() {
     return 0;
 }
 
-db_query_t* System::get_internal_query() {
-  __ENTER_FUNCTION
-    return &odbc_interface_->get_query();
-  __LEAVE_FUNCTION
-    return NULL;
-}
-
-long_db_query_t* System::get_long_internal_query() {
-  __ENTER_FUNCTION
-    return &odbc_interface_->get_long_query();
-  __LEAVE_FUNCTION
-    return NULL;
-}
-
 int32_t System::get_internal_affect_count() {
   __ENTER_FUNCTION
     return odbc_interface_->get_affect_row_count();
@@ -121,30 +107,6 @@ bool System::query() {
     return false;
 }
 
-bool System::long_query() {
-  __ENTER_FUNCTION
-    if (!is_prepare()) return false;
-    if (!odbc_interface_) return false;
-    op_type_ = kDBOptionTypeQuery;
-    result_ = odbc_interface_->long_execute();
-    result_count_ = odbc_interface_->get_affect_row_count();
-    return result_;
-  __LEAVE_FUNCTION
-    return false;
-}
-
-bool System::long_load() {
-  __ENTER_FUNCTION
-    if (!is_prepare()) return false;
-    if (!odbc_interface_) return false;
-    op_type_ = kDBOptionTypeLoad;
-    result_ = odbc_interface_->long_execute();
-    result_count_ = odbc_interface_->get_affect_row_count();
-    return result_;
-  __LEAVE_FUNCTION
-    return false;
-}
-
 bool System::add_new() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
@@ -181,18 +143,6 @@ bool System::save() {
     return false;
 }
 
-bool System::long_save() {
-  __ENTER_FUNCTION
-    if (!is_prepare()) return false;
-    if (!odbc_interface_) return false;
-    op_type_ = kDBOptionTypeSave;
-    result_ = odbc_interface_->long_execute();
-    result_count_ = odbc_interface_->get_affect_row_count();
-    return result_;
-  __LEAVE_FUNCTION
-    return false;
-}
-
 int32_t System::get_error_code() {
   __ENTER_FUNCTION
     return odbc_interface_->get_error_code();
@@ -205,6 +155,10 @@ const char *System::get_error_message() {
     return odbc_interface_->get_error_message();
   __LEAVE_FUNCTION
     return NULL;
+}
+
+Interface *System::getinterface() {
+  return odbc_interface_;
 }
 
 } //namespace odbc

@@ -56,11 +56,10 @@ class System {
    virtual bool _delete();
    virtual bool save();
    db_query_t *get_internal_query();
-   long_db_query_t *get_long_internal_query();
    virtual bool query();
-   virtual bool long_query();
    bool check_db_connect(); //check the connect if work, 
                             //and repeat 5 times when fails
+   Interface *getinterface();
 
 
  protected:

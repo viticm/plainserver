@@ -12,8 +12,8 @@
 #define PS_COMMON_DB_DEFINE_H_
 
 #include "common/base/config.h"
-#define SQL_LENGTH_MAX 4096
-#define LONG_SQL_LENGTH_MAX 204800
+#define SQL_LENGTH_MAX (1024*400)
+//#define LONG_SQL_LENGTH_MAX 204800
 #define DB_CONNECTION_NAME_LENGTH 128 
 #define DB_DBNAME_LENGTH 128
 #define DB_USER_NAME_LENGTH 32
@@ -38,7 +38,7 @@ struct db_query_t {
     }
   }
 };
-
+/**
 struct long_db_query_t {
   char sql_str_[LONG_SQL_LENGTH_MAX];
   void clear() {
@@ -58,6 +58,7 @@ struct long_db_query_t {
     }
   }
 };
+**/
 
 //namespace ps_common_db {
 

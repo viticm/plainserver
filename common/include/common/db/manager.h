@@ -27,11 +27,36 @@ class Manager {
              const char *password);
    dbconnector_type_t get_connector_type() const;
    db_query_t *get_internal_query();
-   long_db_query_t *get_long_internal_query();
    bool query();
-   bool long_query();
    int32_t get_affectcount() const;
    bool check_db_connect();
+
+ public:
+   float get_float(int32_t column_index, int32_t& error_code);
+   int64_t get_int64(int32_t column_index, int32_t& error_code);
+   uint64_t get_uint64(int32_t column_index, int32_t& error_code);
+   int32_t get_int32(int32_t column_index, int32_t& error_code);
+   uint32_t get_uint32(int32_t column_index, int32_t& error_code);
+   int16_t get_int16(int32_t column_index, int32_t& error_code);
+   uint16_t get_uint16(int32_t column_index, int32_t& error_code);
+   int8_t get_int8(int32_t column_index, int32_t& error_code);
+   uint8_t get_uint8(int32_t column_index, int32_t& error_code);
+   int32_t get_string(int32_t column_index, 
+                      char *buffer, 
+                      int32_t buffer_length, 
+                      int32_t& error_code);
+   int32_t get_field(int32_t column_index, 
+                     char *buffer, 
+                     int32_t buffer_length, 
+                     int32_t& error_code);
+   int32_t get_binary(int32_t column_index, 
+                      char *buffer, 
+                      int32_t buffer_length, 
+                      int32_t& error_code);
+   int32_t get_binary_withdecompress(int32_t column_index, 
+                                     char *buffer, 
+                                     int32_t buffer_length, 
+                                     int32_t& error_code);
 
  protected:
    dbconnector_type_t connector_type_;

@@ -1,7 +1,7 @@
 #include <limits>
 #include <iconv.h>
-#include "common/base/string.h"
 #include "common/base/base64.hpp"
+#include "common/base/string.h"
 
 namespace ps_common_base {
 
@@ -288,6 +288,66 @@ int32_t charset_convert(const char* from,
     return status;
   __LEAVE_FUNCTION
     return -1;
+}
+
+bool get_escapechar(char in, char& out) {
+  __ENTER_FUNCTION
+    const char char_array[][2] = {
+      {0, '0'},
+      {'\n', 'n'},
+      {'\r', 'r'},
+      {0x1a, 'Z'},
+      {'\"', '\"'},
+      {'\'', '\''},
+      {'\\', '\\'}
+    };
+    for (uint8_t i = 0; i < sizeof(char_array)/sizeof(char_array[0]); ++i) {
+      if (char_array[i][0] == in) {
+        out = char_array[i][1];
+        return true;
+      }
+    }
+    return false;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool getescape(const char *in, size_t insize, char *out, size_t outsize) {
+  __ENTER_FUNCTION
+    size_t index1 = 0, index2 = 0;
+    for ( ; index1 < insize && index2 < outsize; ++index1) {
+      char _char;
+      if (get_escapechar(in[index1], _char)) {
+        out[index2] = '\\';
+        ++index2;
+        out[index2] = _char;
+        ++index2;
+      } else {
+        out[index2] = in[index1];
+        ++index2;
+      }
+    }
+    return true;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+int64_t toint64(const char *str) {
+  __ENTER_FUNCTION
+    char *endpointer = NULL;
+    int64_t result = strtoint64(str, &endpointer, 10);
+    return result;
+  __LEAVE_FUNCTION
+    return -1;
+}
+
+int64_t touint64(const char *str) {
+  __ENTER_FUNCTION
+    char *endpointer = NULL;
+    int64_t result = strtouint64(str, &endpointer, 10);
+    return result;
+  __LEAVE_FUNCTION
+    return 0;
 }
 
 } //namespace string
