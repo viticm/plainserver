@@ -13,11 +13,11 @@ void account::auth(ps_common_net::packets::login_togateway::AskAuth *message,
     if (strcmp(userinfo.name, message->getpassword())) {
       result = 0;
     }
-    ps_common_net::packets::gateway_tologin::ResultAuth *resultmessage;
-    resultmessage->setresult(result);
-    resultmessage->setaccount(message->getaccount());
-    resultmessage->setpassword(message->getpassword());
-    connection->sendpacket(resultmessage);
+    ps_common_net::packets::gateway_tologin::ResultAuth resultmessage;
+    resultmessage.setresult(result);
+    resultmessage.setaccount(message->getaccount());
+    resultmessage.setpassword(message->getpassword());
+    connection->sendpacket(&resultmessage);
     SLOW_LOG("gateway", 
              "[message.delegator] (account::auth) success!"
              " account: %s, result: %d", 

@@ -12,20 +12,7 @@
 #define PS_COMMON_FILE_DATABASE_H_
 
 #include "common/file/config.h"
-
-#undef max
-#undef min
-
-#if __LINUX__
-#include <ext/hash_map>
-#elif __WINDOWS__
-#include <hash_map>
-#endif
-
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#endif
+#include "common/base/hashmap/config.h"
 
 namespace ps_common_file {
 
@@ -94,13 +81,7 @@ class Database {
                            const field_data &b);
 
  protected:
-#ifdef __SGI_STL_PORT
-   typedef std::hash_map<int32_t, field_data*> field_hashmap;
-#elif __WINDOWS__
-   typedef stdext::hash_map<int32_t, field_data*> field_hashmap;
-#elif __LINUX__
-   typedef __gnu_cxx::hash_map<int32_t, field_data*> field_hashmap;
-#endif
+   typedef hash_map<int32_t, field_data*> field_hashmap;
    uint32_t id_;
    field_type type_;
    int32_t record_number_;

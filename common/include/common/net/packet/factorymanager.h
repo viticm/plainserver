@@ -15,6 +15,7 @@
 #include "common/base/singleton.h"
 #include "common/net/config.h"
 #include "common/net/packet/factory.h"
+#include "common/base/hashmap/template.h"
 
 namespace ps_common_net {
 
@@ -47,7 +48,9 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
 
  private:
    Factory** factories_;
+   ps_common_base::hashmap::Template<uint16_t, uint16_t> idindexs_;
    uint16_t size_;
+   uint16_t factorycount_;
    ps_common_sys::ThreadLock lock_;
 
  private:

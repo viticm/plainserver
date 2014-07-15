@@ -1,4 +1,3 @@
-#include "common/net/packet/factorymanager.h"
 #include "common/net/packet/base.h"
 #include "common/net/packets/id/all.h"
 
@@ -34,6 +33,7 @@ FactoryManager::FactoryManager() {
   __ENTER_FUNCTION
     using namespace ps_common_net::packets::id;
     factories_ = NULL;
+    factorycount_ = 0;
     size_ = 0;
     size_ = serverserver::kLast - serverserver::kFirst; //common for server
 
@@ -149,11 +149,16 @@ void FactoryManager::unlock() {
 
 void FactoryManager::addfactory(Factory* factory) {
   __ENTER_FUNCTION
-    if (factories_[factory->get_packetid()] != NULL) {
+    bool isfind = idindexs_.isfind(factory->get_packetid());
+    uint16_t index = 
+      isfind ? idindexs_.get(factory->get_packetid()) : factorycount_;
+    if (factories_[index] != NULL) {
       Assert(false);
       return;
     }
-    factories_[factory->get_packetid()] = factory;
+    if (!isfind) idindexs_.add(factory->get_packetid(), index);
+    ++factorycount_;
+    factories_[index] = factory;
   __LEAVE_FUNCTION
 }
 

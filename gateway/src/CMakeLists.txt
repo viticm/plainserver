@@ -28,8 +28,6 @@ INCLUDE_DIRECTORIES("../../common/include",
 ##update_begin
 
 
-
-
 SET (SOURCEFILES_COMMON_BASE_HASHMAP_LIST
 	../../common/src/common/base/hashmap/integer.cc
 )
@@ -90,6 +88,14 @@ SET (SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST
 	../../common/src/common/net/packets/serverserver/connect.cc
 )
 
+SET (SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST
+	../../common/src/common/net/packets/login_togateway/askauth.cc
+)
+
+SET (SOURCEFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST
+	../../common/src/common/net/packets/gateway_tologin/resultauth.cc
+)
+
 SET (SOURCEFILES_COMMON_NET_PACKETS_LIST
 )
 
@@ -138,6 +144,14 @@ SET (SOURCEFILES_COMMON_PERFORMANCE_LIST
 	../../common/src/common/performance/eyes.cc
 )
 
+SET (SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST
+	../../common/src/common/util/compressor/mini.cc
+	../../common/src/common/util/compressor/minilzo.c
+)
+
+SET (SOURCEFILES_COMMON_UTIL_LIST
+)
+
 SET (SOURCEFILES_COMMON_LIST
 )
 
@@ -145,10 +159,30 @@ SET (SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST
 	../src/message/handler/serverserver/connect.cc
 )
 
+SET (SOURCEFILES_MESSAGE_HANDLER_LOGIN_TOGATEWAY_LIST
+	../src/message/handler/login_togateway/askauth.cc
+)
+
+SET (SOURCEFILES_MESSAGE_HANDLER_GATEWAY_TOLOGIN_LIST
+	../src/message/handler/gateway_tologin/askauth.cc
+)
+
 SET (SOURCEFILES_MESSAGE_HANDLER_LIST
 )
 
+SET (SOURCEFILES_MESSAGE_DELEGATOR_LIST
+	../src/message/delegator/account.cc
+)
+
 SET (SOURCEFILES_MESSAGE_LIST
+)
+
+SET (SOURCEFILES_DB_LIST
+	../src/db/user.cc
+)
+
+SET (SOURCEFILES_ENGINE_LIST
+	../src/engine/system.cc
 )
 
 SET (SOURCEFILES_LIST
@@ -236,6 +270,16 @@ SET (HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST
 	../../common/include/common/net/packets/serverserver/connect.h
 )
 
+SET (HEADERFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST
+	../../common/include/common/net/packets/login_togateway/askauth.h
+	../../common/include/common/net/packets/login_togateway/config.h
+)
+
+SET (HEADERFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST
+	../../common/include/common/net/packets/gateway_tologin/config.h
+	../../common/include/common/net/packets/gateway_tologin/resultauth.h
+)
+
 SET (HEADERFILES_COMMON_NET_PACKETS_LIST
 	../../common/include/common/net/packets/config.h
 )
@@ -300,7 +344,42 @@ SET (HEADERFILES_COMMON_PERFORMANCE_LIST
 	../../common/include/common/performance/eyes.h
 )
 
+SET (HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST
+	../../common/include/common/util/compressor/config.h
+	../../common/include/common/util/compressor/lzoconf.h
+	../../common/include/common/util/compressor/lzodefs.h
+	../../common/include/common/util/compressor/mini.h
+	../../common/include/common/util/compressor/minilzo.h
+)
+
+SET (HEADERFILES_COMMON_UTIL_LIST
+	../../common/include/common/util/config.h
+)
+
 SET (HEADERFILES_COMMON_LIST
+)
+
+SET (HEADERFILES_CONFIG_LIST
+	../include/config/application.h
+)
+
+SET (HEADERFILES_DB_LIST
+	../include/db/config.h
+	../include/db/user.h
+)
+
+SET (HEADERFILES_ENGINE_LIST
+	../include/engine/config.h
+	../include/engine/system.h
+)
+
+SET (HEADERFILES_MESSAGE_DELEGATOR_LIST
+	../include/message/delegator/account.h
+	../include/message/delegator/config.h
+)
+
+SET (HEADERFILES_MESSAGE_LIST
+	../include/message/config.h
 )
 
 SET (HEADERFILES_LIST
@@ -322,6 +401,8 @@ if (WIN32)
 	source_group(SourceFiles\\common\\net\\socket FILES ${SOURCEFILES_COMMON_NET_SOCKET_LIST})
 	source_group(SourceFiles\\common\\net\\connection FILES ${SOURCEFILES_COMMON_NET_CONNECTION_LIST})
 	source_group(SourceFiles\\common\\net\\packets\\serverver FILES ${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST})
+	source_group(SourceFiles\\common\\net\\packets\\login\\togateway FILES ${SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST})
+	source_group(SourceFiles\\common\\net\\packets\\gateway\\tologin FILES ${SOURCEFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST})
 	source_group(SourceFiles\\common\\net\\packets FILES ${SOURCEFILES_COMMON_NET_PACKETS_LIST})
 	source_group(SourceFiles\\common\\net FILES ${SOURCEFILES_COMMON_NET_LIST})
 	source_group(SourceFiles\\common\\engine\\thread FILES ${SOURCEFILES_COMMON_ENGINE_THREAD_LIST})
@@ -332,10 +413,17 @@ if (WIN32)
 	source_group(SourceFiles\\common\\script\\lua FILES ${SOURCEFILES_COMMON_SCRIPT_LUA_LIST})
 	source_group(SourceFiles\\common\\script FILES ${SOURCEFILES_COMMON_SCRIPT_LIST})
 	source_group(SourceFiles\\common\\performance FILES ${SOURCEFILES_COMMON_PERFORMANCE_LIST})
+	source_group(SourceFiles\\common\\util\\compressor FILES ${SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST})
+	source_group(SourceFiles\\common\\util FILES ${SOURCEFILES_COMMON_UTIL_LIST})
 	source_group(SourceFiles\\common FILES ${SOURCEFILES_COMMON_LIST})
 	source_group(SourceFiles\\message\\handler\\serverserver FILES ${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST})
+	source_group(SourceFiles\\message\\handler\\login\\togateway FILES ${SOURCEFILES_MESSAGE_HANDLER_LOGIN_TOGATEWAY_LIST})
+	source_group(SourceFiles\\message\\handler\\gateway\\tologin FILES ${SOURCEFILES_MESSAGE_HANDLER_GATEWAY_TOLOGIN_LIST})
 	source_group(SourceFiles\\message\\handler FILES ${SOURCEFILES_MESSAGE_HANDLER_LIST})
+	source_group(SourceFiles\\message\\delegator FILES ${SOURCEFILES_MESSAGE_DELEGATOR_LIST})
 	source_group(SourceFiles\\message FILES ${SOURCEFILES_MESSAGE_LIST})
+	source_group(SourceFiles\\db FILES ${SOURCEFILES_DB_LIST})
+	source_group(SourceFiles\\engine FILES ${SOURCEFILES_ENGINE_LIST})
 	source_group(SourceFiles FILES ${SOURCEFILES_LIST})
 	source_group(HeaderFiles\\common\\base\\hashmap FILES ${HEADERFILES_COMMON_BASE_HASHMAP_LIST})
 	source_group(HeaderFiles\\common\\base FILES ${HEADERFILES_COMMON_BASE_LIST})
@@ -347,6 +435,8 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\net\\connection FILES ${HEADERFILES_COMMON_NET_CONNECTION_LIST})
 	source_group(HeaderFiles\\common\\net\\packets\\id FILES ${HEADERFILES_COMMON_NET_PACKETS_ID_LIST})
 	source_group(HeaderFiles\\common\\net\\packets\\serverserver FILES ${HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST})
+	source_group(HeaderFiles\\common\\net\\packets\\login\\togateway FILES ${HEADERFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST})
+	source_group(HeaderFiles\\common\\net\\packets\\gateway\\tologin FILES ${HEADERFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST})
 	source_group(HeaderFiles\\common\\net\\packets FILES ${HEADERFILES_COMMON_NET_PACKETS_LIST})
 	source_group(HeaderFiles\\common\\net FILES ${HEADERFILES_COMMON_NET_LIST})
 	source_group(HeaderFiles\\common\\script\\cache FILES ${HEADERFILES_COMMON_SCRIPT_CACHE_LIST})
@@ -357,7 +447,14 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\sys\\memory FILES ${HEADERFILES_COMMON_SYS_MEMORY_LIST})
 	source_group(HeaderFiles\\common\\sys FILES ${HEADERFILES_COMMON_SYS_LIST})
 	source_group(HeaderFiles\\common\\performance FILES ${HEADERFILES_COMMON_PERFORMANCE_LIST})
+	source_group(HeaderFiles\\common\\util\\compressor FILES ${HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST})
+	source_group(HeaderFiles\\common\\util FILES ${HEADERFILES_COMMON_UTIL_LIST})
 	source_group(HeaderFiles\\common FILES ${HEADERFILES_COMMON_LIST})
+	source_group(HeaderFiles\\config FILES ${HEADERFILES_CONFIG_LIST})
+	source_group(HeaderFiles\\db FILES ${HEADERFILES_DB_LIST})
+	source_group(HeaderFiles\\engine FILES ${HEADERFILES_ENGINE_LIST})
+	source_group(HeaderFiles\\message\\delegator FILES ${HEADERFILES_MESSAGE_DELEGATOR_LIST})
+	source_group(HeaderFiles\\message FILES ${HEADERFILES_MESSAGE_LIST})
 	source_group(HeaderFiles FILES ${HEADERFILES_LIST})
 	source_group(ResourceFiles FILES ${RESOURCEFILES_LIST})
 endif()
@@ -373,6 +470,8 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_NET_SOCKET_LIST}
 	${SOURCEFILES_COMMON_NET_CONNECTION_LIST}
 	${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST}
+	${SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST}
+	${SOURCEFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST}
 	${SOURCEFILES_COMMON_NET_PACKETS_LIST}
 	${SOURCEFILES_COMMON_NET_LIST}
 	${SOURCEFILES_COMMON_ENGINE_THREAD_LIST}
@@ -383,10 +482,17 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_SCRIPT_LUA_LIST}
 	${SOURCEFILES_COMMON_SCRIPT_LIST}
 	${SOURCEFILES_COMMON_PERFORMANCE_LIST}
+	${SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST}
+	${SOURCEFILES_COMMON_UTIL_LIST}
 	${SOURCEFILES_COMMON_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST}
+	${SOURCEFILES_MESSAGE_HANDLER_LOGIN_TOGATEWAY_LIST}
+	${SOURCEFILES_MESSAGE_HANDLER_GATEWAY_TOLOGIN_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_LIST}
+	${SOURCEFILES_MESSAGE_DELEGATOR_LIST}
 	${SOURCEFILES_MESSAGE_LIST}
+	${SOURCEFILES_DB_LIST}
+	${SOURCEFILES_ENGINE_LIST}
 	${SOURCEFILES_LIST}
 	${HEADERFILES_COMMON_BASE_HASHMAP_LIST}
 	${HEADERFILES_COMMON_BASE_LIST}
@@ -398,6 +504,8 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_NET_CONNECTION_LIST}
 	${HEADERFILES_COMMON_NET_PACKETS_ID_LIST}
 	${HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST}
+	${HEADERFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST}
+	${HEADERFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST}
 	${HEADERFILES_COMMON_NET_PACKETS_LIST}
 	${HEADERFILES_COMMON_NET_LIST}
 	${HEADERFILES_COMMON_SCRIPT_CACHE_LIST}
@@ -408,7 +516,14 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_SYS_MEMORY_LIST}
 	${HEADERFILES_COMMON_SYS_LIST}
 	${HEADERFILES_COMMON_PERFORMANCE_LIST}
+	${HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST}
+	${HEADERFILES_COMMON_UTIL_LIST}
 	${HEADERFILES_COMMON_LIST}
+	${HEADERFILES_CONFIG_LIST}
+	${HEADERFILES_DB_LIST}
+	${HEADERFILES_ENGINE_LIST}
+	${HEADERFILES_MESSAGE_DELEGATOR_LIST}
+	${HEADERFILES_MESSAGE_LIST}
 	${HEADERFILES_LIST}
 	${RESOURCEFILES_LIST}
 )
