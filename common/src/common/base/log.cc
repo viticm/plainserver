@@ -149,7 +149,7 @@ bool Log::init(int32_t cache_size) {
     cache_size_ = cache_size;
     int32_t i;
     for (i = 0; i < kLogFileCount; ++i) {
-      log_cache_[i] = new char[cache_size_];
+      if (NULL == log_cache_[i]) log_cache_[i] = new char[cache_size_];
       if (NULL == log_cache_[i]) { //local memory is failed
         return false;
       }

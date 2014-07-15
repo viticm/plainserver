@@ -12,7 +12,7 @@
 #define DB_CONFIG_H_
 
 #include "common/base/config.h"
-#include "common/game/define/macros.h"
+#include "common/application/define/macros.h"
 
 #define DB_TABLE_USER "users"
 

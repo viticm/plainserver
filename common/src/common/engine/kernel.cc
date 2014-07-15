@@ -32,6 +32,7 @@ Kernel::Kernel() {
     registerconfig(ENGINE_CONFIG_NET_RUN_ASTHREAD, false);
     registerconfig(ENGINE_CONFIG_PERFORMANCE_RUN_ASTHREAD, true);
     registerconfig(ENGINE_CONFIG_SCRIPT_RUN_ASTHREAD, false);
+    registerconfig(ENGINE_CONFIG_BASEMODULE_HAS_INIT, false);
     db_manager_ = NULL;
     net_manager_ = NULL;
     db_thread_ = NULL;
@@ -57,13 +58,15 @@ Kernel::~Kernel() {
 bool Kernel::init() {
   __ENTER_FUNCTION
     //base
-    DEBUGPRINTF("[engine] (Kernel::init) start base module");
-    if (!init_base()) {
+    bool hasinit = getconfig_boolvalue(ENGINE_CONFIG_BASEMODULE_HAS_INIT);
+    if (!hasinit) DEBUGPRINTF("[engine] (Kernel::init) start base module");
+    if (!hasinit && !init_base()) {
       SLOW_ERRORLOG("engine", 
                     "[engine] (Kernel::init) base module failed");
       return false;
     }
-    SLOW_LOG("engine", "[engine] (Kernel::init) base module success");
+    if (!hasinit) 
+      SLOW_LOG("engine", "[engine] (Kernel::init) base module success");
     //DEBUGPRINTF("base"); 
     //SYS_PROCESS_CURRENT_INFO_PRINT();
     //db
@@ -76,7 +79,7 @@ bool Kernel::init() {
       SLOW_LOG("engine", "[engine] (Kernel::init) db module success");
     }
     //DEBUGPRINTF("db");
-    //SYS_PROCESS_CURRENT_INFO_PRINT();
+    SYS_PROCESS_CURRENT_INFO_PRINT();
     //net
     if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
       SLOW_LOG("engine", "[engine] (Kernel::init) start net module");
@@ -272,10 +275,10 @@ void Kernel::set_base_logactive(bool flag) {
 bool Kernel::init_base() {
   __ENTER_FUNCTION
     using namespace ps_common_base;
-    g_time_manager = new TimeManager();
+    if (!TIME_MANAGER_POINTER) g_time_manager = new TimeManager();
     if (!TIME_MANAGER_POINTER) return false;
     TIME_MANAGER_POINTER->init();
-    g_log = new Log();
+    if (!LOGSYSTEM_POINTER) g_log = new Log();
     if (!LOGSYSTEM_POINTER) return false;
     LOGSYSTEM_POINTER->init(10 * 1024 * 1024); //10mb cache size for fast log
     return true;

@@ -15,7 +15,7 @@
 #include "common/net/connection/base.h"
 #include "common/net/packet/base.h"
 #include "common/net/packet/factory.h"
-#include "common/game/define/macros.h"
+#include "common/application/define/macros.h"
 
 namespace ps_common_net {
 

@@ -5,12 +5,12 @@
  * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
  * @user viticm<viticm.ti@gmail.com>
- * @date 2014/07/10 16:42
- * @uses the game define module config file
+ * @date 2014/07/15 16:59
+ * @uses the game module config file
  */
-#ifndef PS_COMMON_GAME_DEFINE_CONFIG_H_
-#define PS_COMMON_GAME_DEFINE_CONFIG_H_
+#ifndef PS_COMMON_APPLICATION_CONFIG_H_
+#define PS_COMMON_APPLICATION_CONFIG_H_
 
-#include "common/game/config.h"
+#include "common/base/config.h"
 
-#endif //PS_COMMON_GAME_DEFINE_CONFIG_H_
+#endif //PS_COMMON_APPLICATION_CONFIG_H_

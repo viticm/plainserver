@@ -66,6 +66,7 @@ FactoryManager::~FactoryManager() {
     SAFE_DELETE(packet_alloccount_);
   __LEAVE_FUNCTION
 }
+
 bool FactoryManager::init() {
   __ENTER_FUNCTION
     addfactories_for_serverserver();
@@ -81,15 +82,17 @@ bool FactoryManager::init() {
 
 Base* FactoryManager::createpacket(uint16_t packetid) {
   __ENTER_FUNCTION
-    if (NULL == factories_[packetid]) {
+    bool isfind = idindexs_.isfind(packetid);
+    uint16_t index = idindexs_.get(packetid);
+    if (!isfind || NULL == factories_[index]) {
       Assert(false);
       return NULL;
     }
     Base* packet = NULL;
     lock();
     try {
-      packet = factories_[packetid]->createpacket();
-      ++(packet_alloccount_[packetid]);
+      packet = factories_[index]->createpacket();
+      ++(packet_alloccount_[index]);
     }
     catch(...) {
       packet = NULL;
@@ -103,7 +106,9 @@ Base* FactoryManager::createpacket(uint16_t packetid) {
 uint32_t FactoryManager::getpacket_maxsize(uint16_t packetid) {
   __ENTER_FUNCTION
     uint32_t result = 0;
-    if (NULL == factories_[packetid]) {
+    bool isfind = idindexs_.isfind(packetid);
+    uint16_t index = idindexs_.get(packetid);
+    if (!isfind || NULL == factories_[index]) {
       char temp[FILENAME_MAX] = {0};
       snprintf(temp, 
                sizeof(temp) - 1, 
@@ -113,7 +118,7 @@ uint32_t FactoryManager::getpacket_maxsize(uint16_t packetid) {
       return result;
     }
     lock();
-    result = factories_[packetid]->get_packet_maxsize();
+    result = factories_[index]->get_packet_maxsize();
     unlock();
     return result;
   __LEAVE_FUNCTION

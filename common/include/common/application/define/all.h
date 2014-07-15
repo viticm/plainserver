@@ -8,10 +8,10 @@
  * @date 2014/07/10 16:43
  * @uses the game define module all define header file
  */
-#ifndef PS_COMMON_GAME_DEFINE_ALL_H_
-#define PS_COMMON_GAME_DEFINE_ALL_H_
+#ifndef PS_COMMON_APPLICATION_DEFINE_ALL_H_
+#define PS_COMMON_APPLICATION_DEFINE_ALL_H_
 
-#include "common/game/define/config.h"
-#include "common/game/define/macros.h"
+#include "common/application/define/config.h"
+#include "common/application/define/macros.h"
 
-#endif //PS_COMMON_GAME_DEFINE_ALL_H_
+#endif //PS_COMMON_APPLICATION_DEFINE_ALL_H_
