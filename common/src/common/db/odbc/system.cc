@@ -51,6 +51,14 @@ uint32_t System::get_result_count() {
     return 0;
 }
 
+bool System::fetch(int32_t orientation, int32_t offset) {
+  __ENTER_FUNCTION
+    bool result = odbc_interface_->fetch(orientation, offset);
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
 int32_t System::get_internal_affect_count() {
   __ENTER_FUNCTION
     return odbc_interface_->get_affect_row_count();
@@ -88,6 +96,7 @@ bool System::load() {
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
     op_type_ = kDBOptionTypeLoad;
+    odbc_interface_->clear();
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -99,6 +108,7 @@ bool System::query() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
+    odbc_interface_->clear();
     op_type_ = kDBOptionTypeQuery;
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
@@ -112,6 +122,7 @@ bool System::add_new() {
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
     op_type_ = kDBOptionTypeAddNew;
+    odbc_interface_->clear();
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -124,6 +135,7 @@ bool System::_delete() {
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
     op_type_ = kDBOptionTypeDelete;
+    odbc_interface_->clear();
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;
@@ -136,6 +148,7 @@ bool System::save() {
     if (!is_prepare()) return false;
     if (!odbc_interface_) return false;
     op_type_ = kDBOptionTypeSave;
+    odbc_interface_->clear();
     result_ = odbc_interface_->execute();
     result_count_ = odbc_interface_->get_affect_row_count();
     return result_;

@@ -1,11 +1,10 @@
-#include "common/engine/kernel.h"
 #include "common/base/time_manager.h"
 #include "common/base/log.h"
 #include "common/base/util.h"
 #include "common/sys/process.h"
+#include "engine/system.h"
 #include "gateway.h"
 
-ps_common_engine::Kernel engine_kernel;
 #define PROCESS_ID_FILE "gateway.pid"
 
 #if __LINUX__
@@ -52,12 +51,14 @@ int32_t main(int32_t argc, char *argv[]) {
   versionrequested = MAKEWORD(2, 2);
   error = WSAStartup(versionrequested, &data);
 #endif
-  //engine_kernel.setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
-  engine_kernel.setconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
-  //engine_kernel.setconfig(ENGINE_CONFIG_PERFORMANCE_ISACTIVE, true);
-  engine_kernel.setconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "sword_user");
-  //engine_kernel.setconfig(ENGINE_CONFIG_NET_CONNECTION_MAX, 100);
-  engine_kernel.setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
+  if (!ENGINE_SYSTEM_POINTER)
+    g_engine_system = new engine::System();
+  if (!ENGINE_SYSTEM_POINTER)
+    ERRORPRINTF("[gateway] ENGINE_SYSTEM_POINTER is NULL");
+  ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
+  ENGINE_SYSTEM_POINTER
+    ->setconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "sword_user");
+  ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
   if (!engine_kernel.init()) {
     return 1;
   }
@@ -76,7 +77,8 @@ int32_t main(int32_t argc, char *argv[]) {
     return 1;
   }
 #endif  
-  engine_kernel.run(); //网络线程是来阻塞主线程的，所以不要轻易设置其独立线程模式
+  ENGINE_SYSTEM_POINTER->run(); //网络线程是来阻塞主线程的，所以不要轻易设置其独立线程模式
+  SAFE_DELETE(g_engine_system);
   remove(PROCESS_ID_FILE);
   //engine_kernel.stop();
   return 0;
@@ -93,13 +95,13 @@ void signal_handler(int32_t signal) {
       //engine_kernel.stop();
     } else {
       WARNINGPRINTF("[gateway] signal got SIGINT[%d] will stop!", signal);
-      engine_kernel.stop(); 
+      ENGINE_SYSTEM_POINTER->stop(); 
     }
   }
   //处理后台模式信号
   if (signal == SIGUSR1) {
     WARNINGPRINTF("[gateway] signal got SIGUSR1[%d] will stop!", signal);
-    engine_kernel.stop();
+    ENGINE_SYSTEM_POINTER->stop();
   }
   last_signaltime = currenttime;
 }
@@ -113,7 +115,7 @@ BOOL WINAPI signal_handler(DWORD event) {
         DEBUGPRINTF("[gateway] CTRL+C received, will reload!");
       } else {
         WARNINGPRINTF("[gateway] CTRL+C received, will stop!");
-        engine_kernel.stop();
+        ENGINE_SYSTEM_POINTER->stop();
       }
       break;
     }

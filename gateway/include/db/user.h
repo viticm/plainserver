@@ -19,7 +19,7 @@ namespace user {
 
 user_t get_fullinfo(const char *name);
 
-};
+}; //namespace user
 
 }; //namespace db
 

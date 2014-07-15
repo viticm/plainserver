@@ -41,10 +41,13 @@ class ResultAuth : public packet::Base {
    void setaccount(const char *account);
    const char *getpassword();
    void setpassword(const char *password);
+   void setresult(uint8_t result);
+   uint8_t getresult() const;
 
  private:
    char account_[ACCOUNT_LENGTH_MAX];
    char password_[PASSWORD_LENGTH_MAX];
+   uint8_t result_;
 
 };
 

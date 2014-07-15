@@ -18,7 +18,7 @@
 
 namespace db {
 
-struct user {
+struct _user {
   uint32_t id;
   char name[ACCOUNT_LENGTH_MAX];
   char password[PASSWORD_LENGTH_MAX];
@@ -29,7 +29,7 @@ struct user {
   uint32_t today_logintimes;
   bool locked;
   uint8_t viplevel;
-  user() {
+  _user() {
     id = 0;
     memset(name, 0, sizeof(name));
     memset(password, 0, sizeof(password));
@@ -40,10 +40,10 @@ struct user {
     today_logintimes = 0;
     locked = false;
     viplevel = 0;
-  }
+  };
 };
 
-typedef user user_t;
+typedef _user user_t;
 
 }; //namespace db
 

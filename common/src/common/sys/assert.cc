@@ -127,7 +127,8 @@ bool RangeCheckForIndex_Assert(int index,
   }
   snprintf(buff,
           sizeof(buff),
-          "[%s] index out of range!! index=%d, but legal range is [%d, %d]. check it now, please!!",
+          "[%s] index out of range!! index=%d, but legal range is [%d, %d]."
+          " check it now, please!!",
           code_location,
           index,
           low_border,

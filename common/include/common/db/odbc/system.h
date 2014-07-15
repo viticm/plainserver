@@ -57,6 +57,7 @@ class System {
    virtual bool save();
    db_query_t *get_internal_query();
    virtual bool query();
+   bool fetch(int32_t orientation = 1, int32_t offset = 0);
    bool check_db_connect(); //check the connect if work, 
                             //and repeat 5 times when fails
    Interface *getinterface();

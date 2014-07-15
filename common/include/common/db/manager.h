@@ -10,6 +10,7 @@
  */
 #ifndef PS_COMMON_DB_MANAGER_H_
 #define PS_COMMON_DB_MANAGER_H_
+
 #include "common/db/config.h"
 #include "common/db/odbc/system.h"
 
@@ -28,6 +29,7 @@ class Manager {
    dbconnector_type_t get_connector_type() const;
    db_query_t *get_internal_query();
    bool query();
+   bool fetch(int32_t orientation = 1, int32_t offset = 0);
    int32_t get_affectcount() const;
    bool check_db_connect();
 

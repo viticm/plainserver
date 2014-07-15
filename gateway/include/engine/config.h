@@ -11,6 +11,6 @@
 #ifndef ENGINE_CONFIG_H_
 #define ENGINE_CONFIG_H_
 
-#include "common/base/config.h"
+#include "config/application.h"
 
 #endif //ENGINE_CONFIG_H_

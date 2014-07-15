@@ -14,6 +14,7 @@ Manager::~Manager() {
     SAFE_DELETE(odbc_system_);
   __LEAVE_FUNCTION
 }
+
 bool Manager::init(const char *connection_or_dbname,
                    const char *username,
                    const char *password) {
@@ -46,6 +47,22 @@ bool Manager::query() {
     switch (connector_type_) {
       case kDBConnectorTypeODBC:
         result = odbc_system_->query();
+        break;
+      default:
+        result = false;
+        break;
+    }
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool fetch(int32_t orientation, int32_t offset) {
+  __ENTER_FUNCTION
+    bool result = true;
+    switch (connector_type_) {
+      case kDBConnectorTypeODBC:
+        result = odbc_system_->fetch(orientation, offset);
         break;
       default:
         result = false;
@@ -94,6 +111,22 @@ bool Manager::check_db_connect() {
     switch (connector_type_) {
       case kDBConnectorTypeODBC:
         result = odbc_system_->check_db_connect();
+        break;
+      default:
+        result = false;
+        break;
+    }
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Manager::fetch(int32_t orientation, int32_t offset) {
+  __ENTER_FUNCTION
+    bool result = true;
+    switch (connector_type_) {
+      case kDBConnectorTypeODBC:
+        result = odbc_system_->fetch(orientation, offset);
         break;
       default:
         result = false;

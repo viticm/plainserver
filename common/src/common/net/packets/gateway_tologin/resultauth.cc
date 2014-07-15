@@ -8,6 +8,7 @@ using namespace gateway_tologin;
 
 ResultAuth::ResultAuth() {
   __ENTER_FUNCTION
+    result_ = 0;
     memset(account_, 0, sizeof(account_));
     memset(password_, 0, sizeof(password_));
   __LEAVE_FUNCTION
@@ -17,6 +18,7 @@ bool ResultAuth::read(InputStream& inputstream) {
   __ENTER_FUNCTION
     inputstream.read(account_, sizeof(account_));
     inputstream.read(password_, sizeof(password_));
+    inputstream.read(reinterpret_cast<char*>(&result_), sizeof(result_));
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -26,6 +28,7 @@ bool ResultAuth::write(OutputStream& outputstream) const {
   __ENTER_FUNCTION
     outputstream.write(account_, sizeof(account_));
     outputstream.write(password_, sizeof(password_));
+    outputstream.write(reinterpret_cast<char*>(&result_), sizeof(result_));
   __LEAVE_FUNCTION
     return false;
 }
@@ -46,7 +49,8 @@ uint16_t ResultAuth::getid() const {
 
 uint32_t ResultAuth::getsize() const {
   uint32_t result = sizeof(account_) +
-                    sizeof(password_);
+                    sizeof(password_) +
+                    sizeof(result_);
   return result;
 }
 
@@ -72,6 +76,14 @@ void ResultAuth::setpassword(const char *password) {
   __LEAVE_FUNCTION
 }
 
+void ResultAuth::getresult() const {
+  return result_;
+}
+
+void ResultAuth::setresult(uint8_t result) {
+  result_ = result;
+}
+
 ps_common_net::packet::Base *ResultAuthFactory::createpacket() {
   __ENTER_FUNCTION
     ps_common_net::packet::Base *result = new ResultAuth();
@@ -86,6 +98,7 @@ uint16_t ResultAuthFactory::get_packetid() const {
 
 uint32_t ResultAuthFactory::get_packet_maxsize() const {
   uint32_t result = sizeof(char) * ACCOUNT_LENGTH_MAX +
-                    sizeof(char) * PASSWORD_LENGTH_MAX;
+                    sizeof(char) * PASSWORD_LENGTH_MAX +
+                    sizeof(uint8_t);
   return result;
 }
