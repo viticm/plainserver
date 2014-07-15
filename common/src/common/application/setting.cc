@@ -3,7 +3,11 @@
 #include "common/application/filedefine.h"
 #include "common/application/setting.h"
 
-ps_common_application::Config g_application_config;
+ps_common_application::Setting *g_application_setting;
+
+template <>
+ps_common_application::Setting 
+  *ps_common_base::Singleton<ps_common_application::Setting>::singleton_ = NULL;
 
 namespace ps_common_application {
 
@@ -516,15 +520,24 @@ bool GatewayInfo::is_use() {
     return false;
 }
 
-Config::Config() {
+Setting *Setting::getsingleton_pointer() {
+  return singleton_;
+}
+
+Setting &Setting::getsingleton() {
+  Assert(singleton_);
+  return *singleton_;
+}
+
+Setting::Setting() {
   //do nothing
 }
 
-Config::~Config() {
+Setting::~Setting() {
   //do noting
 }
 
-bool Config::init() {
+bool Setting::init() {
   __ENTER_FUNCTION
     load_config_info();
     load_login_info();
@@ -540,7 +553,7 @@ bool Config::init() {
     return false;
 }
 
-void Config::reload() {
+void Setting::reload() {
   __ENTER_FUNCTION
     load_config_info_reload();
     load_login_info_reload();
@@ -554,14 +567,14 @@ void Config::reload() {
   __LEAVE_FUNCTION
 }
 
-void Config::load_config_info() {
+void Setting::load_config_info() {
   __ENTER_FUNCTION
     load_config_info_only();
     load_config_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_config_info_only() { //this params just read once
+void Setting::load_config_info_only() { //this params just read once
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     ps_common_file::Ini config_info_ini(CONFIG_INFO_FILE);
@@ -586,13 +599,13 @@ void Config::load_config_info_only() { //this params just read once
     config_info_.localization.language = 
       config_info_ini.read_uint8("Localization", "Language");
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              CONFIG_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_config_info_reload() { //this params can reload again
+void Setting::load_config_info_reload() { //this params can reload again
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     ps_common_file::Ini config_info_ini(CONFIG_INFO_FILE);
@@ -1018,20 +1031,20 @@ void Config::load_config_info_reload() { //this params can reload again
     }
     //loop read --
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              CONFIG_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_login_info() {
+void Setting::load_login_info() {
   __ENTER_FUNCTION
     load_login_info_only();
     load_login_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_login_info_only() {
+void Setting::load_login_info_only() {
 #ifdef _PS_LOGIN
   __ENTER_FUNCTION
     ps_common_file::Ini login_info_ini(LOGIN_INFO_FILE);
@@ -1076,30 +1089,30 @@ void Config::load_login_info_only() {
     login_info_.notify_safe_sign = 
       login_info_ini.read_bool("System", "NotifySafeSign");
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              LOGIN_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_login_info_reload() {
+void Setting::load_login_info_reload() {
 #ifdef _PS_LOGIN
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              LOGIN_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_world_info() {
+void Setting::load_world_info() {
   __ENTER_FUNCTION
     load_world_info_only();
     load_world_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_world_info_only() {
+void Setting::load_world_info_only() {
 //#if defined(_PAP_WORLD)
   __ENTER_FUNCTION
     ps_common_file::Ini world_info_ini(WORLD_INFO_FILE);
@@ -1122,30 +1135,30 @@ void Config::load_world_info_only() {
     world_info_.enable_share_memory = 
       world_info_ini.read_bool("System", "EnableShareMemory");
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              WORLD_INFO_FILE);
   __LEAVE_FUNCTION
 //#endif
 }
 
-void Config::load_world_info_reload() {
+void Setting::load_world_info_reload() {
 //#if defined(_PAP_WORLD)
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              WORLD_INFO_FILE);
   __LEAVE_FUNCTION
 //#endif
 }
 
-void Config::load_gateway_info() {
+void Setting::load_gateway_info() {
   __ENTER_FUNCTION
     load_gateway_info_only();
     load_gateway_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_gateway_info_only() {
+void Setting::load_gateway_info_only() {
   __ENTER_FUNCTION
     ps_common_file::Ini gateway_info_ini(GATEWAY_INFO_FILE);
     ps_common_file::Ini server_info_ini(SERVER_INFO_FILE);
@@ -1154,7 +1167,7 @@ void Config::load_gateway_info_only() {
                                                    "Number", 
                                                    number)) {
       AssertEx(false, 
-               "Config::load_gateway_info_only is failed," 
+               "Setting::load_gateway_info_only is failed," 
                "can't find Gateway Number");
     }
     gateway_info_.clean_up();
@@ -1204,7 +1217,7 @@ void Config::load_gateway_info_only() {
             sizeof(gateway_data->ip) - 1)) {
       snprintf(message, 
                sizeof(message) - 1, 
-               "Config::load_gateway_info_only is failed, can't find key: %s", 
+               "Setting::load_gateway_info_only is failed, can't find key: %s", 
                key);
         AssertEx(false, message);
       }
@@ -1217,7 +1230,7 @@ void Config::load_gateway_info_only() {
             gateway_data->port)) {
         snprintf(message, 
                  sizeof(message) - 1, 
-                 "Config::load_gateway_info_only is failed, can't find key: %s", 
+                 "Setting::load_gateway_info_only is failed, can't find key: %s", 
                  key);
         AssertEx(false, message);
       }
@@ -1230,29 +1243,29 @@ void Config::load_gateway_info_only() {
     }
     gateway_info_.begin_use();
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              GATEWAY_INFO_FILE);
   __LEAVE_FUNCTION
 }
 
-void Config::load_gateway_info_reload() {
+void Setting::load_gateway_info_reload() {
 #if defined(_PS_GATEWAY)
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              GATEWAY_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_share_memory_info() {
+void Setting::load_share_memory_info() {
   __ENTER_FUNCTION
     load_share_memory_info_only();
     load_share_memory_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_share_memory_info_only() {
+void Setting::load_share_memory_info_only() {
 #if defined(_PS_SHAREMEMORY)
   __ENTER_FUNCTION
     ps_common_file::Ini share_memory_info_ini(SHARE_MEMORY_INFO_FILE);
@@ -1303,30 +1316,30 @@ void Config::load_share_memory_info_only() {
     share_memory_info_.encrypt_dbpassword = 
       share_memory_info_ini.read_bool("System", "EncryptDBPassword");
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              SHARE_MEMORY_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_share_memory_info_reload() {
+void Setting::load_share_memory_info_reload() {
 #if defined(_PS_SHAREMEMORY)
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              SHARE_MEMORY_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_machine_info() {
+void Setting::load_machine_info() {
   __ENTER_FUNCTION
     load_machine_info_only();
     load_machine_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_machine_info_only() {
+void Setting::load_machine_info_only() {
 #if defined(_PS_SERVER)
   __ENTER_FUNCTION
     ps_common_file::Ini machine_info_ini(MACHINE_INFO_FILE);
@@ -1344,30 +1357,30 @@ void Config::load_machine_info_only() {
                                     "MachineID");
     }
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              MACHINE_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_machine_info_reload() {
+void Setting::load_machine_info_reload() {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              MACHINE_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_server_info() {
+void Setting::load_server_info() {
   __ENTER_FUNCTION
     load_server_info_only();
     load_server_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_server_info_only() {
+void Setting::load_server_info_only() {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     ps_common_file::Ini server_info_ini(SERVER_INFO_FILE);
@@ -1421,30 +1434,30 @@ void Config::load_server_info_only() {
       server_info_.hash_server[server_id] = static_cast<int16_t>(i);
     }
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              SERVER_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_server_info_reload() {
+void Setting::load_server_info_reload() {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              SERVER_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_scene_info() {
+void Setting::load_scene_info() {
   __ENTER_FUNCTION
     load_scene_info_only();
     load_scene_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_scene_info_only() {
+void Setting::load_scene_info_only() {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     ps_common_file::Ini scene_info_ini(SCENE_INFO_FILE);
@@ -1490,42 +1503,42 @@ void Config::load_scene_info_only() {
       scene_info_.scene_hash[scene_id] = static_cast<int16_t>(i);
     }
     SLOW_LOG("config", 
-             "[application] (Config::load) %s only ... ok!", 
+             "[application] (Setting::load) %s only ... ok!", 
              SCENE_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_scene_info_reload() {
+void Setting::load_scene_info_reload() {
 #if _PS_SERVER
   __ENTER_FUNCTION
     SLOW_LOG("config", 
-             "[application] (Config::load) %s reload ... ok!", 
+             "[application] (Setting::load) %s reload ... ok!", 
              SCENE_INFO_FILE);
   __LEAVE_FUNCTION
 #endif
 }
 
-void Config::load_copy_scene_info() {
+void Setting::load_copy_scene_info() {
   __ENTER_FUNCTION
     load_copy_scene_info_only();
     load_copy_scene_info_reload();
   __LEAVE_FUNCTION
 }
 
-void Config::load_copy_scene_info_only() {
+void Setting::load_copy_scene_info_only() {
 #ifdef _PS_SERVER
   //do nothing
 #endif
 }
 
-void Config::load_copy_scene_info_reload() {
+void Setting::load_copy_scene_info_reload() {
 #ifdef _PS_SERVER
   //do nothing
 #endif
 }
 
-int16_t Config::get_server_id_by_scene_id(int16_t id) const {
+int16_t Setting::get_server_id_by_scene_id(int16_t id) const {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
     Assert(id >= 0);
@@ -1534,11 +1547,12 @@ int16_t Config::get_server_id_by_scene_id(int16_t id) const {
   __LEAVE_FUNCTION
     return -1;
 #else
+  USE_PARAM(id);
   return -1;
 #endif
 }
 
-int16_t Config::get_server_id_by_share_memory_key(uint32_t key) const {
+int16_t Setting::get_server_id_by_share_memory_key(uint32_t key) const {
   __ENTER_FUNCTION
     int16_t result = -1;
     Assert(key > 0);

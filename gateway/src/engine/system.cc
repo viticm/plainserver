@@ -1,3 +1,5 @@
+#include "common/base/log.h"
+#include "common/application/setting.h"
 #include "engine/system.h"
 
 engine::System *g_engine_system = NULL;
@@ -36,6 +38,40 @@ ps_common_db::Manager *System::get_dbmanager() {
     return dbmanager;
   __LEAVE_FUNCTION
     return NULL;
+}
+
+bool System::init() {
+  __ENTER_FUNCTION
+    DEBUGPRINTF("[engine] (System::init) start base module");
+    if (!Kernel::init_base()) {
+      SLOW_ERRORLOG("engine", 
+                    "[engine] (System::init) base module failed");
+      return false;
+    }
+    SLOW_LOG("engine", "[engine] (System::init) base module success");
+    SLOW_LOG("engine", "[engine] (System::init) start setting module");
+    if (!init_setting()) {
+      SLOW_ERRORLOG("engine", 
+        "[engine] (System::init) setting module failed");
+      return false;
+    }
+    setconfig(ENGINE_CONFIG_BASEMODULE_HAS_INIT, true); //for kernel
+    SLOW_LOG("engine", "[engine] (System::init) setting module success");
+    bool result = Kernel::init();
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool System::init_setting() {
+  __ENTER_FUNCTION
+    if (!APPLICATION_SETTING_POINTER)
+      g_application_setting = new ps_common_application::Setting();
+    if (!APPLICATION_SETTING_POINTER) return false;
+    bool result = APPLICATION_SETTING_POINTER->init();
+    return result;
+  __LEAVE_FUNCTION
+    return false;
 }
 
 } //namespace engine

@@ -519,6 +519,14 @@
 						</File>
 					</Filter>
 				</Filter>
+				<Filter
+					Name="application"
+					>
+					<File
+						RelativePath="..\..\common\src\common\application\setting.cc"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="message"
@@ -1061,6 +1069,38 @@
 						</File>
 						<File
 							RelativePath="..\..\common\include\common\util\compressor\minilzo.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="application"
+					>
+					<File
+						RelativePath="..\..\common\include\common\application\config.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\common\include\common\application\filedefine.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\common\include\common\application\setting.h"
+						>
+					</File>
+					<Filter
+						Name="define"
+						>
+						<File
+							RelativePath="..\..\common\include\common\application\define\all.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\application\define\config.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\application\define\macros.h"
 							>
 						</File>
 					</Filter>

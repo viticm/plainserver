@@ -79,7 +79,7 @@ bool Kernel::init() {
       SLOW_LOG("engine", "[engine] (Kernel::init) db module success");
     }
     //DEBUGPRINTF("db");
-    SYS_PROCESS_CURRENT_INFO_PRINT();
+    //SYS_PROCESS_CURRENT_INFO_PRINT();
     //net
     if (getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE)) {
       SLOW_LOG("engine", "[engine] (Kernel::init) start net module");

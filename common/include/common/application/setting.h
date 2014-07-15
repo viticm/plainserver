@@ -593,11 +593,11 @@ class GatewayInfo {
 };
 
 //config class
-class Config : public ps_common_base::Singleton<Config> {
+class Setting : public ps_common_base::Singleton<Setting> {
  
  public:
-   Config();
-   ~Config();
+   Setting();
+   ~Setting();
 #ifdef _PS_SERVER
    config_info_t config_info_;
 #endif
@@ -612,8 +612,8 @@ class Config : public ps_common_base::Singleton<Config> {
 #endif
 
  public:
-   Config *getsingleton_pointer();
-   Config &getsingleton();
+   static Setting *getsingleton_pointer();
+   static Setting &getsingleton();
  
  public:
    bool init();
@@ -655,9 +655,9 @@ class Config : public ps_common_base::Singleton<Config> {
 
 }; //namespace ps_common_application
 
-extern ps_common_application::Config g_application_config; //global variable
+extern ps_common_application::Setting *g_application_setting; //global variable
 
 #define APPLICATION_SETTING_POINTER \
-  ps_common_application::Config::getsingleton_pointer()
+  ps_common_application::Setting::getsingleton_pointer()
 
 #endif //PS_COMMON_APPLICATION_SETTING_H_

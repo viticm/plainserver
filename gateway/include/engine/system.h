@@ -29,7 +29,13 @@ class System : public ps_common_engine::Kernel,
    static System &getsingleton(); 
 
  public:
+   bool init();
+
+ public:
    ps_common_db::Manager *get_dbmanager();
+
+ private:
+   bool init_setting();
 
 };
 

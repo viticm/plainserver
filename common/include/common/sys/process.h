@@ -39,14 +39,12 @@ bool daemon();
 }; //namespace ps_common_sys
 
 #define SYS_PROCESS_CURRENT_INFO_PRINT() \
-  DEBUGPRINTF("cpu: %.1f%% VSZ: %dk RSS: %dk"LF"file: %s line: %d",\
+  DEBUGPRINTF("cpu: %.1f%% VSZ: %dk RSS: %dk",\
               ps_common_sys::process::get_cpu_usage(\
                 ps_common_sys::process::getid()),\
               ps_common_sys::process::get_virtualmemory_usage(\
                 ps_common_sys::process::getid()),\
               ps_common_sys::process::get_physicalmemory_usage(\
-                ps_common_sys::process::getid()),\
-              __FILE__,\
-              __LINE__);
+                ps_common_sys::process::getid()))
 
 #endif //PS_COMMON_SYS_PROCESS_H_

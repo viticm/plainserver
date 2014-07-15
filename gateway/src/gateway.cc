@@ -15,6 +15,8 @@ BOOL WINAPI signal_handler(DWORD event);
 
 int32_t main(int32_t argc, char *argv[]) {
 #if __WINDOWS__
+  USE_PARAM(argc);
+  USE_PARAM(argv);
   _CrtSetDbgFlag(_CrtSetDbgFlag(0) | _CRTDBG_LEAK_CHECK_DF);
   system("color 02"); //color green
   system("mode con cols=120"); //cmd size
@@ -56,7 +58,7 @@ int32_t main(int32_t argc, char *argv[]) {
   if (!ENGINE_SYSTEM_POINTER)
     ERRORPRINTF("[gateway] ENGINE_SYSTEM_POINTER is NULL");
   ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_SCRIPT_ISACTIVE, true);
-  ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+  ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_DB_ISACTIVE, false);
   ENGINE_SYSTEM_POINTER
     ->setconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "sword_user");
   ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
