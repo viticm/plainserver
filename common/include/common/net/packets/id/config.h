@@ -13,4 +13,7 @@
 
 #include "common/net/packets/config.h"
 
+#define NET_PACKETS_ID_NAMESPACE_START namespace ps_common_net { namespace packets { namespace id {
+#define NET_PACKETS_ID_NAMESPACE_END } } }
+
 #endif //PS_COMMON_NET_PACKETS_ID_CONFIG_H_

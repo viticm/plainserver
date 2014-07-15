@@ -13,6 +13,8 @@
 
 #include "common/net/packets/id/config.h" //must include this
 
+NET_PACKETS_ID_NAMESPACE_START
+
 namespace serverserver { //服务器与服务器公用
 
 typedef enum {
@@ -23,5 +25,7 @@ typedef enum {
  } packetid_enum;
 
 }; //namespace serverserver
+
+NET_PACKETS_ID_NAMESPACE_END
 
 #endif //PS_COMMON_NET_PACKETS_ID_SERVERSERVER_H_

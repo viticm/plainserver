@@ -60,6 +60,8 @@
 #ifndef PS_COMMON_BASE64_HPP_
 #define PS_COMMON_BASE64_HPP_
 
+#include "common/base/config.h" 
+
 namespace ps_common_base {
 
 //编码后的长度一般比原文多占1/3的存储空间，请保证base64code有足够的空间

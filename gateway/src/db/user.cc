@@ -1,10 +1,12 @@
 #include "engine/system.h"
 #include "db/user.h"
 
-using namespace db::user;
+namespace db {
 
-db::user_t get_fullinfo(const char *name) {
-  db::user_t user;
+namespace user {
+
+user_t get_fullinfo(const char *name) {
+  user_t user;
   __ENTER_FUNCTION
     if (!ENGINE_SYSTEM_POINTER || !ENGINE_SYSTEM_POINTER->get_dbmanager())
       return user;
@@ -79,3 +81,7 @@ db::user_t get_fullinfo(const char *name) {
   __LEAVE_FUNCTION
     return user;
 }
+
+} //namespace user
+
+} //namespace db

@@ -341,10 +341,10 @@ int64_t toint64(const char *str) {
     return -1;
 }
 
-int64_t touint64(const char *str) {
+uint64_t touint64(const char *str) {
   __ENTER_FUNCTION
     char *endpointer = NULL;
-    int64_t result = strtouint64(str, &endpointer, 10);
+    uint64_t result = strtouint64(str, &endpointer, 10);
     return result;
   __LEAVE_FUNCTION
     return 0;

@@ -13,23 +13,11 @@
 #ifndef PS_COMMON_NET_PACKETS_ID_ALL_H_
 #define PS_COMMON_NET_PACKETS_ID_ALL_H_
 
-namespace ps_common_net {
-
-namespace packets {
-
-namespace id {
-
 #include "common/net/packets/id/clientlogin.h"
 #include "common/net/packets/id/clientserver.h"
 #include "common/net/packets/id/gatewaylogin.h"
 #include "common/net/packets/id/logincenter.h"
 #include "common/net/packets/id/servercenter.h"
 #include "common/net/packets/id/serverserver.h"
-
-}; //namespace id
-
-}; //namespace packet
-
-}; //namespace ps_common_net
 
 #endif //PS_COMMON_NET_PACKETS_ID_ALL_H_

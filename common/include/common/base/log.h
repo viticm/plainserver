@@ -87,7 +87,7 @@ class Log : public Singleton<Log> {
          return;
        }
 
-       if (g_command_logprint && type != 9) {
+       if (g_command_logprint) {
          switch (type) {
           case 1:
             WARNINGPRINTF(buffer);
@@ -97,6 +97,8 @@ class Log : public Singleton<Log> {
             break;
           case 3:
             DEBUGPRINTF(buffer);
+            break;
+          case 9:
             break;
           default:
             printf("%s"LF"", buffer);
@@ -145,7 +147,7 @@ class Log : public Singleton<Log> {
            strncat(buffer, time_str, strlen(time_str));
          }
 
-         if (g_command_logprint && type != 9) {
+         if (g_command_logprint) {
            switch (type) {
           case 1:
             WARNINGPRINTF(buffer);
@@ -155,6 +157,8 @@ class Log : public Singleton<Log> {
             break;
           case 3:
             DEBUGPRINTF(buffer);
+            break;
+          case 9:
             break;
           default:
             printf("%s"LF"", buffer);

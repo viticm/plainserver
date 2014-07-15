@@ -259,8 +259,8 @@ bool Interface::execute() {
       diag_state();
       return false;
     }
-    result_ = collect_resultinfo();
-    return result_;
+    result_ = static_cast<SQLRETURN>(collect_resultinfo());
+    return 0 == result_ ? false : true;
   } catch(...) {
     char temp[8092] = {0};
     snprintf(temp, sizeof(temp) - 1, "Huge Error occur: %s", query_.sql_str_);
@@ -633,7 +633,9 @@ int32_t Interface::get_binary_withdecompress(int32_t column_index,
         Assert(false);
         return 0;
       }
-      if (getcompressor()->get_decompress_buffersize() > buffer_length) {
+      int32_t decompress_buffersize = 
+        static_cast<int32_t>(getcompressor()->get_decompress_buffersize());
+      if (decompress_buffersize > buffer_length) {
         char message[8092] = {0};
         snprintf(message, 
                  sizeof(message) - 1, 
@@ -867,7 +869,7 @@ db_query_t& Interface::get_query() {
    return query_;
 }
 
-SQLSMALLINT get_typemapping(SQLSMALLINT typecode) {
+SQLSMALLINT Interface::get_typemapping(SQLSMALLINT typecode) {
   __ENTER_FUNCTION
     SQLSMALLINT type = typecode; 
     switch (typecode) {
@@ -1004,7 +1006,8 @@ int32_t Interface::get_datalength(int32_t column) const {
 int16_t Interface::get_size(int32_t column) const {
   __ENTER_FUNCTION
     if (column < 0 || column > column_count_) return -1;
-    return column_size_[column];
+    int16_t result = static_cast<int16_t>(column_size_[column]);
+    return result;
   __LEAVE_FUNCTION
     return -1;
 }

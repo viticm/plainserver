@@ -4,6 +4,8 @@
 
 /* packets { */
 #include "common/net/packets/serverserver/connect.h"
+#include "common/net/packets/gateway_tologin/resultauth.h"
+#include "common/net/packets/login_togateway/askauth.h"
 /* } packets */
 
 #include "common/net/packet/factorymanager.h"
@@ -34,13 +36,13 @@ FactoryManager::FactoryManager() {
     factories_ = NULL;
     size_ = 0;
     size_ = serverserver::kLast - serverserver::kFirst; //common for server
-/**
-#if defined(_PAP_NET_BILLING) || defined(_PAP_NET_LOGIN)
-    size_ += billinglogin::kLast - billinglogin::kFirst - 1;
-    size_ += billing_tologin::kLast - billing_tologin::kFirst - 1;
-    size_ += login_tobilling::kLast - billing_tologin::kFirst - 1;
+
+#if defined(_PS_NET_GATEWAY) || defined(_PS_NET_LOGIN)
+    size_ += gatewaylogin::kLast - gatewaylogin::kFirst - 1;
+    size_ += gateway_tologin::kLast - gateway_tologin::kFirst - 1;
+    size_ += login_togateway::kLast - login_togateway::kFirst - 1;
 #endif
-**/
+
     Assert(size_ > 0);
     factories_ = new Factory * [size_];
     Assert(factories_);
@@ -158,6 +160,9 @@ void FactoryManager::addfactory(Factory* factory) {
 void FactoryManager::addfactories_for_gatewaylogin() {
 #if defined(_PS_NET_GATEWAY) || defined(_PS_NET_LOGIN) /* { */
   __ENTER_FUNCTION
+    using namespace ps_common_net::packets;
+    addfactory(new gateway_tologin::ResultAuthFactory());
+    addfactory(new login_togateway::AskAuthFactory());
   __LEAVE_FUNCTION
 #endif /* } */
 }

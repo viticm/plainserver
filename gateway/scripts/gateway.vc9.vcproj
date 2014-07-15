@@ -385,6 +385,22 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="login_togateway"
+							>
+							<File
+								RelativePath="..\..\common\src\common\net\packets\login_togateway\askauth.cc"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="gateway_tologin"
+							>
+							<File
+								RelativePath="..\..\common\src\common\net\packets\gateway_tologin\resultauth.cc"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 				<Filter
@@ -487,6 +503,22 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="util"
+					>
+					<Filter
+						Name="compressor"
+						>
+						<File
+							RelativePath="..\..\common\src\common\util\compressor\mini.cc"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\src\common\util\compressor\minilzo.c"
+							>
+						</File>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="message"
@@ -502,7 +534,47 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="login_togateway"
+						>
+						<File
+							RelativePath="..\src\message\handler\login_togateway\askauth.cc"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="gateway_tologin"
+						>
+						<File
+							RelativePath="..\src\message\handler\gateway_tologin\askauth.cc"
+							>
+						</File>
+					</Filter>
 				</Filter>
+				<Filter
+					Name="delegator"
+					>
+					<File
+						RelativePath="..\src\message\delegator\account.cc"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="db"
+				>
+				<File
+					RelativePath="..\src\db\user.cc"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="engine"
+				>
+				<File
+					RelativePath="..\src\engine\system.cc"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -779,6 +851,30 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="login_togateway"
+							>
+							<File
+								RelativePath="..\..\common\include\common\net\packets\login_togateway\askauth.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\include\common\net\packets\login_togateway\config.h"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="gateway_tologin"
+							>
+							<File
+								RelativePath="..\..\common\include\common\net\packets\gateway_tologin\config.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\include\common\net\packets\gateway_tologin\resultauth.h"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 				<Filter
@@ -934,6 +1030,90 @@
 					</File>
 					<File
 						RelativePath="..\..\common\include\common\performance\eyes.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="util"
+					>
+					<File
+						RelativePath="..\..\common\include\common\util\config.h"
+						>
+					</File>
+					<Filter
+						Name="compressor"
+						>
+						<File
+							RelativePath="..\..\common\include\common\util\compressor\config.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\util\compressor\lzoconf.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\util\compressor\lzodefs.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\util\compressor\mini.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\common\include\common\util\compressor\minilzo.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="config"
+				>
+				<File
+					RelativePath="..\include\config\application.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="db"
+				>
+				<File
+					RelativePath="..\include\db\config.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\db\user.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="engine"
+				>
+				<File
+					RelativePath="..\include\engine\config.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\engine\system.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="message"
+				>
+				<File
+					RelativePath="..\include\message\config.h"
+					>
+				</File>
+				<Filter
+					Name="delegator"
+					>
+					<File
+						RelativePath="..\include\message\delegator\account.h"
+						>
+					</File>
+					<File
+						RelativePath="..\include\message\delegator\config.h"
 						>
 					</File>
 				</Filter>

@@ -4,7 +4,6 @@
 
 using namespace ps_common_net::socket;
 using namespace ps_common_net::packets::login_togateway;
-using namespace login_togateway;
 
 AskAuth::AskAuth() {
   __ENTER_FUNCTION
@@ -41,7 +40,7 @@ uint32_t AskAuth::execute(
 }
 
 uint16_t AskAuth::getid() const {
-  return kAskAuth;
+  return ps_common_net::packets::id::login_togateway::kAskAuth;
 }
 
 uint32_t AskAuth::getsize() const {
@@ -81,7 +80,7 @@ ps_common_net::packet::Base *AskAuthFactory::createpacket() {
 }
 
 uint16_t AskAuthFactory::get_packetid() const {
-  return kAskAuth;
+  return ps_common_net::packets::id::login_togateway::kAskAuth;
 }
 
 uint32_t AskAuthFactory::get_packet_maxsize() const {

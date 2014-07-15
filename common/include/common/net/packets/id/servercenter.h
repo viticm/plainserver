@@ -13,6 +13,8 @@
 
 #include "common/net/packets/id/config.h"
 
+NET_PACKETS_ID_NAMESPACE_START
+
 namespace servercenter {
 
 enum packetid_enum {
@@ -42,5 +44,7 @@ enum packetid_enum {
 };
 
 }; //center_toserver
+
+NET_PACKETS_ID_NAMESPACE_END
 
 #endif //PS_COMMON_NET_PACKETS_ID_SERVERCENTER_H_

@@ -13,6 +13,8 @@
 
 #include "common/net/packets/id/config.h"
 
+NET_PACKETS_ID_NAMESPACE_START
+
 namespace gatewaylogin { //登陆服务器与验证服务器公用
 
 typedef enum {
@@ -44,8 +46,9 @@ typedef enum {
   kMax = LOGIN_TOGATEWAY_PACKETID_MAX,
   /*end }*/
 } packetid_enum;
-int a;
 
 }; //namespace login_togateway
+
+NET_PACKETS_ID_NAMESPACE_END
 
 #endif //PS_COMMON_NET_PACKETS_ID_GATEWAYLOGIN_H_

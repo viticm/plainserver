@@ -2,9 +2,10 @@
 
 engine::System *g_engine_system = NULL;
 
-namespace engine {
+template <> 
+engine::System *ps_common_base::Singleton<engine::System>::singleton_ = NULL;
 
-template <> System *ps_common_base::Singleton<System>::singleton_ = NULL;
+namespace engine {
 
 System *System::getsingleton_pointer() {
   return singleton_;

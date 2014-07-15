@@ -13,6 +13,8 @@
 
 #include "common/net/packets/id/config.h"
 
+NET_PACKETS_ID_NAMESPACE_START
+
 namespace logincenter {
 
 enum packetid_enum {
@@ -42,5 +44,7 @@ enum packetid_enum {
 };
 
 }; //namespace center_tologin
+
+NET_PACKETS_ID_NAMESPACE_END
 
 #endif //PS_COMMON_NET_PACKETS_ID_LOGINCENTER_H_

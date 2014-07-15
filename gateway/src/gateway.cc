@@ -59,7 +59,7 @@ int32_t main(int32_t argc, char *argv[]) {
   ENGINE_SYSTEM_POINTER
     ->setconfig(ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, "sword_user");
   ENGINE_SYSTEM_POINTER->setconfig(ENGINE_CONFIG_NET_LISTEN_PORT, 8080);
-  if (!engine_kernel.init()) {
+  if (!ENGINE_SYSTEM_POINTER->init()) {
     return 1;
   }
   //初始化正确后再写入进程ID

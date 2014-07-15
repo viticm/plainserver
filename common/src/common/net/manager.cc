@@ -2,7 +2,6 @@
 #include "common/base/time_manager.h"
 #include "common/base/util.h"
 #include "common/net/packet/factorymanager.h"
-#include "common/net/packets/serverserver/connect.h"
 #include "common/performance/eyes.h"
 #include "common/net/manager.h"
 

@@ -17,6 +17,10 @@ StaticAllocator::~StaticAllocator() {
   //do nothing
 }
 
+void StaticAllocator::clear() {
+  offset_ = 0;
+}
+
 void StaticAllocator::init(char* buffer, size_t size) {
   __ENTER_FUNCTION
     buffer_ = buffer;

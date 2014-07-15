@@ -4,7 +4,6 @@
 
 using namespace ps_common_net::socket;
 using namespace ps_common_net::packets::gateway_tologin;
-using namespace gateway_tologin;
 
 ResultAuth::ResultAuth() {
   __ENTER_FUNCTION
@@ -18,7 +17,7 @@ bool ResultAuth::read(InputStream& inputstream) {
   __ENTER_FUNCTION
     inputstream.read(account_, sizeof(account_));
     inputstream.read(password_, sizeof(password_));
-    inputstream.read(reinterpret_cast<char*>(&result_), sizeof(result_));
+    inputstream.read((char*)&result_, sizeof(result_));
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -28,7 +27,7 @@ bool ResultAuth::write(OutputStream& outputstream) const {
   __ENTER_FUNCTION
     outputstream.write(account_, sizeof(account_));
     outputstream.write(password_, sizeof(password_));
-    outputstream.write(reinterpret_cast<char*>(&result_), sizeof(result_));
+    outputstream.write((char*)&result_, sizeof(result_));
   __LEAVE_FUNCTION
     return false;
 }
@@ -44,7 +43,7 @@ uint32_t ResultAuth::execute(
 }
 
 uint16_t ResultAuth::getid() const {
-  return kResultAuth;
+  return ps_common_net::packets::id::gateway_tologin::kResultAuth;
 }
 
 uint32_t ResultAuth::getsize() const {
@@ -76,7 +75,7 @@ void ResultAuth::setpassword(const char *password) {
   __LEAVE_FUNCTION
 }
 
-void ResultAuth::getresult() const {
+uint8_t ResultAuth::getresult() const {
   return result_;
 }
 
@@ -93,7 +92,7 @@ ps_common_net::packet::Base *ResultAuthFactory::createpacket() {
 }
 
 uint16_t ResultAuthFactory::get_packetid() const {
-  return kResultAuth;
+  return ps_common_net::packets::id::gateway_tologin::kResultAuth;
 }
 
 uint32_t ResultAuthFactory::get_packet_maxsize() const {

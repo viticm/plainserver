@@ -91,6 +91,14 @@ bool System::check_db_connect() {
     return false;
 }
 
+db_query_t *System::get_internal_query() {
+  __ENTER_FUNCTION
+    db_query_t *db_query = &odbc_interface_->get_query();
+    return db_query;
+  __LEAVE_FUNCTION
+    return NULL;
+}
+
 bool System::load() {
   __ENTER_FUNCTION
     if (!is_prepare()) return false;

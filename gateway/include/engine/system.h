@@ -25,8 +25,8 @@ class System : public ps_common_engine::Kernel,
    ~System();
 
  public:
-   static System *getsingletion_pointer();
-   static System &getsingletion(); 
+   static System *getsingleton_pointer();
+   static System &getsingleton(); 
 
  public:
    ps_common_db::Manager *get_dbmanager();
@@ -35,7 +35,7 @@ class System : public ps_common_engine::Kernel,
 
 }; //namespace engine
 
-#define ENGINE_SYSTEM_POINTER engine::System::getsingletion_pointer()
+#define ENGINE_SYSTEM_POINTER engine::System::getsingleton_pointer()
 
 extern engine::System *g_engine_system;
 

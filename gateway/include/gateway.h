@@ -11,6 +11,6 @@
 #ifndef GATEWAY_H_
 #define GATEWAY_H_
 
-#include "config.h"
+#include "config/application.h"
 
 #endif //GATEWAY_H_
