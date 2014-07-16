@@ -564,6 +564,7 @@ class GatewayInfo {
 #ifdef _PS_GATEWAY
    char listenip_[IP_SIZE];
    uint16_t listenport_;
+   uint16_t net_connectionmax_;
    char db_ip_[IP_SIZE];
    uint16_t db_port_; //database port
    char db_connection_ordbname_[DB_CONNECTION_NAME_LENGTH]; //odbc connection name

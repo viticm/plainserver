@@ -1,6 +1,7 @@
 #include "common/base/log.h"
 #include "common/file/ini.h"
 #include "common/application/filedefine.h"
+#include "common/net/connection/config.h"
 #include "common/application/setting.h"
 
 ps_common_application::Setting *g_application_setting;
@@ -443,6 +444,7 @@ GatewayInfo::GatewayInfo() {
 #ifdef _PS_GATEWAY
     memset(listenip_, 0, sizeof(listenip_));
     listenport_ = 0;
+    net_connectionmax_ = NET_CONNECTION_MAX;
 #endif
   __LEAVE_FUNCTION
 }
@@ -598,7 +600,7 @@ void Setting::load_config_info_only() { //this params just read once
       config_info_ini.read_uint16("HumanTimer","MaxCount");
     config_info_.localization.language = 
       config_info_ini.read_uint8("Localization", "Language");
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              CONFIG_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1030,7 +1032,7 @@ void Setting::load_config_info_reload() { //this params can reload again
                                   static_cast<const char*>(key_temp));
     }
     //loop read --
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              CONFIG_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1088,7 +1090,7 @@ void Setting::load_login_info_only() {
       login_info_ini.read_uint32("System", "ReLoginStopTime");
     login_info_.notify_safe_sign = 
       login_info_ini.read_bool("System", "NotifySafeSign");
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              LOGIN_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1098,7 +1100,7 @@ void Setting::load_login_info_only() {
 void Setting::load_login_info_reload() {
 #ifdef _PS_LOGIN
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              LOGIN_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1113,7 +1115,7 @@ void Setting::load_world_info() {
 }
 
 void Setting::load_world_info_only() {
-//#if defined(_PAP_WORLD)
+#ifndef _PS_GATEWAY
   __ENTER_FUNCTION
     ps_common_file::Ini world_info_ini(WORLD_INFO_FILE);
     world_info_.id = world_info_ini.read_int16("System", "ID");
@@ -1134,21 +1136,21 @@ void Setting::load_world_info_only() {
       world_info_ini.read_uint32("System", "FindFriendShareMemoryKey");
     world_info_.enable_share_memory = 
       world_info_ini.read_bool("System", "EnableShareMemory");
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              WORLD_INFO_FILE);
   __LEAVE_FUNCTION
-//#endif
+#endif
 }
 
 void Setting::load_world_info_reload() {
-//#if defined(_PAP_WORLD)
+#ifndef _PS_GATEWAY
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              WORLD_INFO_FILE);
   __LEAVE_FUNCTION
-//#endif
+#endif
 }
 
 void Setting::load_gateway_info() {
@@ -1202,6 +1204,8 @@ void Setting::load_gateway_info_only() {
                                 sizeof(gateway_info_.listenip_) - 1);
     gateway_info_.listenport_ = 
       gateway_info_ini.read_uint16("System", "NetListenPort");
+    gateway_info_.net_connectionmax_ = 
+      gateway_info_ini.read_uint16("System", "NetConnectionMax");
 #endif
     int32_t i;
     for (i = 0; i < gateway_info_.get_number(); ++i) {
@@ -1242,7 +1246,7 @@ void Setting::load_gateway_info_only() {
       }
     }
     gateway_info_.begin_use();
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              GATEWAY_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1251,7 +1255,7 @@ void Setting::load_gateway_info_only() {
 void Setting::load_gateway_info_reload() {
 #if defined(_PS_GATEWAY)
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              GATEWAY_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1315,7 +1319,7 @@ void Setting::load_share_memory_info_only() {
       share_memory_info_ini.read_uint32("System", "HumanDataSaveInterval");
     share_memory_info_.encrypt_dbpassword = 
       share_memory_info_ini.read_bool("System", "EncryptDBPassword");
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              SHARE_MEMORY_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1325,7 +1329,7 @@ void Setting::load_share_memory_info_only() {
 void Setting::load_share_memory_info_reload() {
 #if defined(_PS_SHAREMEMORY)
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              SHARE_MEMORY_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1356,7 +1360,7 @@ void Setting::load_machine_info_only() {
         machine_info_ini.read_int16(static_cast<const char*>(section), 
                                     "MachineID");
     }
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              MACHINE_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1366,7 +1370,7 @@ void Setting::load_machine_info_only() {
 void Setting::load_machine_info_reload() {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              MACHINE_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1433,7 +1437,7 @@ void Setting::load_server_info_only() {
       Assert(-1 == server_info_.hash_server[server_id]);
       server_info_.hash_server[server_id] = static_cast<int16_t>(i);
     }
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              SERVER_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1443,7 +1447,7 @@ void Setting::load_server_info_only() {
 void Setting::load_server_info_reload() {
 #ifdef _PS_SERVER
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              SERVER_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1502,7 +1506,7 @@ void Setting::load_scene_info_only() {
       Assert(-1 == scene_info_.scene_hash[i]);
       scene_info_.scene_hash[scene_id] = static_cast<int16_t>(i);
     }
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s only ... ok!", 
              SCENE_INFO_FILE);
   __LEAVE_FUNCTION
@@ -1512,7 +1516,7 @@ void Setting::load_scene_info_only() {
 void Setting::load_scene_info_reload() {
 #if _PS_SERVER
   __ENTER_FUNCTION
-    SLOW_LOG("config", 
+    SLOW_LOG("setting", 
              "[application] (Setting::load) %s reload ... ok!", 
              SCENE_INFO_FILE);
   __LEAVE_FUNCTION

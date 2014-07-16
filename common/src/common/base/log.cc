@@ -1,4 +1,4 @@
-#include <stdarg.h>
+#include "common/base/util.h"
 #include "common/base/log.h"
 
 ps_common_base::Log* g_log = NULL;
@@ -62,14 +62,11 @@ void Log::get_log_timestr(char* time_str, int32_t length) {
     if (g_time_manager) {
         g_time_manager->reset_time();
         snprintf(time_str, length, 
-                 " (%"PRIu64")(T0=%d-%d-%d_%d:%d:%d T1=%.4f)",
-                 ps_common_sys::get_current_thread_id(), 
-                 g_time_manager->get_year(),
-                 g_time_manager->get_month() + 1,
-                 g_time_manager->get_day(),
+                 "%.2d:%.2d:%.2d (%"PRIu64" %.4f)",
                  g_time_manager->get_hour(),
                  g_time_manager->get_minute(),
                  g_time_manager->get_second(),
+                 ps_common_sys::get_current_thread_id(), 
                  static_cast<float>(g_time_manager->get_run_time())/1000.0);
     }
   __LEAVE_FUNCTION

@@ -69,17 +69,18 @@ class Log : public Singleton<Log> {
    void fast_savelog(logid_t logid, const char* format, ...) {
      __ENTER_FUNCTION
        if (logid < 0 || logid >= kLogFileCount) return;
-       char buffer[2049] = {0};
+       char buffer[4096] = {0};
+       char temp[4096] = {0};
        va_list argptr;
        try {
          va_start(argptr, format);
-         vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+         vsnprintf(temp, sizeof(temp) - 1, format, argptr);
          va_end(argptr);
          if (g_time_manager) {
            char time_str[256] = {0};
            memset(time_str, '\0', sizeof(time_str));
            get_log_timestr(time_str, sizeof(time_str) - 1);
-           strncat(buffer, time_str, strlen(time_str));
+           snprintf(buffer, sizeof(buffer) - 1,"%s %s", time_str, temp);
          }
        }
        catch(...) {
@@ -134,17 +135,18 @@ class Log : public Singleton<Log> {
                             const char* format, ...) {
        __ENTER_FUNCTION
        g_log_lock.lock();
-       char buffer[2049] = {0};
+       char buffer[4096] = {0};
+       char temp[4096] = {0};
        va_list argptr;
        try {
          va_start(argptr, format);
-         vsnprintf(buffer, sizeof(buffer) - 1, format, argptr);
+         vsnprintf(temp, sizeof(temp) - 1, format, argptr);
          va_end(argptr);
          if (g_time_manager) {
            char time_str[256];
            memset(time_str, '\0', sizeof(time_str));
            get_log_timestr(time_str, sizeof(time_str) - 1);
-           strncat(buffer, time_str, strlen(time_str));
+           snprintf(buffer, sizeof(buffer) - 1,"%s %s", time_str, temp);
          }
 
          if (g_command_logprint) {

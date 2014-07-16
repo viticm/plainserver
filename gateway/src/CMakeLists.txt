@@ -28,6 +28,8 @@ INCLUDE_DIRECTORIES("../../common/include",
 ##update_begin
 
 
+
+
 SET (SOURCEFILES_COMMON_BASE_HASHMAP_LIST
 	../../common/src/common/base/hashmap/integer.cc
 )
@@ -150,6 +152,10 @@ SET (SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST
 )
 
 SET (SOURCEFILES_COMMON_UTIL_LIST
+)
+
+SET (SOURCEFILES_COMMON_APPLICATION_LIST
+	../../common/src/common/application/setting.cc
 )
 
 SET (SOURCEFILES_COMMON_LIST
@@ -356,6 +362,18 @@ SET (HEADERFILES_COMMON_UTIL_LIST
 	../../common/include/common/util/config.h
 )
 
+SET (HEADERFILES_COMMON_APPLICATION_DEFINE_LIST
+	../../common/include/common/application/define/all.h
+	../../common/include/common/application/define/config.h
+	../../common/include/common/application/define/macros.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_LIST
+	../../common/include/common/application/config.h
+	../../common/include/common/application/filedefine.h
+	../../common/include/common/application/setting.h
+)
+
 SET (HEADERFILES_COMMON_LIST
 )
 
@@ -415,6 +433,7 @@ if (WIN32)
 	source_group(SourceFiles\\common\\performance FILES ${SOURCEFILES_COMMON_PERFORMANCE_LIST})
 	source_group(SourceFiles\\common\\util\\compressor FILES ${SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST})
 	source_group(SourceFiles\\common\\util FILES ${SOURCEFILES_COMMON_UTIL_LIST})
+	source_group(SourceFiles\\common\\application FILES ${SOURCEFILES_COMMON_APPLICATION_LIST})
 	source_group(SourceFiles\\common FILES ${SOURCEFILES_COMMON_LIST})
 	source_group(SourceFiles\\message\\handler\\serverserver FILES ${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST})
 	source_group(SourceFiles\\message\\handler\\login\\togateway FILES ${SOURCEFILES_MESSAGE_HANDLER_LOGIN_TOGATEWAY_LIST})
@@ -449,6 +468,8 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\performance FILES ${HEADERFILES_COMMON_PERFORMANCE_LIST})
 	source_group(HeaderFiles\\common\\util\\compressor FILES ${HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST})
 	source_group(HeaderFiles\\common\\util FILES ${HEADERFILES_COMMON_UTIL_LIST})
+	source_group(HeaderFiles\\common\\application\\define FILES ${HEADERFILES_COMMON_APPLICATION_DEFINE_LIST})
+	source_group(HeaderFiles\\common\\application FILES ${HEADERFILES_COMMON_APPLICATION_LIST})
 	source_group(HeaderFiles\\common FILES ${HEADERFILES_COMMON_LIST})
 	source_group(HeaderFiles\\config FILES ${HEADERFILES_CONFIG_LIST})
 	source_group(HeaderFiles\\db FILES ${HEADERFILES_DB_LIST})
@@ -484,6 +505,7 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_PERFORMANCE_LIST}
 	${SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST}
 	${SOURCEFILES_COMMON_UTIL_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_LIST}
 	${SOURCEFILES_COMMON_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_LOGIN_TOGATEWAY_LIST}
@@ -518,6 +540,8 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_PERFORMANCE_LIST}
 	${HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST}
 	${HEADERFILES_COMMON_UTIL_LIST}
+	${HEADERFILES_COMMON_APPLICATION_DEFINE_LIST}
+	${HEADERFILES_COMMON_APPLICATION_LIST}
 	${HEADERFILES_COMMON_LIST}
 	${HEADERFILES_CONFIG_LIST}
 	${HEADERFILES_DB_LIST}

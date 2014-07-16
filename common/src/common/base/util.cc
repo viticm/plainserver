@@ -1,3 +1,4 @@
+#include "common/base/string.h"
 #include "common/base/util.h" //无论如何都是用全路径
 
 namespace ps_common_base {
@@ -423,6 +424,33 @@ void disable_windowclose() {
     }
 #endif
   __LEAVE_FUNCTION
+}
+
+bool makedir(const char *path, uint16_t mode) {
+  __ENTER_FUNCTION
+    char _path[FILENAME_MAX] = {0};
+    int32_t i = 0;
+    int32_t result = 0;
+    int32_t length = strlen(path);
+    string::safecopy(_path, path, sizeof(_path));
+    path_tounix(_path, length);
+    if (_path[length - 1] != '/') {
+      _path[length] = '/';
+      _path[length + 1] = '\0';
+    }
+    for (i = 0; i < length; ++i) {
+      if ('/' ==  _path[i]) {
+        _path[i] = '\0';
+        result = access(_path, 0);
+        if (result != 0 && mkdir(_path, 0) != 0) {
+          return false;
+        }
+        _path[i] = '/';
+      }
+    }
+    return true;
+  __LEAVE_FUNCTION
+    return false;
 }
 
 } //namespace util

@@ -50,6 +50,8 @@
 #include <windows.h>
 #include <crtdbg.h>
 #include <tchar.h>
+#include <direct.h>
+#include <io.h>
 #elif __LINUX__
 #include <string.h>
 #include <sys/types.h>
@@ -59,6 +61,7 @@
 #include <exception>
 #include <setjmp.h>
 #include <sys/epoll.h>
+#include <sys/stat.h>
 #endif
 #include "common/sys/assert.h"
 #include "common/base/io.h"
@@ -127,6 +130,11 @@ typedef int16_t connectionid_t;
 #define strtoint64(pointer,endpointer,base) strtoll(pointer,endpointer,base)
 #define strtouint64(pointer,endpointer,base) strtoull(pointer,endpointer,base) 
 #endif
+#endif
+
+#if __WINDOWS__
+#define access _access
+#define mkdir(dir,mode) _mkdir(dir)
 #endif
 
 //根据指针值删除内存

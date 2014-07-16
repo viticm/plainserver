@@ -11,8 +11,8 @@
 #ifndef PS_COMMON_BASE_UTIL_H_
 #define PS_COMMON_BASE_UTIL_H_
 
-#include "common/base/md5.h"
 #include "common/base/config.h"
+#include "common/base/md5.h"
 
 namespace ps_common_base {
 
@@ -51,6 +51,8 @@ void path_tounix(char* buffer, uint16_t length);
 void get_module_filename(char *buffer, size_t size);
 
 void disable_windowclose();
+
+bool makedir(const char *path, uint16_t mode = 755);
 
 } //namespace util
 

@@ -281,6 +281,7 @@ bool Kernel::init_base() {
     if (!LOGSYSTEM_POINTER) g_log = new Log();
     if (!LOGSYSTEM_POINTER) return false;
     LOGSYSTEM_POINTER->init(10 * 1024 * 1024); //10mb cache size for fast log
+    setconfig(ENGINE_CONFIG_BASEMODULE_HAS_INIT, true);
     return true;
   __LEAVE_FUNCTION
     return false;

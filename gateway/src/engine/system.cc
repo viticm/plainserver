@@ -55,7 +55,26 @@ bool System::init() {
         "[engine] (System::init) setting module failed");
       return false;
     }
-    setconfig(ENGINE_CONFIG_BASEMODULE_HAS_INIT, true); //for kernel
+    setconfig(ENGINE_CONFIG_DB_ISACTIVE, true);
+    setconfig(
+        ENGINE_CONFIG_DB_CONNECTION_OR_DBNAME, 
+        APPLICATION_SETTING_POINTER->gateway_info_.db_connection_ordbname_);
+    setconfig(
+        ENGINE_CONFIG_DB_USERNAME,
+        APPLICATION_SETTING_POINTER->gateway_info_.db_user_);
+    setconfig(
+        ENGINE_CONFIG_DB_PASSWORD,
+        APPLICATION_SETTING_POINTER->gateway_info_.db_password_);
+    setconfig(
+        ENGINE_CONFIG_DB_CONNECTOR_TYPE,
+        APPLICATION_SETTING_POINTER->gateway_info_.db_connectortype_);
+    setconfig(ENGINE_CONFIG_NET_ISACTIVE, true);
+    setconfig(ENGINE_CONFIG_NET_LISTEN_IP, 
+              APPLICATION_SETTING_POINTER->gateway_info_.listenip_);
+    setconfig(ENGINE_CONFIG_NET_LISTEN_PORT,
+              APPLICATION_SETTING_POINTER->gateway_info_.listenport_);
+    setconfig(ENGINE_CONFIG_NET_CONNECTION_MAX,
+              APPLICATION_SETTING_POINTER->gateway_info_.net_connectionmax_);
     SLOW_LOG("engine", "[engine] (System::init) setting module success");
     bool result = Kernel::init();
     return result;
