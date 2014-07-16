@@ -58,6 +58,12 @@ class Kernel {
    thread::Script *script_thread_;
 
  protected:
+   //子类重载此方法以实现初始化不同类型的网络连接数据，
+   //引擎默认连接的socket未初始化，只在接受新连接时才初始化，
+   //如需服务器启动就初始化可以重写此方法来实现（启动时就初始化会占用大量内存）。
+   virtual bool init_net_connectionpool_data();
+
+ protected:
    bool init_base();
    bool init_db();
    bool init_net();

@@ -98,6 +98,20 @@ int32_t exec(const char *command, char *result, size_t size) {
     return -1;
 }
 
+bool set_core_rlimit() {
+  __ENTER_FUNCTION
+    bool result = true;
+#if __LINUX__
+    struct rlimit rlimit_core;
+    rlimit_core.rlim_cur = RLIM_INFINITY;
+    rlimit_core.rlim_max = RLIM_INFINITY;
+    result = 0 == setrlimit(RLIMIT_CORE, &rlimit_core) ? true : false;
+#endif
+    return result;
+  __LEAVE_FUNCTION
+    return false;
+}
+
 } //namespace util
 
 } //namespace ps_common_sys

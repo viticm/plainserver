@@ -33,7 +33,7 @@ bool Manager::heartbeat(uint32_t time) {
     return false;
 }
 
-bool Manager::add(Base* connection) {
+bool Manager::add(Base *connection) {
   __ENTER_FUNCTION
     Assert(connection);
     if (ID_INVALID == connection_idset_[count_]) {

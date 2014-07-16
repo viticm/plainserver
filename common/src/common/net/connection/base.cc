@@ -21,34 +21,17 @@ const char* g_kModelName = "server";
 const uint8_t g_kModelSaveLogId = kServerLogFile;
 #endif /* } */
 
-Base::Base(bool flag_isserver) {
+Base::Base() {
   __ENTER_FUNCTION
     id_ = ID_INVALID;
     userid_ = ID_INVALID;
     managerid_ = ID_INVALID;
-    socket_ = new socket::Base();
-    Assert(socket_);
-    if (!flag_isserver) {
-      socket_inputstream_ = new socket::InputStream(socket_);
-      Assert(socket_inputstream_);
-      socket_outputstream_ = new socket::OutputStream(socket_);
-      Assert(socket_outputstream_);
-    }
-    else {
-      socket_inputstream_ = new socket::InputStream(
-          socket_,
-          SOCKETINPUT_BUFFERSIZE_DEFAULT,
-          64 * 1024 * 1024
-          );
-      Assert(socket_inputstream_);
-      socket_outputstream_ = new socket::OutputStream(
-          socket_,
-          SOCKETOUTPUT_BUFFERSIZE_DEFAULT,
-          64 * 1024 * 1024);
-      Assert(socket_outputstream_);
-    }
+    socket_ = NULL;
+    socket_inputstream_ = NULL;
+    socket_outputstream_ = NULL;
     isempty_ = true;
     isdisconnect_ = false;
+    isinit_ = false;
     packetindex_ = 0;
     execute_count_pretick_ = NET_CONNECTION_EXECUTE_COUNT_PRE_TICK_DEFAULT;
     receive_bytes_ = 0;
@@ -62,6 +45,28 @@ Base::~Base() {
     SAFE_DELETE(socket_inputstream_);
     SAFE_DELETE(socket_);
   __LEAVE_FUNCTION
+}
+
+bool Base::init() {
+  __ENTER_FUNCTION
+    if (isinit()) return true; //放置再次初始化，会出错
+    socket_ = new socket::Base();
+    Assert(socket_);
+    socket_inputstream_ = new socket::InputStream(
+        socket_,
+        SOCKETINPUT_BUFFERSIZE_DEFAULT,
+        64 * 1024 * 1024
+        );
+    Assert(socket_inputstream_);
+    socket_outputstream_ = new socket::OutputStream(
+        socket_,
+        SOCKETOUTPUT_BUFFERSIZE_DEFAULT,
+        64 * 1024 * 1024);
+    Assert(socket_outputstream_);
+    isinit_ = true;
+    return true;
+  __LEAVE_FUNCTION
+    return false;
 }
 
 bool Base::processinput() {
@@ -377,6 +382,10 @@ uint32_t Base::get_send_bytes() {
     return result;
   __LEAVE_FUNCTION
     return 0;
+}
+
+bool Base::isinit() const {
+  return isinit_;
 }
 
 } //namespace connection

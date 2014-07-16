@@ -16,7 +16,7 @@
 #include "common/sys/thread.h"
 #include "common/net/connection/pool.h"
 #include "common/net/connection/manager.h"
-#include "common/net/connection/server.h"
+#include "common/net/connection/base.h"
 #include "common/net/socket/server.h"
 
 namespace ps_common_net {
@@ -26,12 +26,6 @@ class Manager : public connection::Manager {
  public:
    Manager();
    ~Manager();
-
-/**
- public:
-   static Manager* getsingleton_pointer();
-   static Manager& getsingleton();
-**/
 
  public:
    bool init(uint16_t connectionmax = NET_CONNECTION_MAX,
@@ -50,18 +44,17 @@ class Manager : public connection::Manager {
 
  public:
    //将connection数据加入系统中
-   bool addconnection(connection::Base* connection);
+   bool addconnection(connection::Base *connection);
    //将拥有fd句柄的玩家(服务器)数据从当前系统中清除
-   bool deleteconnection(connection::Base* connection);
+   bool deleteconnection(connection::Base *connection);
    //出现异常后将connection信息清除，并将系统中的信息也清除 断开玩家(服务器)的连接
-   bool removeconnection(connection::Base* connection);
+   bool removeconnection(connection::Base *connection);
    void removeconnection(int16_t id);
    void remove_allconnection();
-   //获得服务器连接指针
-   connection::Server* get_serverconnection(uint16_t id);
+   //获得连接指针
+   connection::Base *getconnection(uint16_t id);
    //服务器广播
-   void broadcast(packet::Base* packet);
-   bool connectserver(); //just test
+   void broadcast(packet::Base *packet);
 
  public:
    int32_t get_onestep_accept() const;
@@ -70,6 +63,7 @@ class Manager : public connection::Manager {
    uint64_t get_receive_bytes() const;
    uint16_t get_listenport() const;
    uint16_t get_connectionmax() const;
+   connection::Pool *get_connectionpool();
 
  public:
    uint64_t threadid_;
@@ -77,7 +71,7 @@ class Manager : public connection::Manager {
 
  protected:
    //用于侦听的服务器Socket
-   socket::Server* serversocket_;
+   socket::Server *serversocket_;
    //用于侦听的服务器SOCKET句柄值（此数据即serversocket_内拥有的SOCKET句柄值）
    int32_t socketid_;
    //网络相关数据
@@ -100,7 +94,6 @@ class Manager : public connection::Manager {
    uint64_t receive_bytes_; //接收字节数
    int32_t onestep_accept_; //一帧内接受的新连接数量, -1无限制
    connection::Pool connectionpool_;   
-   connection::Server billing_serverconnection_; //for debug
 
 };
 

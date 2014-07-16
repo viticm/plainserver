@@ -1,9 +1,11 @@
 #include "common/base/time_manager.h"
 #include "common/base/log.h"
 #include "common/base/util.h"
+#include "common/net/connection/server.h"
 #include "common/script/lua/system.h"
 #include "common/performance/eyes.h"
 #include "common/sys/process.h"
+#include "common/sys/util.h"
 #include "common/engine/kernel.h"
 
 namespace ps_common_engine {
@@ -57,6 +59,10 @@ Kernel::~Kernel() {
 
 bool Kernel::init() {
   __ENTER_FUNCTION
+    if (!ps_common_sys::util::set_core_rlimit()) {
+      ERRORPRINTF("[engine] (Kernel::init) change core rlimit failed!");
+      return false;
+    }
     //base
     bool hasinit = getconfig_boolvalue(ENGINE_CONFIG_BASEMODULE_HAS_INIT);
     if (!hasinit) DEBUGPRINTF("[engine] (Kernel::init) start base module");
@@ -329,7 +335,6 @@ bool Kernel::init_net() {
     using namespace ps_common_net;
     bool isactive = getconfig_boolvalue(ENGINE_CONFIG_NET_ISACTIVE);
     bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
-
     if (isactive) {
       uint16_t listenport = static_cast<uint16_t>(
           getconfig_int32value(ENGINE_CONFIG_NET_LISTEN_PORT));
@@ -353,6 +358,7 @@ bool Kernel::init_net() {
         if (NULL == net_manager_) return false;
         result = net_manager_->init(connectionmax, listenport, listenip);
       }
+      if (result) result = init_net_connectionpool_data();
       if (result) {
         listenport = is_usethread ? 
                      net_thread_->get_listenport() : 
@@ -511,6 +517,28 @@ void Kernel::stop_performance() {
       performance_thread_->stop();
     }
   __LEAVE_FUNCTION
+}
+
+
+bool Kernel::init_net_connectionpool_data() {
+  __ENTER_FUNCTION
+    using namespace ps_common_net;
+    bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
+    uint16_t connectionmax = static_cast<uint16_t>(
+        getconfig_int32value(ENGINE_CONFIG_NET_CONNECTION_MAX));
+    uint16_t i = 0;
+    for (i = 0; i < connectionmax; ++i) {
+      connection::Server *connection = new connection::Server();
+      Assert(connection);
+      if (is_usethread) {
+        net_thread_->get_connectionpool()->init_data(i, connection);
+      } else {
+        net_manager_->get_connectionpool()->init_data(i, connection);
+      }
+    }
+    return true;
+  __LEAVE_FUNCTION
+    return false;
 }
 
 } //namespace ps_common_engine

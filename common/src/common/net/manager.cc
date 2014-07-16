@@ -9,22 +9,7 @@
 #pragma warning(disable : 4127) //why use it? for FD_* functions
 #endif
 
-//ps_common_net::Manager* g_netmanager = NULL;
-
 namespace ps_common_net {
-
-/**
-template<> Manager* ps_common_base::Singleton<Manager>::singleton_ = NULL;
-
-Manager* Manager::getsingleton_pointer() {
-  return singleton_;
-}
-
-Manager& Manager::getsingleton() {
-  Assert(singleton_);
-  return *singleton_;
-}
-**/
 
 Manager::Manager() {
   __ENTER_FUNCTION
@@ -38,7 +23,6 @@ Manager::Manager() {
     send_bytes_ = 0;
     receive_bytes_ = 0;
     listenport_ = 0;
-    billing_serverconnection_.setid(0);
   __LEAVE_FUNCTION
 }
 
@@ -53,14 +37,10 @@ bool Manager::init(uint16_t connectionmax,
                    const char *listenip) {
   __ENTER_FUNCTION
     /* init packet factory manager { */
-    //DEBUGPRINTF("net 1");
-    //SYS_PROCESS_CURRENT_INFO_PRINT();
     if (!NET_PACKET_FACTORYMANAGER_POINTER)
       g_packetfactory_manager = new packet::FactoryManager();
     Assert(NET_PACKET_FACTORYMANAGER_POINTER);  
     /* } init packet factory manager */
-    //DEBUGPRINTF("net 2");
-    //SYS_PROCESS_CURRENT_INFO_PRINT();
     if (!NET_PACKET_FACTORYMANAGER_POINTER->init()) return false;
     /* server main socket { */
     listenport_ = listenport;
@@ -81,17 +61,11 @@ bool Manager::init(uint16_t connectionmax,
       serverhash_[i] = ID_INVALID;
     }
     /* } server main socket */
-    //DEBUGPRINTF("net 3");
-    //SYS_PROCESS_CURRENT_INFO_PRINT();
-
     /* connection init { */
     connectionmax_ = connectionmax;
     if (!connectionpool_.init(connectionmax_)) return false;
     connection::Manager::init(connectionmax_);
     /* } connection init */
-    //DEBUGPRINTF("net 4");
-    //SYS_PROCESS_CURRENT_INFO_PRINT();
-
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -147,28 +121,25 @@ bool Manager::processinput() {
     uint16_t connectioncount = connection::Manager::getcount();
     for (i = 0; i < connectioncount; ++i) {
       if (ID_INVALID == connection_idset_[i]) continue;
-      connection::Server* serverconnection = NULL;
-      serverconnection = connectionpool_.get(connection_idset_[i]);
-      Assert(serverconnection);
-      int32_t socketid = serverconnection->getsocket()->getid();
+      connection::Base *connection = NULL;
+      connection = connectionpool_.get(connection_idset_[i]);
+      Assert(connection);
+      int32_t socketid = connection->getsocket()->getid();
       if (socketid_ == socketid) continue;
       if (FD_ISSET(socketid, &readfds_[kSelectUse])) { //read information
-        if (serverconnection->getsocket()->iserror()) {
-          removeconnection(serverconnection);
-        }
-        else {
+        if (connection->getsocket()->iserror()) {
+          removeconnection(connection);
+        } else {
           try {
-            if (!serverconnection->processinput()) { 
-              removeconnection(serverconnection);
+            if (!connection->processinput()) { 
+              removeconnection(connection);
+            } else {
+              receive_bytes_ += connection->get_receive_bytes();
             }
-            else {
-              receive_bytes_ += serverconnection->get_receive_bytes();
-            }
+          } catch(...) {
+            removeconnection(connection);
           }
-          catch(...) {
-            removeconnection(serverconnection);
-          }
-        }
+        }//connection->getsocket()->iserror()
       }
     }
     return true;
@@ -184,29 +155,25 @@ bool Manager::processoutput() {
     uint16_t connectioncount = connection::Manager::getcount();
     for (i = 0; i < connectioncount; ++i) {
       if (ID_INVALID == connection_idset_[i]) continue;
-      connection::Server* serverconnection = NULL;
-      serverconnection = connectionpool_.get(connection_idset_[i]);
-      //serverconnection = &billing_serverconnection_;
-      Assert(serverconnection);
-      int32_t socketid = serverconnection->getsocket()->getid();
+      connection::Base* connection = NULL;
+      connection = connectionpool_.get(connection_idset_[i]);
+      Assert(connection);
+      int32_t socketid = connection->getsocket()->getid();
       if (socketid_ == socketid) continue;
       if (FD_ISSET(socketid, &writefds_[kSelectUse])) {
-        if (serverconnection->getsocket()->iserror()) {
-          removeconnection(serverconnection);
-        }
-        else {
+        if (connection->getsocket()->iserror()) {
+          removeconnection(connection);
+        } else {
           try {
-            if (!serverconnection->processoutput()) { 
-              removeconnection(serverconnection);
+            if (!connection->processoutput()) { 
+              removeconnection(connection);
+            } else {
+              send_bytes_ += connection->get_send_bytes();
             }
-            else {
-              send_bytes_ += serverconnection->get_send_bytes();
-            }
+          } catch(...) {
+            removeconnection(connection);
           }
-          catch(...) {
-            removeconnection(serverconnection);
-          }
-        }
+        } //connection->getsocket()->iserror()
       }
     }
     return true;
@@ -219,19 +186,19 @@ bool Manager::processexception() {
     if (SOCKET_INVALID == minfd_ && SOCKET_INVALID == maxfd_)
       return true;
     uint16_t connectioncount = connection::Manager::getcount();
-    connection::Server* serverconnection = NULL;
+    connection::Base* connection = NULL;
     uint16_t i;
     for (i = 0; i < connectioncount; ++i) {
       if (ID_INVALID == connection_idset_[i]) continue;
-      serverconnection = connectionpool_.get(connection_idset_[i]);
-      Assert(serverconnection);
-      int32_t socketid = serverconnection->getsocket()->getid();
+      connection = connectionpool_.get(connection_idset_[i]);
+      Assert(connection);
+      int32_t socketid = connection->getsocket()->getid();
       if (socketid_ == socketid) {
         Assert(false);
         continue;
       }
       if (FD_ISSET(socketid, &exceptfds_[kSelectUse])) {
-        removeconnection(serverconnection);
+        removeconnection(connection);
       }
     }
     return true;
@@ -247,24 +214,21 @@ bool Manager::processcommand() {
     uint16_t connectioncount = connection::Manager::getcount();
     for (i = 0; i < connectioncount; ++i) {
       if (ID_INVALID == connection_idset_[i]) continue;
-      connection::Server* serverconnection = NULL;
-      serverconnection = connectionpool_.get(connection_idset_[i]);
-      //serverconnection = &billing_serverconnection_;
-      Assert(serverconnection);
-      int32_t socketid = serverconnection->getsocket()->getid();
+      connection::Base* connection = NULL;
+      connection = connectionpool_.get(connection_idset_[i]);
+      Assert(connection);
+      int32_t socketid = connection->getsocket()->getid();
       if (socketid_ == socketid) continue;
-      if (serverconnection->getsocket()->iserror()) {
-        removeconnection(serverconnection);
-      }
-      else { //connection is ok
+      if (connection->getsocket()->iserror()) {
+        removeconnection(connection);
+      } else { //connection is ok
         try {
-          if (!serverconnection->processcommand(false)) 
-            removeconnection(serverconnection);
+          if (!connection->processcommand(false)) 
+            removeconnection(connection);
+        } catch(...) {
+          removeconnection(connection);
         }
-        catch(...) {
-          removeconnection(serverconnection);
-        }
-      }
+      } //connection->getsocket()->iserror()
     }
     return true;
   __LEAVE_FUNCTION
@@ -275,7 +239,7 @@ bool Manager::accept_newconnection() {
   __ENTER_FUNCTION
     uint32_t step = 0;
     bool result = false;
-    connection::Server* newconnection = NULL;
+    connection::Base* newconnection = NULL;
     newconnection = connectionpool_.create();
     if (NULL == newconnection) return false;
     step = 5;
@@ -289,8 +253,7 @@ bool Manager::accept_newconnection() {
         step = 15;
         goto EXCEPTION;
       }
-    }
-    catch(...) {
+    } catch(...) {
       step += 1000;
       goto EXCEPTION;
     }
@@ -321,7 +284,6 @@ bool Manager::accept_newconnection() {
       }
       step = 70;
       newconnection->init();
-      newconnection->setstatus(kConnectionStatusCenterConnect);
       step = 80;
       try {
         result = addconnection(newconnection);
@@ -380,16 +342,12 @@ void Manager::loop() {
       try {
         result = select();
         Assert(result);
-        //ERRORPRINTF("select");
         result = processexception();
         Assert(result);
-        //ERRORPRINTF("processexception");
         result = processinput();
         Assert(result);
-        //ERRORPRINTF("processinput");
         result = processoutput();
         Assert(result); 
-        //ERRORPRINTF("processoutput");
         if (PERFORMANCE_EYES_POINTER) { //网络性能监视
           uint16_t connectioncount = connection::Manager::getcount();
           PERFORMANCE_EYES_POINTER->set_onlinecount(connectioncount);
@@ -455,10 +413,7 @@ bool Manager::addconnection(connection::Base* connection) {
 
 bool Manager::deleteconnection(connection::Base* connection) {
   __ENTER_FUNCTION
-    connection::Server* serverconnection = NULL;
-    serverconnection = //class pointer transform use dynamic_cast will be safe
-      dynamic_cast<connection::Server*>(connection);
-    int32_t socketid = serverconnection->getsocket()->getid();
+    int32_t socketid = connection->getsocket()->getid();
     uint16_t i;
     Assert(minfd_ != SOCKET_INVALID && maxfd_ != SOCKET_INVALID);   
     if (socketid == minfd_) { //the first connection
@@ -466,35 +421,32 @@ bool Manager::deleteconnection(connection::Base* connection) {
       uint16_t connectioncount = connection::Manager::getcount();
       for (i = 0; i < connectioncount; ++i) {
         if (ID_INVALID == connection_idset_[i]) continue;
-        serverconnection = connectionpool_.get(connection_idset_[i]);
-        Assert(serverconnection);
-        if (NULL == serverconnection) continue;
-        int32_t _socketid = serverconnection->getsocket()->getid();
+        connection = connectionpool_.get(connection_idset_[i]);
+        Assert(connection);
+        if (NULL == connection) continue;
+        int32_t _socketid = connection->getsocket()->getid();
         if (socketid == _socketid || SOCKET_INVALID == _socketid) continue;
         if (socketid_max < _socketid) socketid_max = _socketid;
         if (minfd_ == maxfd_) {
           minfd_ = maxfd_ = SOCKET_INVALID;
-        }
-        else {
+        } else {
           minfd_ = socketid_max > socketid_ ? minfd_ : socketid_max;
         }
       }
-    }
-    else if (socketid == maxfd_) { //
+    } else if (socketid == maxfd_) { //
       int32_t socketid_min = minfd_;
       uint16_t connectioncount = connection::Manager::getcount();
       for (i = 0; i < connectioncount; ++i) {
         if (ID_INVALID == connection_idset_[i]) continue;
-        serverconnection = connectionpool_.get(connection_idset_[i]);
-        Assert(serverconnection);
-        if (NULL == serverconnection) continue;
-        int32_t _socketid = serverconnection->getsocket()->getid();
+        connection = connectionpool_.get(connection_idset_[i]);
+        Assert(connection);
+        if (NULL == connection) continue;
+        int32_t _socketid = connection->getsocket()->getid();
         if (socketid == _socketid || SOCKET_INVALID == _socketid) continue;
         if (socketid_min > _socketid) socketid_min = _socketid;
         if (minfd_ == maxfd_) {
           minfd_ = maxfd_ = SOCKET_INVALID;
-        }
-        else {
+        } else {
           maxfd_ = socketid_min < socketid_ ? maxfd_ : socketid_min;
         }
       }
@@ -507,7 +459,7 @@ bool Manager::deleteconnection(connection::Base* connection) {
     FD_CLR(static_cast<uint32_t>(socketid), &exceptfds_[kSelectUse]);
     --fdsize_;
     Assert(fdsize_ >= 0);
-    removeconnection(serverconnection->getid());
+    removeconnection(connection->getid());
     return true;
   __LEAVE_FUNCTION
     return false;
@@ -517,13 +469,8 @@ bool Manager::removeconnection(connection::Base* connection) {
   __ENTER_FUNCTION
     //first clean in connection manager
     Assert(deleteconnection(connection));
-    connection::Server* serverconnection = NULL;
-    serverconnection = dynamic_cast<connection::Server*>(connection);
-    Assert(serverconnection != NULL);
-    //second clean in connection pool, free to new connection
-    serverconnection->freeown();
+    Assert(connection != NULL);
     //服务器的连接，都不主动关闭
-    //serverconnection->disconnect(); 
     FAST_LOG(kNetLogFile, 
              "[net] (Manager::removeconnection) id: %d", 
              connection->getid());
@@ -576,14 +523,14 @@ void Manager::remove_allconnection() {
   __LEAVE_FUNCTION
 }
 
-connection::Server* Manager::get_serverconnection(uint16_t id) {
+connection::Base *Manager::getconnection(uint16_t id) {
   __ENTER_FUNCTION 
     Assert(id >= 0 && id < NET_OVER_SERVER_MAX);
     int16_t connectionid = serverhash_[id];
-    connection::Server* serverconnection = NULL;
-    serverconnection = connectionpool_.get(connectionid);
-    Assert(serverconnection);
-    return serverconnection;
+    connection::Base *connection = NULL;
+    connection = connectionpool_.get(connectionid);
+    Assert(connection);
+    return connection;
   __LEAVE_FUNCTION
     return NULL;
 }
@@ -605,87 +552,6 @@ void Manager::broadcast(packet::Base* packet) {
   __LEAVE_FUNCTION
 }
 
-bool Manager::connectserver() {
-  //uint8_t step = 0;
-  __ENTER_FUNCTION
-    /**
-    bool result = false;
-    packets::serverserver::Connect* connectpacket = NULL;
-    pap_common_net::socket::Base* billingsocket = NULL;
-	  const char *kServerIp = "127.0.0.1";
-	  const uint16_t kServerPort = 12680;
-    billingsocket = billing_serverconnection_.getsocket();
-    try {
-      result = billingsocket->create();
-      if (!result) {
-        step = 1;
-        Assert(false);
-      }
-      result = billingsocket->connect(
-          kServerIp,
-		  kServerPort);
-      if (!result) {
-        step = 2;
-        printf("exception 2");
-        goto EXCEPTION;
-        Assert(false);
-      }
-      result = billingsocket->set_nonblocking();
-      if (!result) {
-        step = 3;
-        printf("exception 3");
-        Assert(false);
-      }
-
-      result = billingsocket->setlinger(0);
-      if (!result) {
-        step = 4;
-        printf("exception 4");
-        Assert(false);
-      }
-      g_log->fast_save_log(kBillingLogFile,
-                           "Manager::connectserver()"
-                           " ip:%s, port: %d, success",
-						   kServerIp,
-						   kServerPort);
-    }
-    catch(...) {
-      step = 5;
-      Assert(false);
-    }
-    result = addconnection(
-        (pap_server_common_net::connection::Base*)&billing_serverconnection_);
-    if (!result) {
-      step = 6;
-      Assert(false);
-    }
-    connectpacket = new pap_server_common_net::packets::serverserver::Connect();
-    connectpacket->set_serverid(9999);
-    connectpacket->set_worldid(0);
-    connectpacket->set_zoneid(0);
-    result = billing_serverconnection_.sendpacket(connectpacket);
-    SAFE_DELETE(connectpacket);
-    if (!result) {
-      step = 7;
-      Assert(false);
-    }
-    g_log->fast_save_log(kBillingLogFile, 
-                         "Manager::connectserver() is success!");
-    return true;
-EXCEPTION:
-    g_log->fast_save_log(
-        kBillingLogFile, 
-        "Manager::connectserver() have error, ip: %s, port: %d, step: %d",
-		kServerIp,
-		kServerPort,
-        step);
-    billing_serverconnection_.cleanup();
-    **/
-    return false;
-  __LEAVE_FUNCTION
-    return false;
-}
-
 int32_t Manager::get_onestep_accept() const {
   return onestep_accept_;
 }
@@ -700,6 +566,10 @@ uint64_t Manager::get_send_bytes() const {
    
 uint64_t Manager::get_receive_bytes() const {
   return receive_bytes_;
+}
+
+connection::Pool *Manager::get_connectionpool() {
+  return &connectionpool_;
 }
 
 } //namespace ps_common_net

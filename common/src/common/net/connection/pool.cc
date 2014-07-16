@@ -1,7 +1,5 @@
 #include "common/net/connection/pool.h"
 
-//ps_common_net::connection::Pool* g_connectionpool = NULL;
-
 namespace ps_common_net {
 
 namespace connection {
@@ -15,6 +13,10 @@ Pool::Pool() {
 
 Pool::~Pool() {
   __ENTER_FUNCTION
+    uint16_t i = 0;
+    for (i = 0; i < maxcount_; ++i) {
+      SAFE_DELETE(connections_[i]);
+    }
     SAFE_DELETE_ARRAY(connections_);
   __LEAVE_FUNCTION
 }
@@ -22,12 +24,11 @@ Pool::~Pool() {
 bool Pool::init(uint32_t maxcount) {
   __ENTER_FUNCTION
     maxcount_ = maxcount;
-    connections_ = new Server[maxcount_];
+    connections_ = new Base * [maxcount_];
     Assert(connections_);
     uint16_t i;
     for(i = 0; i < maxcount_; ++i) {
-      connections_[i].setid(i);
-      connections_[i].setempty(true);
+      connections_[i] = NULL;
     }
     position_ = 0;
     count_ = maxcount_;
@@ -36,29 +37,41 @@ bool Pool::init(uint32_t maxcount) {
     return false;
 }
 
-Server* Pool::get(int16_t id) {
+
+bool Pool::init_data(uint16_t index, Base *connection) {
   __ENTER_FUNCTION
-    Server* connection = NULL;
+    Assert(connection);
+    Assert(index >= 0 && index < maxcount_);
+    connections_[index] = connection;
+    connections_[index]->setid(index);
+    connections_[index]->setempty(true);
+  __LEAVE_FUNCTION
+    return false;
+}
+
+Base *Pool::get(int16_t id) {
+  __ENTER_FUNCTION
+    Base *connection = NULL;
     if (static_cast<uint32_t>(id) > maxcount_) return NULL;
-    connection = &(connections_[id]);
+    connection = connections_[id];
     return connection;
   __LEAVE_FUNCTION
     return NULL;
 }
 
-Server* Pool::create() {
+Base *Pool::create() {
   __ENTER_FUNCTION
-    Server* connection = NULL;
+    Base *connection = NULL;
     lock();
     uint16_t result = 0, i;
     for (i = 0; i < maxcount_; i++) {
-      if (connections_[position_].isempty()) { //找出空闲位置
+      if (connections_[position_]->isempty()) { //找出空闲位置
         result = static_cast<uint16_t>(position_);
-        connections_[position_].setempty(false);
+        connections_[position_]->setempty(false);
         ++position_;
         if (position_ >= maxcount_) position_ = 0;
         --count_;
-        connection = &(connections_[result]);
+        connection = connections_[result];
         break;
       }
       ++position_;
@@ -79,7 +92,7 @@ void Pool::remove(int16_t id) {
       unlock();
       return;
     }
-    connections_[id].setempty(true);
+    connections_[id]->setempty(true);
     ++count_;
     unlock();
   __LEAVE_FUNCTION

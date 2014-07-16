@@ -16,7 +16,7 @@
 #define SOCKETINPUT_BUFFERSIZE_DEFAULT (64*1024) //default size
 #define SOCKETINPUT_DISCONNECT_MAXSIZE (96*1024) //if buffer more than it,
                                                  //will disconnect this socket.
-#define SOCKETOUTPUT_BUFFERSIZE_DEFAULT (8192)   //default size
+#define SOCKETOUTPUT_BUFFERSIZE_DEFAULT (8*1024)   //default size
 #define SOCKETOUTPUT_DISCONNECT_MAXSIZE (100*1024)//if buffer more than it,
                                                   //will disconnect this socket.
 #ifndef SOCKET_ERROR

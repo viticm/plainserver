@@ -22,7 +22,7 @@ namespace connection {
 class Server : public Base {
 
  public:
-   Server(bool isserver = true);
+   Server();
    ~Server();
 
  public:

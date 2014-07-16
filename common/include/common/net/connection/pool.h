@@ -13,7 +13,7 @@
 
 #include "common/net/connection/config.h"
 #include "common/sys/thread.h"
-#include "common/net/connection/server.h"
+#include "common/net/connection/base.h"
 
 namespace ps_common_net {
 
@@ -27,15 +27,16 @@ class Pool {
 
  public:
    bool init(uint32_t maxcount = NET_CONNECTION_POOL_SIZE_DEFAULT);
-   Server* get(int16_t id);
-   Server* create(); //new
+   Base *get(int16_t id);
+   Base *create(); //new
+   bool init_data(uint16_t index, Base* connection);
    void remove(int16_t id); //delete
    void lock();
    void unlock();
    uint32_t get_maxcount() const { return maxcount_; }   
 
  private:
-   Server* connections_; //注意，这是一个指向Server对象的数组指针
+   Base **connections_; //注意，这是一个指向Server对象的数组指针
    uint32_t position_;
    ps_common_sys::ThreadLock lock_;
    uint32_t count_;

@@ -62,6 +62,7 @@
 #include <setjmp.h>
 #include <sys/epoll.h>
 #include <sys/stat.h>
+#include <sys/resource.h>
 #endif
 #include "common/sys/assert.h"
 #include "common/base/io.h"

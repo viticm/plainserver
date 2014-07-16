@@ -4,7 +4,7 @@ namespace ps_common_net {
 
 namespace connection {
 
-Server::Server(bool isserver) : Base(isserver) {
+Server::Server() {
   status_ = 0;
 }
 
@@ -16,7 +16,8 @@ bool Server::init() {
   __ENTER_FUNCTION
     Base::setdisconnect(false);
     Base::resetkick();
-    return true;
+    bool result = Base::init();
+    return result;
   __LEAVE_FUNCTION
     return false;
 }

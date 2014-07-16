@@ -44,8 +44,11 @@ extern const uint8_t g_kModelSaveLogId;
 class Base {
 
  public:
-   Base(bool flag_isserver = false);
+   Base();
    ~Base();
+
+ public:
+   bool init(); //初始化，主要是socket
 
  public:
    virtual bool processinput();
@@ -85,6 +88,7 @@ class Base {
    virtual void resetkick();
    uint8_t get_execute_count_pretick() const;
    void set_execute_count_pretick(uint8_t count);
+   bool isinit() const;
 
  public:
    uint32_t get_receive_bytes(); //获取流中接收的字节数，获取一次则重新计数
@@ -103,6 +107,7 @@ class Base {
  private:
    bool isempty_;
    bool isdisconnect_;
+   bool isinit_;
    uint32_t receive_bytes_;
    uint32_t send_bytes_;
 
