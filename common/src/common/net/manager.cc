@@ -56,10 +56,6 @@ bool Manager::init(uint16_t connectionmax,
     timeout_[kSelectFull].tv_sec = 0;
     timeout_[kSelectFull].tv_usec = 0;
     threadid_ = ps_common_sys::get_current_thread_id();
-    uint16_t i;
-    for (i = 0; i < NET_OVER_SERVER_MAX; ++i) {
-      serverhash_[i] = ID_INVALID;
-    }
     /* } server main socket */
     /* connection init { */
     connectionmax_ = connectionmax;
@@ -526,9 +522,8 @@ void Manager::remove_allconnection() {
 connection::Base *Manager::getconnection(uint16_t id) {
   __ENTER_FUNCTION 
     Assert(id >= 0 && id < NET_OVER_SERVER_MAX);
-    int16_t connectionid = serverhash_[id];
     connection::Base *connection = NULL;
-    connection = connectionpool_.get(connectionid);
+    connection = connectionpool_.get(id);
     Assert(connection);
     return connection;
   __LEAVE_FUNCTION

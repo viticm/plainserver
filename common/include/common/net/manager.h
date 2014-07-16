@@ -67,7 +67,6 @@ class Manager : public connection::Manager {
 
  public:
    uint64_t threadid_;
-   int16_t serverhash_[NET_OVER_SERVER_MAX]; //服务器连接ID池
 
  protected:
    //用于侦听的服务器Socket
