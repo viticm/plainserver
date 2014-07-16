@@ -1,4 +1,5 @@
 #include "common/base/log.h"
+#include "common/base/string.h"
 #include "common/file/ini.h"
 #include "common/application/filedefine.h"
 #include "common/net/connection/config.h"
@@ -1198,6 +1199,14 @@ void Setting::load_gateway_info_only() {
       gateway_info_ini.read_int8("System", "DBConnectorType"));
     gateway_info_.encrypt_dbpassword_ = 
       gateway_info_ini.read_bool("System", "EncryptDBPassword");
+    if (gateway_info_.encrypt_dbpassword_) {
+      char temp[DB_PASSWORD_LENGTH] = {0};
+      ps_common_base::string::safecopy(temp, gateway_info_.db_password_, sizeof(temp));
+      memset(gateway_info_.db_password_, 0, sizeof(gateway_info_.db_password_));
+      ps_common_base::string::decrypt(temp, 
+                                      gateway_info_.db_password_, 
+                                      sizeof(gateway_info_.db_password_) - 1);
+    }
     gateway_info_ini.readstring("System",
                                 "NetListenIP",
                                 gateway_info_.listenip_,

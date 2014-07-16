@@ -22,8 +22,8 @@ user_t get_fullinfo(const char *name) {
       kDBLocked,
       kDBVipLevel,
     };
-    const char *kSqlStr = "SELECT `id`, `name`, `truename`, `birthday`,"
-                          " `password2`, `money`, `today_logintims`, `locked`,"
+    const char *kSqlStr = "SELECT `id`, `name`, `password`, `truename`, `birthday`,"
+                          " `password2`, `money`, `today_logintimes`, `locked`,"
                           " `viplevel` FROM "DB_TABLE_USER""
                           " WHERE `name` = '%s'";
     ENGINE_SYSTEM_POINTER

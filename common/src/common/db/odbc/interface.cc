@@ -764,6 +764,7 @@ void Interface::save_error_log(const char *log) {
       fwrite(LF, 1, strlen(LF), fp);
       fclose(fp);
     }
+    ERRORPRINTF(log);
   __LEAVE_FUNCTION
 }
 
@@ -783,6 +784,7 @@ void Interface::save_warning_log(const char *log) {
       fwrite(LF, 1, strlen(LF), fp);
       fclose(fp);
     }
+    WARNINGPRINTF(log);
   __LEAVE_FUNCTION
 }
 

@@ -79,8 +79,16 @@ bool System::check_db_connect() {
     if (!odbc_interface_->is_connected()) {
       int i;
       for (i = 0; i < 5; ++i) {
+        SLOW_WARNINGLOG("odbc", 
+                        "[db.odbc] the connection lost, try connect after 5 seconds!"
+                        " connection name: %s.",
+                        odbc_interface_->connection_name_);
         ps_common_base::util::sleep(5000);
         if (odbc_interface_->connect()) {
+          SLOW_DEBUGLOG("odbc", 
+                        "[db.odbc] the connection reconnect successful!"
+                        " connection name: %s.",
+                        odbc_interface_->connection_name_);
           return true;
         }
       }
