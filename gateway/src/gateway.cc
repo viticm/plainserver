@@ -3,7 +3,6 @@
 #include "common/base/util.h"
 #include "common/sys/process.h"
 #include "engine/system.h"
-#include "db/user.h"
 #include "gateway.h"
 
 #define PROCESS_ID_FILE "gateway.pid"
@@ -61,7 +60,6 @@ int32_t main(int32_t argc, char *argv[]) {
   if (!ENGINE_SYSTEM_POINTER->init()) {
     return 1;
   }
-  //db::user_t userinfo = db::user::get_fullinfo("admin");
   //初始化正确后再写入进程ID
   if (!ps_common_sys::process::writeid(PROCESS_ID_FILE)) {
     ERRORPRINTF("[gateway] process id file: %s write error", PROCESS_ID_FILE);

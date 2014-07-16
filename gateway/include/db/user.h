@@ -17,7 +17,7 @@ namespace db {
 
 namespace user {
 
-user_t get_fullinfo(const char *name);
+void get_fullinfo(const char *name, user_t& info);
 
 }; //namespace user
 
