@@ -37,8 +37,8 @@ class Select : public Base {
    bool processoutput(); //数据发送接口
    bool processexception(); //异常连接处理
    bool processcommand(); //消息执行
-   virtual bool heartbeat();
    bool set_poll_maxcount(uint16_t maxcount);
+   virtual bool heartbeat();
 
  public:
    //增加连接socket

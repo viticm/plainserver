@@ -143,7 +143,7 @@ bool Base::erase(connection::Base* connection) {
     removesocket(connection->getsocket()->getid());
     Assert(connection != NULL);
     FAST_LOG(kNetLogFile, 
-             "[net] (Manager::removeconnection) id: %d", 
+             "[net.connection.manager] (Base::removeconnection) id: %d", 
              connection->getid());
     return true;
   __LEAVE_FUNCTION
@@ -193,8 +193,8 @@ bool Base::accept() {
     newconnection = pool_.create();
     if (NULL == newconnection) return false;
     step = 5;
-    newconnection->cleanup();
     newconnection->init();
+    newconnection->cleanup();
     int32_t socketid = SOCKET_INVALID;
     step = 10;
     try {
@@ -208,7 +208,6 @@ bool Base::accept() {
       step += 1000;
       goto EXCEPTION;
     }
-
     try {
       step = 30;
       socketid = newconnection->getsocket()->getid();

@@ -6,6 +6,7 @@ ADD_DEFINITIONS(-D_PS_NET_GATEWAY)
 IF(CMAKE_SYSTEM MATCHES Linux)
   ADD_DEFINITIONS(-D_REENTRANT)
   ADD_DEFINITIONS(-DDONT_TD_VOID)
+  ADD_DEFINITIONS(-D_PS_NET_EPOLL)
 ELSE(CMAKE_SYSTEM MATCHES Linux)
 ENDIF(CMAKE_SYSTEM MATCHES Linux)
 
@@ -79,9 +80,15 @@ SET (SOURCEFILES_COMMON_NET_SOCKET_LIST
 	../../common/src/common/net/socket/stream.cc
 )
 
+SET (SOURCEFILES_COMMON_NET_CONNECTION_MANAGER_LIST
+	../../common/src/common/net/connection/manager/base.cc
+	../../common/src/common/net/connection/manager/epoll.cc
+	../../common/src/common/net/connection/manager/iocp.cc
+	../../common/src/common/net/connection/manager/select.cc
+)
+
 SET (SOURCEFILES_COMMON_NET_CONNECTION_LIST
 	../../common/src/common/net/connection/base.cc
-	../../common/src/common/net/connection/manager.cc
 	../../common/src/common/net/connection/pool.cc
 	../../common/src/common/net/connection/server.cc
 )
@@ -252,10 +259,17 @@ SET (HEADERFILES_COMMON_NET_PACKET_LIST
 	../../common/include/common/net/packet/factorymanager.h
 )
 
+SET (HEADERFILES_COMMON_NET_CONNECTION_MANAGER_LIST
+	../../common/include/common/net/connection/manager/base.h
+	../../common/include/common/net/connection/manager/config.h
+	../../common/include/common/net/connection/manager/epoll.h
+	../../common/include/common/net/connection/manager/iocp.h
+	../../common/include/common/net/connection/manager/select.h
+)
+
 SET (HEADERFILES_COMMON_NET_CONNECTION_LIST
 	../../common/include/common/net/connection/base.h
 	../../common/include/common/net/connection/config.h
-	../../common/include/common/net/connection/manager.h
 	../../common/include/common/net/connection/pool.h
 	../../common/include/common/net/connection/server.h
 )
@@ -417,6 +431,7 @@ if (WIN32)
 	source_group(SourceFiles\\common\\file FILES ${SOURCEFILES_COMMON_FILE_LIST})
 	source_group(SourceFiles\\common\\net\\packet FILES ${SOURCEFILES_COMMON_NET_PACKET_LIST})
 	source_group(SourceFiles\\common\\net\\socket FILES ${SOURCEFILES_COMMON_NET_SOCKET_LIST})
+	source_group(SourceFiles\\common\\net\\connection\\manager FILES ${SOURCEFILES_COMMON_NET_CONNECTION_MANAGER_LIST})
 	source_group(SourceFiles\\common\\net\\connection FILES ${SOURCEFILES_COMMON_NET_CONNECTION_LIST})
 	source_group(SourceFiles\\common\\net\\packets\\serverver FILES ${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST})
 	source_group(SourceFiles\\common\\net\\packets\\login\\togateway FILES ${SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST})
@@ -451,6 +466,7 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\file FILES ${HEADERFILES_COMMON_FILE_LIST})
 	source_group(HeaderFiles\\common\\net\\socket FILES ${HEADERFILES_COMMON_NET_SOCKET_LIST})
 	source_group(HeaderFiles\\common\\net\\packet FILES ${HEADERFILES_COMMON_NET_PACKET_LIST})
+	source_group(HeaderFiles\\common\\net\\connection\\manager FILES ${HEADERFILES_COMMON_NET_CONNECTION_MANAGER_LIST})
 	source_group(HeaderFiles\\common\\net\\connection FILES ${HEADERFILES_COMMON_NET_CONNECTION_LIST})
 	source_group(HeaderFiles\\common\\net\\packets\\id FILES ${HEADERFILES_COMMON_NET_PACKETS_ID_LIST})
 	source_group(HeaderFiles\\common\\net\\packets\\serverserver FILES ${HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST})
@@ -489,6 +505,7 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_FILE_LIST}
 	${SOURCEFILES_COMMON_NET_PACKET_LIST}
 	${SOURCEFILES_COMMON_NET_SOCKET_LIST}
+	${SOURCEFILES_COMMON_NET_CONNECTION_MANAGER_LIST}
 	${SOURCEFILES_COMMON_NET_CONNECTION_LIST}
 	${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST}
 	${SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST}
@@ -523,6 +540,7 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_FILE_LIST}
 	${HEADERFILES_COMMON_NET_SOCKET_LIST}
 	${HEADERFILES_COMMON_NET_PACKET_LIST}
+	${HEADERFILES_COMMON_NET_CONNECTION_MANAGER_LIST}
 	${HEADERFILES_COMMON_NET_CONNECTION_LIST}
 	${HEADERFILES_COMMON_NET_PACKETS_ID_LIST}
 	${HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST}

@@ -31,7 +31,7 @@ bool Epoll::init(uint16_t connectionmax,
   __ENTER_FUNCTION
     if (!Base::init(connectionmax, listenport, listenip)) return false;
     if (is_servermode_) {
-      poll_add(polldata_, socketid_, EPOLL_CTL_ADD, ID_INVALID);
+      poll_add(polldata_, socketid_, EPOLLIN, ID_INVALID);
     }
     return true;
   __LEAVE_FUNCTION

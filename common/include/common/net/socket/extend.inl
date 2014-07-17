@@ -12,6 +12,7 @@
 #define PS_COMMON_NET_SOCKET_EXTEND_INL_
 
 #include "common/file/api.h"
+#include "common/base/util.h"
 #if __LINUX__
 #include <sys/epoll.h>
 #include <poll.h>
@@ -53,7 +54,8 @@ inline int32_t poll_add(polldata_t& polldata,
   struct epoll_event _epoll_event;
   memset(&_epoll_event, 0, sizeof(_epoll_event));
   _epoll_event.events = mask;
-  _epoll_event.data.u64 = fd;
+  _epoll_event.data.u64 = ps_common_base::util::touint64(
+      static_cast<uint32_t>(fd), static_cast<uint32_t>(connectionid));
   int32_t result = epoll_ctl(polldata.fd, EPOLL_CTL_ADD, fd, &_epoll_event);
   return result;
 }

@@ -335,9 +335,9 @@ bool Base::isvalid() {
 
 void Base::cleanup() {
   __ENTER_FUNCTION
-    socket_->close();
-    socket_inputstream_->cleanup();
-    socket_outputstream_->cleanup();
+    if (socket_) socket_->close();
+    if (socket_inputstream_) socket_inputstream_->cleanup();
+    if (socket_outputstream_) socket_outputstream_->cleanup();
     set_managerid(ID_INVALID);
     set_userid(ID_INVALID);
     packetindex_ = 0;
