@@ -358,7 +358,7 @@ bool Kernel::init_net() {
         if (NULL == net_manager_) return false;
         result = net_manager_->init(connectionmax, listenport, listenip);
       }
-      if (result) result = init_net_connectionpool_data();
+      if (result) result = init_net_connectionpool();
       if (result) {
         listenport = is_usethread ? 
                      net_thread_->get_listenport() : 

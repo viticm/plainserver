@@ -11,9 +11,9 @@
 #ifndef PS_COMMON_NET_CONNECTION_MANAGER_EPOLL_H_
 #define PS_COMMON_NET_CONNECTION_MANAGER_EPOLL_H_
 
+#if __LINUX__ && defined(_PS_NET_EPOLL)
+#include "common/net/connection/manager/config.h"
 #include "common/net/connection/manager/base.h"
-
-#if __LINUX__ && defined(_NET_EPOLL)
 #include "common/net/socket/extend.inl"
 
 namespace ps_common_net {

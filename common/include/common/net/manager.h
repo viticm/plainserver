@@ -15,9 +15,9 @@
 #include "common/base/singleton.h"
 #include "common/sys/thread.h"
 #include "common/net/connection/pool.h"
-#if __LINUX__ && defined(_NET_EPOLL) /* { */
+#if __LINUX__ && defined(_PS_NET_EPOLL) /* { */
 #include "common/net/connection/manager/epoll.h"
-#elif __WINDOWS__ && defined(_NET_IOCP) /* }{ */
+#elif __WINDOWS__ && defined(_PS_NET_IOCP) /* }{ */
 #include "common/net/connection/manager/iocp.h"
 #else /* }{ */
 #include "common/net/connection/manager/select.h"
@@ -27,9 +27,9 @@
 
 namespace ps_common_net {
 
-#if __LINUX__ && defined(_NET_EPOLL) /* { */
+#if __LINUX__ && defined(_PS_NET_EPOLL) /* { */
 class Manager : public connection::manager::Epoll {
-#elif __WINDOWS__ && defined(_NET_IOCP) /* }{ */
+#elif __WINDOWS__ && defined(_PS_NET_IOCP) /* }{ */
 class Manager : public connection::manager::Iocp {
 #else /* }{ */
 class Manager : public connection::manager::Select {

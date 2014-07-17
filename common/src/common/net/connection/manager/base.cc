@@ -64,7 +64,7 @@ bool Base::init_pool(uint16_t connectionmax) {
     return false;
 }
 
-void init_pool(connection::Pool pool) {
+void Base::init_pool(connection::Pool pool) {
   pool_ = pool;
 }
 
@@ -194,6 +194,7 @@ bool Base::accept() {
     if (NULL == newconnection) return false;
     step = 5;
     newconnection->cleanup();
+    newconnection->init();
     int32_t socketid = SOCKET_INVALID;
     step = 10;
     try {
@@ -233,8 +234,6 @@ bool Base::accept() {
         goto EXCEPTION;
       }
       step = 70;
-      newconnection->init();
-      step = 80;
       try {
         result = add(newconnection);
         if (!result) {
@@ -302,6 +301,10 @@ uint64_t Base::get_receive_bytes() const {
 
 connection::Pool *Base::getpool() {
   return &pool_;
+}
+
+uint16_t Base::get_listenport() const {
+  return listenport_;
 }
 
 connection::Base *Base::get(uint16_t id) {

@@ -2,7 +2,8 @@
 #include "common/base/util.h"
 #include "common/net/connection/manager/select.h"
 
-#if !(__LINUX__ && defined(_NET_EPOLL)) && !(__WINDOWS__ && defined(_NET_IOCP))
+#if !(__LINUX__ && defined(_PS_NET_EPOLL)) && \
+  !(__WINDOWS__ && defined(_PS_NET_IOCP))
 
 #if __WINDOWS__
 #pragma warning(disable : 4127) //why use it? for FD_* functions
@@ -206,6 +207,7 @@ bool Select::processcommand() {
 
 bool Select::addsocket(int32_t socketid, int16_t connectionid) {
   __ENTER_FUNCTION
+    USE_PARAM(connectionid);
     if (fdsize_ > FD_SETSIZE) {
       Assert(false);
       return false;
@@ -278,6 +280,14 @@ bool Select::removesocket(int32_t socketid) {
 bool Select::set_poll_maxcount(uint16_t maxcount) {
   USE_PARAM(maxcount);
   return true;
+}
+
+bool Select::heartbeat() {
+  __ENTER_FUNCTION
+    bool result = Base::heartbeat();
+    return result;
+  __LEAVE_FUNCTION
+    return false;
 }
 
 } //namespace manager

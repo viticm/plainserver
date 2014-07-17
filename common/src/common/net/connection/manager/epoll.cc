@@ -2,7 +2,7 @@
 #include "common/base/util.h"
 #include "common/net/connection/manager/epoll.h"
 
-#if __LINUX__ && defined(_NET_EPOLL)
+#if __LINUX__ && defined(_PS_NET_EPOLL)
 
 namespace ps_common_net {
 
@@ -227,6 +227,14 @@ bool Epoll::processcommand() {
       } //connection->getsocket()->iserror()
     }
     return true;
+  __LEAVE_FUNCTION
+    return false;
+}
+
+bool Epoll::heartbeat() {
+  __ENTER_FUNCTION
+    bool result = Base::heartbeat();
+    return result;
   __LEAVE_FUNCTION
     return false;
 }

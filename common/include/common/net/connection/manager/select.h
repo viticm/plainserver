@@ -11,9 +11,11 @@
 #ifndef PS_COMMON_NET_CONNECTION_MANAGER_SELECT_H_
 #define PS_COMMON_NET_CONNECTION_MANAGER_SELECT_H_
 
+#if !(__LINUX__ && defined(_PS_NET_EPOLL)) && \
+  !(__WINDOWS__ && defined(_PS_NET_IOCP))
+#include "common/net/connection/manager/config.h"
 #include "common/net/connection/manager/base.h"
 
-#if !(__LINUX__ && defined(_NET_EPOLL)) && !(__WINDOWS__ && defined(_NET_IOCP))
 namespace ps_common_net {
 
 namespace connection {

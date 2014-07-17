@@ -433,7 +433,7 @@ bool makedir(const char *path, uint16_t mode) {
     int32_t result = 0;
     int32_t length = strlen(path);
     string::safecopy(_path, path, sizeof(_path));
-    path_tounix(_path, length);
+    path_tounix(_path, static_cast<uint16_t>(length));
     if (_path[length - 1] != '/') {
       _path[length] = '/';
       _path[length + 1] = '\0';
@@ -442,7 +442,7 @@ bool makedir(const char *path, uint16_t mode) {
       if ('/' ==  _path[i]) {
         _path[i] = '\0';
         result = access(_path, 0);
-        if (result != 0 && mkdir(_path, 0) != 0) {
+        if (result != 0 && mkdir(_path, mode) != 0) {
           return false;
         }
         _path[i] = '/';

@@ -11,6 +11,7 @@
 #ifndef PS_COMMON_NET_CONNECTION_MANAGER_BASE_H_
 #define PS_COMMON_NET_CONNECTION_MANAGER_BASE_H_
 
+#include "common/net/connection/manager/config.h"
 #include "common/net/socket/base.h"
 #include "common/net/socket/server.h"
 #include "common/net/packet/base.h"

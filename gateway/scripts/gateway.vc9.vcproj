@@ -362,10 +362,6 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\common\src\common\net\connection\manager.cc"
-							>
-						</File>
-						<File
 							RelativePath="..\..\common\src\common\net\connection\pool.cc"
 							>
 						</File>
@@ -373,6 +369,26 @@
 							RelativePath="..\..\common\src\common\net\connection\server.cc"
 							>
 						</File>
+						<Filter
+							Name="manager"
+							>
+							<File
+								RelativePath="..\..\common\src\common\net\connection\manager\base.cc"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\src\common\net\connection\manager\epoll.cc"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\src\common\net\connection\manager\iocp.cc"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\src\common\net\connection\manager\select.cc"
+								>
+							</File>
+						</Filter>
 					</Filter>
 					<Filter
 						Name="packets"
@@ -792,10 +808,6 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\common\include\common\net\connection\manager.h"
-							>
-						</File>
-						<File
 							RelativePath="..\..\common\include\common\net\connection\pool.h"
 							>
 						</File>
@@ -803,6 +815,30 @@
 							RelativePath="..\..\common\include\common\net\connection\server.h"
 							>
 						</File>
+						<Filter
+							Name="manager"
+							>
+							<File
+								RelativePath="..\..\common\include\common\net\connection\manager\base.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\include\common\net\connection\manager\config.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\include\common\net\connection\manager\epoll.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\include\common\net\connection\manager\iocp.h"
+								>
+							</File>
+							<File
+								RelativePath="..\..\common\include\common\net\connection\manager\select.h"
+								>
+							</File>
+						</Filter>
 					</Filter>
 					<Filter
 						Name="packets"
