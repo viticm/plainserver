@@ -28,7 +28,19 @@ namespace connection {
 class Base;
 class Server;
 class Pool;
-class Manager;
+
+namespace manager {
+class Base;
+#if __LINUX__ && defined(_NET_EPOLL) /* { */
+class Epoll;
+#elif __WINDOWS__ && defined(_NET_IOCP) /* }{ */
+class Iocp;
+#else /* }{ */
+class Select;
+#endif /* } */
+
+}; //namespace manager
+
 }; //namespace connection
 
 namespace socket {

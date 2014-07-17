@@ -74,6 +74,4 @@ class Base {
 
 }; //namespace ps_common_net
 
-#include "common/net/socket/extend.inl"
-
 #endif //PS_COMMON_NET_SOCKET_BASE_H_

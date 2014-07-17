@@ -453,6 +453,25 @@ bool makedir(const char *path, uint16_t mode) {
     return false;
 }
 
+uint64_t touint64(uint32_t high, uint32_t low) {
+  __ENTER_FUNCTION
+    uint64_t value = high;
+    value = (value << 32) | low;
+    return value;
+  __LEAVE_FUNCTION
+    return 0;
+}
+
+uint32_t get_highsection(uint64_t value) {
+  uint32_t result = static_cast<uint32_t>((value >> 32) & 0xFFFFFFFF);
+  return result;
+}
+
+uint32_t get_lowsection(uint64_t value) {
+  uint32_t result = static_cast<uint32_t>(value & 0xFFFFFFFF);
+  return result;
+}
+
 } //namespace util
 
 } //namespace ps_common_base

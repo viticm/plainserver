@@ -520,20 +520,25 @@ void Kernel::stop_performance() {
 }
 
 
-bool Kernel::init_net_connectionpool_data() {
+bool Kernel::init_net_connectionpool() {
   __ENTER_FUNCTION
     using namespace ps_common_net;
     bool is_usethread = getconfig_boolvalue(ENGINE_CONFIG_NET_RUN_ASTHREAD);
     uint16_t connectionmax = static_cast<uint16_t>(
         getconfig_int32value(ENGINE_CONFIG_NET_CONNECTION_MAX));
+    if (is_usethread) {
+      net_thread_->getpool()->init(connectionmax);
+    } else {
+      net_manager_->getpool()->init(connectionmax);
+    }
     uint16_t i = 0;
     for (i = 0; i < connectionmax; ++i) {
       connection::Server *connection = new connection::Server();
       Assert(connection);
       if (is_usethread) {
-        net_thread_->get_connectionpool()->init_data(i, connection);
+        net_thread_->getpool()->init_data(i, connection);
       } else {
-        net_manager_->get_connectionpool()->init_data(i, connection);
+        net_manager_->getpool()->init_data(i, connection);
       }
     }
     return true;

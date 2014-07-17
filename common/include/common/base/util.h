@@ -54,6 +54,12 @@ void disable_windowclose();
 
 bool makedir(const char *path, uint16_t mode = 755);
 
+uint64_t touint64(uint32_t high, uint32_t low);
+
+uint32_t get_highsection(uint64_t value);
+
+uint32_t get_lowsection(uint64_t value);
+
 } //namespace util
 
 } //namespace ps_common_base

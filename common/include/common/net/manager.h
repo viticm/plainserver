@@ -15,89 +15,45 @@
 #include "common/base/singleton.h"
 #include "common/sys/thread.h"
 #include "common/net/connection/pool.h"
-#include "common/net/connection/manager.h"
+#if __LINUX__ && defined(_NET_EPOLL) /* { */
+#include "common/net/connection/manager/epoll.h"
+#elif __WINDOWS__ && defined(_NET_IOCP) /* }{ */
+#include "common/net/connection/manager/iocp.h"
+#else /* }{ */
+#include "common/net/connection/manager/select.h"
+#endif /* } */
 #include "common/net/connection/base.h"
 #include "common/net/socket/server.h"
 
 namespace ps_common_net {
 
-class Manager : public connection::Manager {
+#if __LINUX__ && defined(_NET_EPOLL) /* { */
+class Manager : public connection::manager::Epoll {
+#elif __WINDOWS__ && defined(_NET_IOCP) /* }{ */
+class Manager : public connection::manager::Iocp {
+#else /* }{ */
+class Manager : public connection::manager::Select {
+#endif /* } */
 
  public:
    Manager();
    ~Manager();
 
  public:
-   bool init(uint16_t connectionmax = NET_CONNECTION_MAX,
-             uint16_t listenport = 0,
-             const char *listenip = NULL);
-   bool select(); //网络侦测
-   bool processinput(); //数据接收接口
-   bool processoutput(); //数据发送接口
-   bool processexception(); //异常连接处理
-   bool processcommand(); //消息执行
-   bool accept_newconnection(); //新连接接收处理
    virtual bool heartbeat();
    void loop();
    bool isactive();
    void setactive(bool active);
 
  public:
-   //将connection数据加入系统中
-   bool addconnection(connection::Base *connection);
-   //将拥有fd句柄的玩家(服务器)数据从当前系统中清除
-   bool deleteconnection(connection::Base *connection);
-   //出现异常后将connection信息清除，并将系统中的信息也清除 断开玩家(服务器)的连接
-   bool removeconnection(connection::Base *connection);
-   void removeconnection(int16_t id);
-   void remove_allconnection();
-   //获得连接指针
-   connection::Base *getconnection(uint16_t id);
    //服务器广播
    void broadcast(packet::Base *packet);
 
- public:
-   int32_t get_onestep_accept() const;
-   void set_onestep_accept(int32_t count);
-   uint64_t get_send_bytes() const;
-   uint64_t get_receive_bytes() const;
-   uint16_t get_listenport() const;
-   uint16_t get_connectionmax() const;
-   connection::Pool *get_connectionpool();
-
- public:
-   uint64_t threadid_;
-
  protected:
-   //用于侦听的服务器Socket
-   socket::Server *serversocket_;
-   //用于侦听的服务器SOCKET句柄值（此数据即serversocket_内拥有的SOCKET句柄值）
-   int32_t socketid_;
-   //网络相关数据
-   enum {
-     kSelectFull = 0, //当前系统中拥有的完整句柄数据
-     kSelectUse, //用于select调用的句柄数据
-     kSelectMax,
-   };
-   fd_set readfds_[kSelectMax];
-   fd_set writefds_[kSelectMax];
-   fd_set exceptfds_[kSelectMax];
-   timeval timeout_[kSelectMax];
-   uint16_t listenport_;
-   uint16_t connectionmax_;
-   int32_t maxfd_;
-   int32_t minfd_;
-   int32_t fdsize_;
    bool active_;
-   uint64_t send_bytes_; //发送字节数
-   uint64_t receive_bytes_; //接收字节数
-   int32_t onestep_accept_; //一帧内接受的新连接数量, -1无限制
-   connection::Pool connectionpool_;   
 
 };
 
 }; //namespace ps_common_net
-
-//extern ps_common_net::Manager* g_netmanager;
 
 #endif //PS_COMMON_NET_MANAGER_H_
