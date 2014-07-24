@@ -12,7 +12,7 @@
 #define MESSAGE_DELEGATOR_ACCOUNT_H_
 
 #include "message/delegator/config.h"
-#include "common/net/packets/login_togateway/askauth.h"
+#include "common/application/net/packet/login_togateway/askauth.h"
 
 namespace message {
 
@@ -20,7 +20,7 @@ namespace delegator {
 
 namespace account {
 
-void auth(ps_common_net::packets::login_togateway::AskAuth *message,
+void auth(ps_common_application::net::packet::login_togateway::AskAuth *message,
           ps_common_net::connection::Base* connection);
 
 }; //namespace account

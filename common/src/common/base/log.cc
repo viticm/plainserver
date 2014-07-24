@@ -1,5 +1,4 @@
 #include "common/base/util.h"
-#include "common/application/extend/log.h"
 #include "common/base/log.h"
 
 ps_common_base::Log* g_log = NULL;
@@ -154,7 +153,7 @@ bool Log::init(int32_t cache_size) {
     return false;
 }
 
-void Log::get_log_filename(logid_t logid, char *save) {
+void Log::get_log_filename(uint8_t logid, char *save) {
   __ENTER_FUNCTION
     const char *filename = logid > kLogFileCount ? 
                            g_extend_log_filename[logid - kLogFileCount] : 
@@ -194,16 +193,15 @@ void Log::get_log_filename(const char* file_nameprefix, char* file_name) {
     else {
       snprintf(file_name,
                FILENAME_MAX - 1,
-               "%s/%s_%d.log",
+               "%s/%s.log",
                kBaseLogSaveDir,
-               file_nameprefix,
-               999999);
+               file_nameprefix);
     }
    
   __LEAVE_FUNCTION
 }
 
-void Log::flush_log(logid_t logid) {
+void Log::flush_log(uint8_t logid) {
   __ENTER_FUNCTION
     char log_file_name[FILENAME_MAX];
     memset(log_file_name, '\0', sizeof(log_file_name));
@@ -228,7 +226,7 @@ void Log::flush_alllog() {
   __ENTER_FUNCTION
     int32_t i;
     for (i = 0; i < kLogFileCount; ++i) {
-      logid_t logid = static_cast<logid_t>(i);
+      uint8_t logid = static_cast<uint8_t>(i);
       flush_log(logid);
     }
   __LEAVE_FUNCTION

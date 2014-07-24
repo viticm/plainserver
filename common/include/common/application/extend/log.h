@@ -1,7 +1,7 @@
 /**
  * PLAIN SERVER Engine ( https://github.com/viticm/plainserver )
  * $Id log.h
- * @link https://github.com/viticm/plianserver for the canonical source repository
+ * @link https://github.com/viticm/plainserver for the canonical source repository
  * @copyright Copyright (c) 2014- viticm( viticm.ti@gmail.com )
  * @license
  * @user viticm<viticm.ti@gmail.com>
@@ -17,14 +17,14 @@
 #include "common/application/extend/config.h"
 #include "common/base/log.h"
 
-typedef enum {
+enum {
   kLoginLogFile = kLogFileCount,
   kShareMemoryLogFile,
   kGatewayLogFile,
   kCenterLogFile,
   kServerLogFile,
   kFinalLogFileCount,
-} extend_logid_t; //扩展的日志记录ID，从基础的kLogFileCount开始扩展
+}; //扩展的日志记录ID，从基础的kLogFileCount开始扩展
 
 namespace ps_common_base {
 extern const char *g_extend_log_filename[];

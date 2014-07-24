@@ -1,7 +1,7 @@
 #include "common/base/log.h"
-#include "common/net/packets/serverserver/connect.h"
+#include "common/application/net/packet/serverserver/connect.h"
 
-using namespace ps_common_net::packets::serverserver;
+using namespace ps_common_application::net::packet::serverserver;
 uint32_t ConnectHandler::execute(Connect* packet, 
                                  ps_common_net::connection::Base* connection) {
   __ENTER_FUNCTION

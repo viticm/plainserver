@@ -13,16 +13,9 @@
 
 #include "common/base/config.h"
 #include "common/sys/thread.h"
+#include "common/application/extend/log.h"
 #include "common/base/singleton.h"
 #include "common/base/time_manager.h"
-
-typedef enum {
-  kDebugLogFile = 0,
-  kErrorLogFile = 1,
-  kNetLogFile = 2,
-  kFunctionLogFile = 3,
-  kLogFileCount,
-} logid_t;
 
 namespace ps_common_base {
 
@@ -48,9 +41,9 @@ class Log : public Singleton<Log> {
  public:
    static void disk_log(const char* file_name_prefix, const char* format, ...);
    bool init(int32_t cache_size = kDefaultLogCacheSize);
-   void flush_log(logid_t logid);
-   int32_t get_logsize(logid_t logid);
-   void get_log_filename(logid_t logid, char* filename);
+   void flush_log(uint8_t logid);
+   int32_t get_logsize(uint8_t logid);
+   void get_log_filename(uint8_t logid, char* filename);
    static void get_log_filename(const char* filename_prefix, char* filename);
    void flush_alllog();
    static void get_serial(char* serial, int16_t worldid, int16_t serverid);
@@ -60,7 +53,7 @@ class Log : public Singleton<Log> {
  public:
    //模板函数 type 0 普通日志 1 警告日志 2 错误日志 3 调试日志 9 只写日志
    template <uint8_t type>
-   void fast_savelog(logid_t logid, const char* format, ...) {
+   void fast_savelog(uint8_t logid, const char* format, ...) {
      __ENTER_FUNCTION
        if (logid < 0 || logid >= kLogFileCount) return;
        char buffer[4096] = {0};

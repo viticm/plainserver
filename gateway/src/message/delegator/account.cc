@@ -1,12 +1,14 @@
-#include "common/net/packets/gateway_tologin/resultauth.h"
+#include "common/application/net/packet/gateway_tologin/resultauth.h"
 #include "common/base/log.h"
 #include "db/user.h"
 #include "message/delegator/account.h"
 
 using namespace message::delegator;
+using namespace ps_common_net;
+using namespace ps_common_application::net::packet;
 
-void account::auth(ps_common_net::packets::login_togateway::AskAuth *message,
-                   ps_common_net::connection::Base *connection) {
+void account::auth(login_togateway::AskAuth *message,
+                   connection::Base *connection) {
   __ENTER_FUNCTION
     db::user_t userinfo;
     db::user::get_fullinfo(message->getaccount(), userinfo);
@@ -14,7 +16,7 @@ void account::auth(ps_common_net::packets::login_togateway::AskAuth *message,
     if (strcmp(userinfo.name, message->getpassword())) {
       result = 0;
     }
-    ps_common_net::packets::gateway_tologin::ResultAuth resultmessage;
+    gateway_tologin::ResultAuth resultmessage;
     resultmessage.setresult(result);
     resultmessage.setaccount(message->getaccount());
     resultmessage.setpassword(message->getpassword());

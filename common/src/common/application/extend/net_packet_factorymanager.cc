@@ -57,7 +57,7 @@ void FactoryManager::extend_forconstruct() {
   __LEAVE_FUNCTION
 }
 
-bool FactoryManager::extend_for_packetid_isvalid() const {
+bool FactoryManager::extend_for_packetid_isvalid(uint16_t id) {
   __ENTER_FUNCTION
     bool result = true;
     using namespace ps_common_application::define::net::packet::id;
@@ -109,6 +109,14 @@ bool FactoryManager::extend_for_packetid_isvalid() const {
 void FactoryManager::extend_forinit() {
   __ENTER_FUNCTION
     using namespace ps_common_application::net::packet;
+
+#if defined(_PS_NET_GATEWAY) || \
+  defined(_PS_NET_LOGIN) || \
+  defined(_PS_NET_CENTER) || \
+  defined(_PS_NET_SERVER)
+  addfactory(new serverserver::ConnectFactory());
+#endif
+
 #if defined(_PS_NET_GATEWAY) || defined(_PS_NET_LOGIN) /* { */
     addfactory(new gateway_tologin::ResultAuthFactory());
     addfactory(new login_togateway::AskAuthFactory());

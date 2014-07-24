@@ -1,7 +1,7 @@
 #include "message/delegator/account.h"
-#include "common/net/packets/login_togateway/askauth.h"
+#include "common/application/net/packet/login_togateway/askauth.h"
 
-using namespace ps_common_net::packets::login_togateway;
+using namespace ps_common_application::net::packet::login_togateway;
 
 uint32_t AskAuthHandler::execute(AskAuth *packet, 
                                  ps_common_net::connection::Base *connection) {

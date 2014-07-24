@@ -23,11 +23,9 @@ FactoryManager& FactoryManager::getsingleton() {
 
 FactoryManager::FactoryManager() {
   __ENTER_FUNCTION
-    using namespace ps_common_net::packets::id;
     factories_ = NULL;
     factorycount_ = 0;
     size_ = 0;
-    addfactories_for_clientserver();
     Assert(size_ > 0);
     factories_ = new Factory * [size_];
     Assert(factories_);
@@ -147,17 +145,10 @@ void FactoryManager::addfactory(Factory* factory) {
   __LEAVE_FUNCTION
 }
 
-void FactoryManager::addfactories_for_serverserver() {
-  __ENTER_FUNCTION
-    using namespace ps_common_net::packets;
-    addfactory(new serverserver::ConnectFactory());
-  __LEAVE_FUNCTION
-}
-
-bool FactoryManager::isvalid_packetid(uint16_t id) const {
+bool FactoryManager::isvalid_packetid(uint16_t id) {
   bool result = false;
   __ENTER_FUNCTION
-    result = extend_for_packetid_isvalid();
+    result = extend_for_packetid_isvalid(id);
     return result;
   __LEAVE_FUNCTION
     return result;

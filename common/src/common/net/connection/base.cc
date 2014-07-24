@@ -5,7 +5,7 @@
 #include "common/net/connection/base.h"
 
 #define NET_MODULENAME \
-  strlen(APPLICATION_NAME) > 0 "net_"APPLICATION_NAME : APPLICATION_NAME
+  strlen(APPLICATION_NAME) > 0 ? "net_"APPLICATION_NAME : "net"
 
 namespace ps_common_net {
 

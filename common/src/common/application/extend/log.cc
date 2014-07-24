@@ -9,6 +9,6 @@ const char *g_extend_log_filename[] = {
   "./log/center", //kCenterLogFile
   "./log/server", //kServerLogFile
   '\0',
-}
+};
 
 } //namespace ps_common_base

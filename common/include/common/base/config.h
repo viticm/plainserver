@@ -15,6 +15,14 @@
 #include "common/base/type.h"
 /* } base type */
 
+enum {
+  kDebugLogFile = 0,
+  kErrorLogFile = 1,
+  kNetLogFile = 2,
+  kFunctionLogFile = 3,
+  kLogFileCount,
+};
+
 #define PASSWORD_ENCRYPT_KEY "123456" //密码加密串，真实加密串是取其MD5值
 #define DATE_LENGTH_MAX 20
 

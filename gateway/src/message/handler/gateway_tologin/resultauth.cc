@@ -1,7 +1,7 @@
 #include "message/delegator/account.h"
-#include "common/net/packets/gateway_tologin/resultauth.h"
+#include "common/application/net/packet/gateway_tologin/resultauth.h"
 
-using namespace ps_common_net::packets::gateway_tologin;
+using namespace ps_common_application::net::packet::gateway_tologin;
 
 uint32_t ResultAuthHandler::execute(ResultAuth *packet, 
                                     ps_common_net::connection::Base *connection) {
