@@ -13,5 +13,6 @@
 
 #include "common/application/define/config.h"
 #include "common/application/define/macros.h"
+#include "common/application/define/net/packet/id/all.h"
 
 #endif //PS_COMMON_APPLICATION_DEFINE_ALL_H_

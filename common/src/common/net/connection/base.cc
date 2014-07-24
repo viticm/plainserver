@@ -1,25 +1,15 @@
 #include "common/base/log.h"
 #include "common/base/time_manager.h"
 #include "common/net/packet/factorymanager.h"
+#include "common/application/extend/define.h"
 #include "common/net/connection/base.h"
+
+#define NET_MODULENAME \
+  strlen(APPLICATION_NAME) > 0 "net_"APPLICATION_NAME : APPLICATION_NAME
 
 namespace ps_common_net {
 
 namespace connection {
-
-#if defined(_PS_GATEWAY) /* { */
-const char* g_kModelName = "gateway";    
-const uint8_t g_kModelSaveLogId = kGatewayLogFile;
-#elif defined(_PS_LOGIN) /* }{ */
-const char* g_kModelName = "login";
-const uint8_t g_kModelSaveLogId = kLoginLogFile;
-#elif defined(_PS_CENTER) /* }{ */
-const char* g_kModelName = "center";
-const uint8_t g_kModelSaveLogId = kCenterLogFile;
-#elif defined(_PS_SERVER) /* }{ */
-const char* g_kModelName = "server";
-const uint8_t g_kModelSaveLogId = kServerLogFile;
-#endif /* } */
 
 Base::Base() {
   __ENTER_FUNCTION
@@ -82,7 +72,7 @@ bool Base::processinput() {
         socket_inputstream_->getsocket()->getlast_errormessage(
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
-        SLOW_ERRORLOG(g_kModelName,
+        SLOW_ERRORLOG(NET_MODULENAME,
                       "[net.connection] (connection::Base::processinput)"
                       " socket_inputstream_->fill() result: %d %s",
                       fillresult,
@@ -115,7 +105,7 @@ bool Base::processoutput() {
         socket_inputstream_->getsocket()->getlast_errormessage(
             errormessage, 
             static_cast<uint16_t>(sizeof(errormessage) - 1));
-        SLOW_ERRORLOG(g_kModelName,
+        SLOW_ERRORLOG(NET_MODULENAME,
                       "[net.connection] (Base::processoutput)"
                       " socket_outputstream_->flush() result: %d %s",
                       flushresult,
@@ -258,7 +248,7 @@ bool Base::sendpacket(packet::Base* packet) {
 #if defined(_PS_SERVER)
       uint32_t after_writesize = socket_outputstream_->reallength();
       if (packet->getsize() != after_writesize - before_writesize - 6) {
-        FAST_ERRORLOG(g_kModelSaveLogId,
+        FAST_ERRORLOG(APPLICATION_LOGFILE,
                       "[net.connection] (Base::sendpacket) size error"
                       "id = %d(write: %d, should: %d)",
                       pakcet->getid(),

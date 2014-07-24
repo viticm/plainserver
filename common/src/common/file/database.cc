@@ -31,8 +31,9 @@ bool Database::open_from_txt(const char* filename) {
     fseek(fp, 0, SEEK_SET);
     //read in memory
     char* memory = new char[filesize + 1];
+    memset(memory, 0, filesize + 1); //use memset to memory pointer
     fread(memory, 1, filesize, fp);
-    memory[filesize + 1] = '\0';
+    //memory[filesize + 1] = '\0'; //remember this error, can't change memory like this
     bool result = open_from_memory(memory, memory + filesize + 1, filename);
     SAFE_DELETE_ARRAY(memory); memory = 0;
     return result;
@@ -44,13 +45,14 @@ bool Database::open_from_memory(const char* memory,
                                 const char* end, 
                                 const char* filename) {
   __ENTER_FUNCTION
+    bool result = true;
     if (end - memory >= static_cast<int32_t>(sizeof(file_head_t)) && 
         *((uint32_t*)memory) == 0XDDBBCC0) {
-      return open_from_memory_binary(memory, end, filename);
+      result = open_from_memory_binary(memory, end, filename);
+    } else {
+      result = open_from_memory_text(memory, end, filename);
     }
-    else {
-      return open_from_memory_text(memory, end, filename);
-    }
+    return result;
   __LEAVE_FUNCTION
     return false;
 }
@@ -78,7 +80,7 @@ const Database::field_data* Database::search_position(int32_t line,
                line,
                column,
                position);
-#if defined(_PAP_CLIENT)
+#ifdef _PS_THROW_EXCEPTION_AS_STD_STRING
       throw std::string(temp);
 #else
       AssertEx(false, temp);
@@ -103,11 +105,9 @@ const Database::field_data* Database::search_first_column_equal(
       bool result;
       if (kTypeInt == type) {
         result = field_equal(kTypeInt, _field_data, value);
-      }
-      else if (kTypeFloat == type) {
+      } else if (kTypeFloat == type) {
         result = field_equal(kTypeInt, _field_data, value);
-      }
-      else {
+      } else {
         result = field_equal(kTypeInt, _field_data, value);
       }
       if (result) {
@@ -157,7 +157,7 @@ void Database::create_index(int32_t column, const char* filename) {
                  filename, 
                  i + 1, 
                  _field_data->int_value);
-#if defined(_PAP_CLINET)
+#ifdef _PS_THROW_EXCEPTION_AS_STD_STRING
         throw std::string(temp);
 #else
         AssertEx(false, temp);
@@ -181,8 +181,7 @@ int32_t Database::convert_string_tovector(const char* source,
     std::string::size_type right;
     if (one_key) {
       right = str.find_first_of(key);
-    }
-    else {
+    } else {
       right = str.find(key);
     }
 
@@ -198,8 +197,7 @@ int32_t Database::convert_string_tovector(const char* source,
         std::string temp = str.substr(left);
         right = temp.find_first_of(key);
         if (right != std::string::npos) right += left;
-      }
-      else {
+      } else {
         right = str.find(key, left);
       }
       if (std::string::npos == right) right = str.length();
@@ -240,15 +238,12 @@ bool Database::field_equal(field_type_enum type,
     bool result = false;
     if (kTypeInt == type) {
       result = a.int_value == b.int_value;
-    }
-    else if (kTypeFloat == type) {
+    } else if (kTypeFloat == type) {
       result = a.float_value == b.float_value;
-    }
-    else {
+    } else {
       try {
         result = 0 == strcmp(a.string_value, b.string_value);
-      }
-      catch(...) {
+      } catch(...) {
         //do nothing
       }
     }
@@ -277,14 +272,11 @@ bool Database::open_from_memory_text(const char* memory,
     for (i = 0; i < static_cast<int32_t>(result_size); ++i) {
       if ("INT" == result[i]) {
         _field_type[i] = kTypeInt;
-      }
-      else if("FLOAT" == result[i]) {
+      } else if("FLOAT" == result[i]) {
         _field_type[i] = kTypeFloat;
-      }
-      else if("STRING" == result[i]) {
+      } else if("STRING" == result[i]) {
         _field_type[i] = kTypeString;
-      }
-      else {
+      } else {
         return false;
       }
     }
@@ -298,6 +290,7 @@ bool Database::open_from_memory_text(const char* memory,
     int32_t string_buffer_size = 0;
     bool loop = true;
     do {
+      //以行读取数据
       _memory = get_line_from_memory(line, sizeof(line) - 1, _memory, end);
       if (!_memory) break;
       if ('#' == line[0]) continue; //注释行
@@ -356,8 +349,7 @@ bool Database::open_from_memory_text(const char* memory,
               _field_data.int_value = string_buffer_size + 1;
               string_buffer_size += 
                 static_cast<int32_t>(strlen(result[i].c_str())) + 1;
-            }
-            else {
+            } else {
               _field_data.int_value = string_buffer[it->second].second + 1;
             }
             data_buffer_.push_back(_field_data);

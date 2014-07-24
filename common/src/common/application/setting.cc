@@ -1,7 +1,7 @@
 #include "common/base/log.h"
 #include "common/base/string.h"
 #include "common/file/ini.h"
-#include "common/application/filedefine.h"
+#include "common/application//define/file.h"
 #include "common/net/connection/config.h"
 #include "common/application/setting.h"
 

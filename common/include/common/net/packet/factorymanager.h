@@ -44,7 +44,7 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
    void removepacket(Base* packet);
    void lock();
    void unlock();
-   static bool isvalid_packetid(uint16_t id); //packetid is valid
+   static bool isvalid_packetid(uint16_t id) const; //packetid is valid
 
  private:
    Factory** factories_;
@@ -55,12 +55,9 @@ class FactoryManager : public ps_common_base::Singleton<FactoryManager> {
 
  private:
    void addfactory(Factory* factory);
-   void addfactories_for_gatewaylogin();
-   void addfactories_for_serverserver();
-   void addfactories_for_clientlogin();
-   void addfactories_for_logincenter();
-   void addfactories_for_servercenter();
-   void addfactories_for_clientserver();
+   void extend_forconstruct(); //构造的扩展函数，对象建立的时候即调用
+   void extend_forinit(); //初始化的扩展函数，调用函数init初始化时调用
+   bool extend_for_packetid_isvalid() const; //扩展包ID是否有效
 
 };
 

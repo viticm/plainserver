@@ -17,18 +17,12 @@
 #include "common/base/time_manager.h"
 
 typedef enum {
-  kLoginLogFile = 0,
-  kDebugLogFile = 1,
-  kErrorLogFile = 2,
-  kShareMemoryLogFile = 3,
-  kGatewayLogFile = 4,
-  kCenterLogFile = 5,
-  kServerLogFile = 6,
-  kNetLogFile = 7,
-  kFunctionLogFile = 8,
+  kDebugLogFile = 0,
+  kErrorLogFile = 1,
+  kNetLogFile = 2,
+  kFunctionLogFile = 3,
   kLogFileCount,
 } logid_t;
-
 
 namespace ps_common_base {
 

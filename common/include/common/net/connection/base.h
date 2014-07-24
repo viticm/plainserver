@@ -38,9 +38,6 @@ namespace ps_common_net {
 
 namespace connection {
 
-extern const char* g_kModelName;
-extern const uint8_t g_kModelSaveLogId;
-
 class Base {
 
  public:

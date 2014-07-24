@@ -1,4 +1,5 @@
 #include "common/base/util.h"
+#include "common/application/extend/log.h"
 #include "common/base/log.h"
 
 ps_common_base::Log* g_log = NULL;
@@ -11,13 +12,8 @@ const char* kBaseLogSaveDir = "./log";
 ps_common_sys::ThreadLock g_log_lock;
 
 const char* g_log_filename[] = {
-  "./log/login", //kLoginLogFile
   "./log/debug", //kDebugLogFile
   "./log/error", //kErrorLogFile
-  "./log/sharememory", //kShareMemoryLogFile
-  "./log/gateway", //kGatewayLogFile
-  "./log/center", //kCenterLogFile
-  "./log/server", //kServerLogFile
   "./log/net", //kNetLogFile
   "./log/function", //kFunctionLogFile
   '\0',
@@ -145,7 +141,7 @@ bool Log::init(int32_t cache_size) {
   __ENTER_FUNCTION
     cache_size_ = cache_size;
     int32_t i;
-    for (i = 0; i < kLogFileCount; ++i) {
+    for (i = 0; i < kFinalLogFileCount; ++i) {
       if (NULL == log_cache_[i]) log_cache_[i] = new char[cache_size_];
       if (NULL == log_cache_[i]) { //local memory is failed
         return false;
@@ -158,22 +154,25 @@ bool Log::init(int32_t cache_size) {
     return false;
 }
 
-void Log::get_log_filename(logid_t logid, char* file_name) {
+void Log::get_log_filename(logid_t logid, char *save) {
   __ENTER_FUNCTION
+    const char *filename = logid > kLogFileCount ? 
+                           g_extend_log_filename[logid - kLogFileCount] : 
+                           g_log_filename[logid];
     if (g_time_manager) {
-      snprintf(file_name,
+      snprintf(save,
                FILENAME_MAX - 1,
                "%s_%d_%d_%d.log",
-               g_log_filename[logid],
+               filename,
                g_time_manager->get_year(),
                g_time_manager->get_month() + 1,
                g_time_manager->get_day());
     }
     else {
-      snprintf(file_name,
+      snprintf(save,
                FILENAME_MAX - 1,
                "%s_%d.log",
-               g_log_filename[logid],
+               filename,
                day_time_);
     }
   __LEAVE_FUNCTION
