@@ -649,10 +649,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\common\include\common\base\log_define.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\common\include\common\base\md5.h"
 						>
 					</File>
@@ -1050,10 +1046,6 @@
 					>
 					<File
 						RelativePath="..\..\common\include\common\application\config.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\common\include\common\application\filedefine.h"
 						>
 					</File>
 					<File
