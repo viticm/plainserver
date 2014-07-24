@@ -93,21 +93,6 @@ SET (SOURCEFILES_COMMON_NET_CONNECTION_LIST
 	../../common/src/common/net/connection/server.cc
 )
 
-SET (SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST
-	../../common/src/common/net/packets/serverserver/connect.cc
-)
-
-SET (SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST
-	../../common/src/common/net/packets/login_togateway/askauth.cc
-)
-
-SET (SOURCEFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST
-	../../common/src/common/net/packets/gateway_tologin/resultauth.cc
-)
-
-SET (SOURCEFILES_COMMON_NET_PACKETS_LIST
-)
-
 SET (SOURCEFILES_COMMON_NET_LIST
 	../../common/src/common/net/manager.cc
 )
@@ -161,6 +146,29 @@ SET (SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST
 SET (SOURCEFILES_COMMON_UTIL_LIST
 )
 
+SET (SOURCEFILES_COMMON_APPLICATION_NET_PACKET_GATEWAY_TOLOGIN_LIST
+	../../common/src/common/application/net/packet/gateway_tologin/resultauth.cc
+)
+
+SET (SOURCEFILES_COMMON_APPLICATION_NET_PACKET_LOGIN_TOGATEWAY_LIST
+	../../common/src/common/application/net/packet/login_togateway/askauth.cc
+)
+
+SET (SOURCEFILES_COMMON_APPLICATION_NET_PACKET_SERVERSERVER_LIST
+	../../common/src/common/application/net/packet/serverserver/connect.cc
+)
+
+SET (SOURCEFILES_COMMON_APPLICATION_NET_PACKET_LIST
+)
+
+SET (SOURCEFILES_COMMON_APPLICATION_NET_LIST
+)
+
+SET (SOURCEFILES_COMMON_APPLICATION_EXTEND_LIST
+	../../common/src/common/application/extend/log.cc
+	../../common/src/common/application/extend/net_packet_factorymanager.cc
+)
+
 SET (SOURCEFILES_COMMON_APPLICATION_LIST
 	../../common/src/common/application/setting.cc
 )
@@ -177,7 +185,7 @@ SET (SOURCEFILES_MESSAGE_HANDLER_LOGIN_TOGATEWAY_LIST
 )
 
 SET (SOURCEFILES_MESSAGE_HANDLER_GATEWAY_TOLOGIN_LIST
-	../src/message/handler/gateway_tologin/askauth.cc
+	../src/message/handler/gateway_tologin/resultauth.cc
 )
 
 SET (SOURCEFILES_MESSAGE_HANDLER_LIST
@@ -213,7 +221,6 @@ SET (HEADERFILES_COMMON_BASE_LIST
 	../../common/include/common/base/config.h
 	../../common/include/common/base/io.h
 	../../common/include/common/base/log.h
-	../../common/include/common/base/log_define.h
 	../../common/include/common/base/md5.h
 	../../common/include/common/base/singleton.h
 	../../common/include/common/base/string.h
@@ -272,36 +279,6 @@ SET (HEADERFILES_COMMON_NET_CONNECTION_LIST
 	../../common/include/common/net/connection/config.h
 	../../common/include/common/net/connection/pool.h
 	../../common/include/common/net/connection/server.h
-)
-
-SET (HEADERFILES_COMMON_NET_PACKETS_ID_LIST
-	../../common/include/common/net/packets/id/all.h
-	../../common/include/common/net/packets/id/clientlogin.h
-	../../common/include/common/net/packets/id/clientserver.h
-	../../common/include/common/net/packets/id/config.h
-	../../common/include/common/net/packets/id/gatewaylogin.h
-	../../common/include/common/net/packets/id/logincenter.h
-	../../common/include/common/net/packets/id/servercenter.h
-	../../common/include/common/net/packets/id/serverserver.h
-)
-
-SET (HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST
-	../../common/include/common/net/packets/serverserver/config.h
-	../../common/include/common/net/packets/serverserver/connect.h
-)
-
-SET (HEADERFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST
-	../../common/include/common/net/packets/login_togateway/askauth.h
-	../../common/include/common/net/packets/login_togateway/config.h
-)
-
-SET (HEADERFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST
-	../../common/include/common/net/packets/gateway_tologin/config.h
-	../../common/include/common/net/packets/gateway_tologin/resultauth.h
-)
-
-SET (HEADERFILES_COMMON_NET_PACKETS_LIST
-	../../common/include/common/net/packets/config.h
 )
 
 SET (HEADERFILES_COMMON_NET_LIST
@@ -376,15 +353,65 @@ SET (HEADERFILES_COMMON_UTIL_LIST
 	../../common/include/common/util/config.h
 )
 
+SET (HEADERFILES_COMMON_APPLICATION_DEFINE_NET_PACKET_ID_LIST
+	../../common/include/common/application/define/net/packet/id/all.h
+	../../common/include/common/application/define/net/packet/id/clientlogin.h
+	../../common/include/common/application/define/net/packet/id/clientserver.h
+	../../common/include/common/application/define/net/packet/id/config.h
+	../../common/include/common/application/define/net/packet/id/gatewaylogin.h
+	../../common/include/common/application/define/net/packet/id/logincenter.h
+	../../common/include/common/application/define/net/packet/id/servercenter.h
+	../../common/include/common/application/define/net/packet/id/serverserver.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_DEFINE_NET_PACKET_LIST
+	../../common/include/common/application/define/net/packet/config.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_DEFINE_NET_LIST
+	../../common/include/common/application/define/net/config.h
+)
+
 SET (HEADERFILES_COMMON_APPLICATION_DEFINE_LIST
 	../../common/include/common/application/define/all.h
 	../../common/include/common/application/define/config.h
+	../../common/include/common/application/define/file.h
+	../../common/include/common/application/define/log.h
 	../../common/include/common/application/define/macros.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_NET_PACKET_LOGIN_TOGATEWAY_LIST
+	../../common/include/common/application/net/packet/login_togateway/askauth.h
+	../../common/include/common/application/net/packet/login_togateway/config.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_NET_PACKET_SERVERSERVER_LIST
+	../../common/include/common/application/net/packet/serverserver/config.h
+	../../common/include/common/application/net/packet/serverserver/connect.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_NET_PACKET_GATEWAY_TOLOGIN_LIST
+	../../common/include/common/application/net/packet/gateway_tologin/config.h
+	../../common/include/common/application/net/packet/gateway_tologin/resultauth.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_NET_PACKET_LIST
+	../../common/include/common/application/net/packet/config.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_NET_LIST
+	../../common/include/common/application/net/config.h
+)
+
+SET (HEADERFILES_COMMON_APPLICATION_EXTEND_LIST
+	../../common/include/common/application/extend/config.h
+	../../common/include/common/application/extend/define.h
+	../../common/include/common/application/extend/log.h
+	../../common/include/common/application/extend/net_packet_factorymanager.h
 )
 
 SET (HEADERFILES_COMMON_APPLICATION_LIST
 	../../common/include/common/application/config.h
-	../../common/include/common/application/filedefine.h
 	../../common/include/common/application/setting.h
 )
 
@@ -433,10 +460,6 @@ if (WIN32)
 	source_group(SourceFiles\\common\\net\\socket FILES ${SOURCEFILES_COMMON_NET_SOCKET_LIST})
 	source_group(SourceFiles\\common\\net\\connection\\manager FILES ${SOURCEFILES_COMMON_NET_CONNECTION_MANAGER_LIST})
 	source_group(SourceFiles\\common\\net\\connection FILES ${SOURCEFILES_COMMON_NET_CONNECTION_LIST})
-	source_group(SourceFiles\\common\\net\\packets\\serverver FILES ${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST})
-	source_group(SourceFiles\\common\\net\\packets\\login\\togateway FILES ${SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST})
-	source_group(SourceFiles\\common\\net\\packets\\gateway\\tologin FILES ${SOURCEFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST})
-	source_group(SourceFiles\\common\\net\\packets FILES ${SOURCEFILES_COMMON_NET_PACKETS_LIST})
 	source_group(SourceFiles\\common\\net FILES ${SOURCEFILES_COMMON_NET_LIST})
 	source_group(SourceFiles\\common\\engine\\thread FILES ${SOURCEFILES_COMMON_ENGINE_THREAD_LIST})
 	source_group(SourceFiles\\common\\engine FILES ${SOURCEFILES_COMMON_ENGINE_LIST})
@@ -448,6 +471,12 @@ if (WIN32)
 	source_group(SourceFiles\\common\\performance FILES ${SOURCEFILES_COMMON_PERFORMANCE_LIST})
 	source_group(SourceFiles\\common\\util\\compressor FILES ${SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST})
 	source_group(SourceFiles\\common\\util FILES ${SOURCEFILES_COMMON_UTIL_LIST})
+	source_group(SourceFiles\\common\\application\\net\\packet\\gateway\\tologin FILES ${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_GATEWAY_TOLOGIN_LIST})
+	source_group(SourceFiles\\common\\application\\net\\packet\\login\\togateway FILES ${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_LOGIN_TOGATEWAY_LIST})
+	source_group(SourceFiles\\common\\application\\net\\packet\\serverserver FILES ${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_SERVERSERVER_LIST})
+	source_group(SourceFiles\\common\\application\\net\\packet FILES ${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_LIST})
+	source_group(SourceFiles\\common\\application\\net FILES ${SOURCEFILES_COMMON_APPLICATION_NET_LIST})
+	source_group(SourceFiles\\common\\application\\extend FILES ${SOURCEFILES_COMMON_APPLICATION_EXTEND_LIST})
 	source_group(SourceFiles\\common\\application FILES ${SOURCEFILES_COMMON_APPLICATION_LIST})
 	source_group(SourceFiles\\common FILES ${SOURCEFILES_COMMON_LIST})
 	source_group(SourceFiles\\message\\handler\\serverserver FILES ${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST})
@@ -468,11 +497,6 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\net\\packet FILES ${HEADERFILES_COMMON_NET_PACKET_LIST})
 	source_group(HeaderFiles\\common\\net\\connection\\manager FILES ${HEADERFILES_COMMON_NET_CONNECTION_MANAGER_LIST})
 	source_group(HeaderFiles\\common\\net\\connection FILES ${HEADERFILES_COMMON_NET_CONNECTION_LIST})
-	source_group(HeaderFiles\\common\\net\\packets\\id FILES ${HEADERFILES_COMMON_NET_PACKETS_ID_LIST})
-	source_group(HeaderFiles\\common\\net\\packets\\serverserver FILES ${HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST})
-	source_group(HeaderFiles\\common\\net\\packets\\login\\togateway FILES ${HEADERFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST})
-	source_group(HeaderFiles\\common\\net\\packets\\gateway\\tologin FILES ${HEADERFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST})
-	source_group(HeaderFiles\\common\\net\\packets FILES ${HEADERFILES_COMMON_NET_PACKETS_LIST})
 	source_group(HeaderFiles\\common\\net FILES ${HEADERFILES_COMMON_NET_LIST})
 	source_group(HeaderFiles\\common\\script\\cache FILES ${HEADERFILES_COMMON_SCRIPT_CACHE_LIST})
 	source_group(HeaderFiles\\common\\script\\lua FILES ${HEADERFILES_COMMON_SCRIPT_LUA_LIST})
@@ -484,7 +508,16 @@ if (WIN32)
 	source_group(HeaderFiles\\common\\performance FILES ${HEADERFILES_COMMON_PERFORMANCE_LIST})
 	source_group(HeaderFiles\\common\\util\\compressor FILES ${HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST})
 	source_group(HeaderFiles\\common\\util FILES ${HEADERFILES_COMMON_UTIL_LIST})
+	source_group(HeaderFiles\\common\\application\\define\\net\\packet\\id FILES ${HEADERFILES_COMMON_APPLICATION_DEFINE_NET_PACKET_ID_LIST})
+	source_group(HeaderFiles\\common\\application\\define\\net\\packet FILES ${HEADERFILES_COMMON_APPLICATION_DEFINE_NET_PACKET_LIST})
+	source_group(HeaderFiles\\common\\application\\define\\net FILES ${HEADERFILES_COMMON_APPLICATION_DEFINE_NET_LIST})
 	source_group(HeaderFiles\\common\\application\\define FILES ${HEADERFILES_COMMON_APPLICATION_DEFINE_LIST})
+	source_group(HeaderFiles\\common\\application\\net\\packet\\login\\togateway FILES ${HEADERFILES_COMMON_APPLICATION_NET_PACKET_LOGIN_TOGATEWAY_LIST})
+	source_group(HeaderFiles\\common\\application\\net\\packet\\serverserver FILES ${HEADERFILES_COMMON_APPLICATION_NET_PACKET_SERVERSERVER_LIST})
+	source_group(HeaderFiles\\common\\application\\net\\packet\\gateway\\tologin FILES ${HEADERFILES_COMMON_APPLICATION_NET_PACKET_GATEWAY_TOLOGIN_LIST})
+	source_group(HeaderFiles\\common\\application\\net\\packet FILES ${HEADERFILES_COMMON_APPLICATION_NET_PACKET_LIST})
+	source_group(HeaderFiles\\common\\application\\net FILES ${HEADERFILES_COMMON_APPLICATION_NET_LIST})
+	source_group(HeaderFiles\\common\\application\\extend FILES ${HEADERFILES_COMMON_APPLICATION_EXTEND_LIST})
 	source_group(HeaderFiles\\common\\application FILES ${HEADERFILES_COMMON_APPLICATION_LIST})
 	source_group(HeaderFiles\\common FILES ${HEADERFILES_COMMON_LIST})
 	source_group(HeaderFiles\\config FILES ${HEADERFILES_CONFIG_LIST})
@@ -507,10 +540,6 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_NET_SOCKET_LIST}
 	${SOURCEFILES_COMMON_NET_CONNECTION_MANAGER_LIST}
 	${SOURCEFILES_COMMON_NET_CONNECTION_LIST}
-	${SOURCEFILES_COMMON_NET_PACKETS_SERVERVER_LIST}
-	${SOURCEFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST}
-	${SOURCEFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST}
-	${SOURCEFILES_COMMON_NET_PACKETS_LIST}
 	${SOURCEFILES_COMMON_NET_LIST}
 	${SOURCEFILES_COMMON_ENGINE_THREAD_LIST}
 	${SOURCEFILES_COMMON_ENGINE_LIST}
@@ -522,6 +551,12 @@ ADD_EXECUTABLE(gateway
 	${SOURCEFILES_COMMON_PERFORMANCE_LIST}
 	${SOURCEFILES_COMMON_UTIL_COMPRESSOR_LIST}
 	${SOURCEFILES_COMMON_UTIL_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_GATEWAY_TOLOGIN_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_LOGIN_TOGATEWAY_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_SERVERSERVER_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_NET_PACKET_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_NET_LIST}
+	${SOURCEFILES_COMMON_APPLICATION_EXTEND_LIST}
 	${SOURCEFILES_COMMON_APPLICATION_LIST}
 	${SOURCEFILES_COMMON_LIST}
 	${SOURCEFILES_MESSAGE_HANDLER_SERVERSERVER_LIST}
@@ -542,11 +577,6 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_NET_PACKET_LIST}
 	${HEADERFILES_COMMON_NET_CONNECTION_MANAGER_LIST}
 	${HEADERFILES_COMMON_NET_CONNECTION_LIST}
-	${HEADERFILES_COMMON_NET_PACKETS_ID_LIST}
-	${HEADERFILES_COMMON_NET_PACKETS_SERVERSERVER_LIST}
-	${HEADERFILES_COMMON_NET_PACKETS_LOGIN_TOGATEWAY_LIST}
-	${HEADERFILES_COMMON_NET_PACKETS_GATEWAY_TOLOGIN_LIST}
-	${HEADERFILES_COMMON_NET_PACKETS_LIST}
 	${HEADERFILES_COMMON_NET_LIST}
 	${HEADERFILES_COMMON_SCRIPT_CACHE_LIST}
 	${HEADERFILES_COMMON_SCRIPT_LUA_LIST}
@@ -558,7 +588,16 @@ ADD_EXECUTABLE(gateway
 	${HEADERFILES_COMMON_PERFORMANCE_LIST}
 	${HEADERFILES_COMMON_UTIL_COMPRESSOR_LIST}
 	${HEADERFILES_COMMON_UTIL_LIST}
+	${HEADERFILES_COMMON_APPLICATION_DEFINE_NET_PACKET_ID_LIST}
+	${HEADERFILES_COMMON_APPLICATION_DEFINE_NET_PACKET_LIST}
+	${HEADERFILES_COMMON_APPLICATION_DEFINE_NET_LIST}
 	${HEADERFILES_COMMON_APPLICATION_DEFINE_LIST}
+	${HEADERFILES_COMMON_APPLICATION_NET_PACKET_LOGIN_TOGATEWAY_LIST}
+	${HEADERFILES_COMMON_APPLICATION_NET_PACKET_SERVERSERVER_LIST}
+	${HEADERFILES_COMMON_APPLICATION_NET_PACKET_GATEWAY_TOLOGIN_LIST}
+	${HEADERFILES_COMMON_APPLICATION_NET_PACKET_LIST}
+	${HEADERFILES_COMMON_APPLICATION_NET_LIST}
+	${HEADERFILES_COMMON_APPLICATION_EXTEND_LIST}
 	${HEADERFILES_COMMON_APPLICATION_LIST}
 	${HEADERFILES_COMMON_LIST}
 	${HEADERFILES_CONFIG_LIST}

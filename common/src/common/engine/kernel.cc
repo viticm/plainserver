@@ -65,7 +65,8 @@ bool Kernel::init() {
     }
     //base
     bool hasinit = getconfig_boolvalue(ENGINE_CONFIG_BASEMODULE_HAS_INIT);
-    if (!hasinit) DEBUGPRINTF("[engine] (Kernel::init) start base module");
+    if (!hasinit) 
+      DEBUGPRINTF("(###) engine for (%s) start...", APPLICATION_NAME);
     if (!hasinit && !init_base()) {
       SLOW_ERRORLOG("engine", 
                     "[engine] (Kernel::init) base module failed");

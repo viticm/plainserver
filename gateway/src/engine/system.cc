@@ -42,7 +42,7 @@ ps_common_db::Manager *System::get_dbmanager() {
 
 bool System::init() {
   __ENTER_FUNCTION
-    DEBUGPRINTF("[engine] (System::init) start base module");
+    DEBUGPRINTF("(###) engine for (%s) start...", APPLICATION_NAME);
     if (!Kernel::init_base()) {
       SLOW_ERRORLOG("engine", 
                     "[engine] (System::init) base module failed");

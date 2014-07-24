@@ -26,6 +26,8 @@ enum {
 #define PASSWORD_ENCRYPT_KEY "123456" //密码加密串，真实加密串是取其MD5值
 #define DATE_LENGTH_MAX 20
 
+#include "common/application/extend/define.h"
+
 //headers include order: common/base/config.h -> sys include -> module include
 
 #endif //PS_COMMON_BASE_CONFIG_H_

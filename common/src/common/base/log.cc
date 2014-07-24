@@ -63,6 +63,10 @@ void Log::get_log_timestr(char* time_str, int32_t length) {
                  g_time_manager->get_second(),
                  ps_common_sys::get_current_thread_id(), 
                  static_cast<float>(g_time_manager->get_run_time())/1000.0);
+    } else {
+      snprintf(time_str, length, 
+                 "00:00:00 (%"PRIu64" 0.0000)",
+                 ps_common_sys::get_current_thread_id());
     }
   __LEAVE_FUNCTION
 }

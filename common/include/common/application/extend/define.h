@@ -8,14 +8,11 @@
  * @date 2014/07/24 16:21
  * @uses the application extend for base module define form framework, important!
  *       cn:
- *       框架基础定义扩展
+ *       框架基础定义扩展，宏和常量以及枚举等定义
  *       重要的 -- 编译时必须包含
  */
 #ifndef PS_COMMON_APPLICATION_EXTEND_DEFINE_H_
 #define PS_COMMON_APPLICATION_EXTEND_DEFINE_H_
-
-#include "common/application/extend/config.h"
-#include "common/application/extend/log.h"
 
 #if defined(_PS_GATEWAY) /* { */
 //applications defined puts in here

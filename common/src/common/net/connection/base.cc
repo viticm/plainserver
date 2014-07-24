@@ -1,7 +1,6 @@
 #include "common/base/log.h"
 #include "common/base/time_manager.h"
 #include "common/net/packet/factorymanager.h"
-#include "common/application/extend/define.h"
 #include "common/net/connection/base.h"
 
 #define NET_MODULENAME \

@@ -63,14 +63,11 @@ class Log : public Singleton<Log> {
          va_start(argptr, format);
          vsnprintf(temp, sizeof(temp) - 1, format, argptr);
          va_end(argptr);
-         if (g_time_manager) {
-           char time_str[256] = {0};
-           memset(time_str, '\0', sizeof(time_str));
-           get_log_timestr(time_str, sizeof(time_str) - 1);
-           snprintf(buffer, sizeof(buffer) - 1,"%s %s", time_str, temp);
-         }
-       }
-       catch(...) {
+         char time_str[256] = {0};
+         memset(time_str, '\0', sizeof(time_str));
+         get_log_timestr(time_str, sizeof(time_str) - 1);
+         snprintf(buffer, sizeof(buffer) - 1,"%s %s", time_str, temp);
+       } catch(...) {
          Assert(false);
          return;
        }
@@ -129,28 +126,26 @@ class Log : public Singleton<Log> {
          va_start(argptr, format);
          vsnprintf(temp, sizeof(temp) - 1, format, argptr);
          va_end(argptr);
-         if (g_time_manager) {
-           char time_str[256];
-           memset(time_str, '\0', sizeof(time_str));
-           get_log_timestr(time_str, sizeof(time_str) - 1);
-           snprintf(buffer, sizeof(buffer) - 1,"%s %s", time_str, temp);
-         }
+         char time_str[256];
+         memset(time_str, '\0', sizeof(time_str));
+         get_log_timestr(time_str, sizeof(time_str) - 1);
+         snprintf(buffer, sizeof(buffer) - 1,"%s %s", time_str, temp);
 
          if (g_command_logprint) {
            switch (type) {
-          case 1:
-            WARNINGPRINTF(buffer);
-            break;
-          case 2:
-            ERRORPRINTF(buffer);
-            break;
-          case 3:
-            DEBUGPRINTF(buffer);
-            break;
-          case 9:
-            break;
-          default:
-            printf("%s"LF"", buffer);
+            case 1:
+              WARNINGPRINTF(buffer);
+              break;
+            case 2:
+              ERRORPRINTF(buffer);
+              break;
+            case 3:
+              DEBUGPRINTF(buffer);
+              break;
+            case 9:
+              break;
+            default:
+              printf("%s"LF"", buffer);
            }
          }
          strncat(buffer, LF, sizeof(LF)); //add wrap
@@ -164,10 +159,9 @@ class Log : public Singleton<Log> {
            fwrite(buffer, 1, strlen(buffer), fp);
            fclose(fp);
          }
-       }
-       catch(...) {
-         ERRORPRINTF("ps_common_base::Log::save_log have some log error here%s", 
-           LF);
+       } catch(...) {
+         ERRORPRINTF(
+             "ps_common_base::Log::save_log have some log error here"LF"");
        }
        g_log_lock.unlock();
        __LEAVE_FUNCTION
