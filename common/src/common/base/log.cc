@@ -33,7 +33,7 @@ Log& Log::getsingleton() {
 Log::Log() {
   __ENTER_FUNCTION
     int32_t i;
-    for (i = 0; i < kLogFileCount; ++i) {
+    for (i = 0; i < kFinalLogFileCount; ++i) {
       log_cache_[i] = NULL;
       log_position_[i] = 0;
     }
@@ -125,17 +125,15 @@ void Log::disk_log(const char* file_nameprefix, const char* format, ...) {
       if (fp) {
         try {
           fwrite(buffer, 1, strlen(buffer), fp );
-        }
-        catch(...) {
+        } catch(...) {
+        
         }
         fclose(fp);
       }
-    }
-    catch(...) {
-    }
-
-    g_log_lock.unlock();
+    } catch(...) {
     
+    }
+    g_log_lock.unlock(); 
   __LEAVE_FUNCTION
 }
 
@@ -193,8 +191,7 @@ void Log::get_log_filename(const char* file_nameprefix, char* file_name) {
                g_time_manager->get_year(),
                g_time_manager->get_month() + 1,
                g_time_manager->get_day());
-    }
-    else {
+    } else {
       snprintf(file_name,
                FILENAME_MAX - 1,
                "%s/%s.log",
@@ -207,6 +204,7 @@ void Log::get_log_filename(const char* file_nameprefix, char* file_name) {
 
 void Log::flush_log(uint8_t logid) {
   __ENTER_FUNCTION
+    if (logid > kFinalLogFileCount) return;
     char log_file_name[FILENAME_MAX];
     memset(log_file_name, '\0', sizeof(log_file_name));
     get_log_filename(logid, log_file_name);
@@ -218,8 +216,7 @@ void Log::flush_log(uint8_t logid) {
         fwrite(log_cache_[logid], 1, log_position_[logid], fp);
         fclose(fp);
       }
-    }
-    catch(...) {
+    } catch(...) {
       //do nothing
     }
     log_lock_[logid].unlock();
@@ -229,7 +226,7 @@ void Log::flush_log(uint8_t logid) {
 void Log::flush_alllog() {
   __ENTER_FUNCTION
     int32_t i;
-    for (i = 0; i < kLogFileCount; ++i) {
+    for (i = 0; i < kFinalLogFileCount; ++i) {
       uint8_t logid = static_cast<uint8_t>(i);
       flush_log(logid);
     }

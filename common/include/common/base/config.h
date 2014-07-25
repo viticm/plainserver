@@ -15,6 +15,9 @@
 #include "common/base/type.h"
 /* } base type */
 
+#define DATE_LENGTH_MAX 20
+
+/* base log { */
 enum {
   kDebugLogFile = 0,
   kErrorLogFile = 1,
@@ -22,9 +25,7 @@ enum {
   kFunctionLogFile = 3,
   kLogFileCount,
 };
-
-#define PASSWORD_ENCRYPT_KEY "123456" //密码加密串，真实加密串是取其MD5值
-#define DATE_LENGTH_MAX 20
+/* } base log */
 
 #include "common/application/extend/define.h"
 

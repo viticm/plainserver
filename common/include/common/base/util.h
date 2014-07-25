@@ -27,13 +27,6 @@ bool string_tobinary(const char* in,
                      uint32_t out_limit, 
                      uint32_t &out_length);
 void sleep(uint32_t million_seconds);
-uint32_t str_length(const char* str);
-void char_swap(char* str, uint32_t source, uint32_t destination);
-void simple_encrypt_decrypt(char* str, 
-                            uint32_t strlength, 
-                            uint32_t key_begin = 0); //use first is encrypt 
-                                                     //and next to decrypt
-void password_swap_chars(char* str); //string will more than 32
 /**
  * 由byte类型获得单位大小字符串如：32bytes,32kb,32mb,32gb,32t
  * type: -1 获得大于1最大单位字符串，如1023byte则返回1023bytes而非kb

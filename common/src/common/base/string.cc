@@ -43,8 +43,7 @@ static bool fast_toint(const char* str,
       if (('\0' == tmp_str[1]) || (1 == converted_length)) {
         result = 0;
         return true;
-      }
-      else {
+      } else {
         if (!ignored_zero) return false;
         for (;;) {
           ++tmp_str;
@@ -262,8 +261,7 @@ int32_t charset_convert(const char* from,
           int one = 1 ;
           iconvctl(cd, ICONV_SET_DISCARD_ILSEQ, &one);
           status = -3;
-        } 
-        else if (EINVAL == errno) {
+        } else if (EINVAL == errno) {
           if (0 == inbufsize) {
             status = -4;
             goto done;
@@ -271,12 +269,10 @@ int32_t charset_convert(const char* from,
           else {
             break;
           }
-        } 
-        else if (E2BIG == errno) {
+        } else if (E2BIG == errno) {
           status = -5;
           goto done;
-        } 
-        else {
+        } else {
           status = -6;
           goto done;
         }

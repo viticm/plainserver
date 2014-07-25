@@ -15,7 +15,6 @@
 #define PS_COMMON_APPLICATION_EXTEND_LOG_H_
 
 #include "common/application/extend/config.h"
-#include "common/base/log.h"
 
 enum {
   kLoginLogFile = kLogFileCount,
@@ -23,7 +22,7 @@ enum {
   kGatewayLogFile,
   kCenterLogFile,
   kServerLogFile,
-  kFinalLogFileCount,
+  kFinalLogFileCount, //如果没有任何扩展，此值为kLogFileCount
 }; //扩展的日志记录ID，从基础的kLogFileCount开始扩展
 
 namespace ps_common_base {

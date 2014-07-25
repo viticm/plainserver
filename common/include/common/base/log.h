@@ -55,7 +55,7 @@ class Log : public Singleton<Log> {
    template <uint8_t type>
    void fast_savelog(uint8_t logid, const char* format, ...) {
      __ENTER_FUNCTION
-       if (logid < 0 || logid >= kLogFileCount) return;
+       if (logid < 0 || logid >= kFinalLogFileCount) return;
        char buffer[4096] = {0};
        char temp[4096] = {0};
        va_list argptr;
@@ -100,8 +100,7 @@ class Log : public Singleton<Log> {
        log_lock_[logid].lock();
        try {
          memcpy(log_cache_[logid] + log_position_[logid], buffer, length);
-       }
-       catch(...) {
+       } catch(...) {
          //do nogthing
        }
        log_position_[logid] += length;
